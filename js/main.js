@@ -188,8 +188,8 @@
         }));
         const cat = cats.find(c => c.id === activeCat);
         panel.setAttribute('aria-labelledby', 'tab-' + activeCat);
-        panel.replaceChildren(...((cat && cat.items) || []).map(it => {
-            const li = el('div', 'drink-item');
+        panel.replaceChildren(...((cat && cat.items) || []).map((it, i) => {
+            const li = el('div', 'drink-item'); li.style.setProperty('--i', i);
             const head = el('div', 'drink-head');
             const name = el('span', 'drink-name', loc(it.name));
             if (it.size) name.append(el('span', 'drink-size', it.size));
@@ -216,27 +216,31 @@
     const lb = $('#lightbox'), lbImg = $('#lbImg'), items = $$('.gallery-item');
     if (lb) {
         let idx = 0;
-        function show(i) {
+        const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)');
+        function show(i, dir = 0) {
             idx = (i + items.length) % items.length;
             const img = $('img', items[idx]);
             lbImg.src = img.currentSrc || img.src;
             lbImg.alt = img.alt;
+            if (dir && !reduceMotion.matches && lbImg.animate) lbImg.animate(
+                [{ opacity: 0, transform: `translateX(${dir * 48}px)` }, { opacity: 1, transform: 'none' }],
+                { duration: 280, easing: 'cubic-bezier(.2,.7,.2,1)' });
         }
         items.forEach((b, i) => b.addEventListener('click', () => { show(i); lb.showModal(); }));
         $('#lbClose').addEventListener('click', () => lb.close());
-        $('#lbPrev').addEventListener('click', () => show(idx - 1));
-        $('#lbNext').addEventListener('click', () => show(idx + 1));
+        $('#lbPrev').addEventListener('click', () => show(idx - 1, -1));
+        $('#lbNext').addEventListener('click', () => show(idx + 1, 1));
         lb.addEventListener('click', e => { if (e.target === lb) lb.close(); });
         lb.addEventListener('keydown', e => {
-            if (e.key === 'ArrowLeft') show(idx - 1);
-            if (e.key === 'ArrowRight') show(idx + 1);
+            if (e.key === 'ArrowLeft') show(idx - 1, -1);
+            if (e.key === 'ArrowRight') show(idx + 1, 1);
         });
         let touchX = null;
         lb.addEventListener('touchstart', e => { touchX = e.changedTouches[0].clientX; }, { passive: true });
         lb.addEventListener('touchend', e => {
             if (touchX === null) return;
             const dx = e.changedTouches[0].clientX - touchX;
-            if (Math.abs(dx) > 50) show(dx < 0 ? idx + 1 : idx - 1);
+            if (Math.abs(dx) > 50) show(dx < 0 ? idx + 1 : idx - 1, dx < 0 ? 1 : -1);
             touchX = null;
         });
     }

@@ -149,7 +149,7 @@ p { margin: 0 0 1em; }
 .card p { color: var(--muted); margin: 0; }
 .tag { display: inline-block; margin-bottom: 1rem; padding: .2rem .65rem; border: 1px solid var(--accent); border-radius: var(--radius); color: var(--accent-text); font-size: .75rem; font-weight: 800; text-transform: uppercase; letter-spacing: .14em; }
 a.contact-card { text-decoration: none; transition: border-color .2s, transform .2s; }
-a.contact-card:hover { transform: translateY(-3px); }
+a.contact-card:hover { translate: 0 -3px; }
 a.contact-card:hover h3 { color: var(--accent-text); }
 a.contact-card p { color: var(--text-2); }
 
@@ -201,12 +201,67 @@ address strong { color: var(--text); font-size: 1.1rem; }
 .legal a { color: var(--accent-text); }
 
 /* Scroll reveal (only when JS is active) */
-.js .reveal { opacity: 0; transform: translateY(24px); transition: opacity .6s, transform .6s; }
+.js .reveal { opacity: 0; transform: translateY(24px); transition: opacity .6s var(--d, 0s), transform .6s var(--d, 0s), translate .2s, border-color .2s; }
 .js .reveal.visible { opacity: 1; transform: none; }
+
+
+/* ---------- Animations ---------- */
+:root { interpolate-size: allow-keywords; }
+@keyframes fade-up { from { opacity: 0; transform: translateY(16px); } to { opacity: 1; transform: none; } }
+@keyframes fade-in { from { opacity: 0; } to { opacity: 1; } }
+@keyframes pop-in { from { opacity: 0; transform: scale(.96); } to { opacity: 1; transform: none; } }
+@keyframes pulse { 0%, 100% { box-shadow: 0 0 0 0 var(--ok); } 70% { box-shadow: 0 0 0 8px transparent; } }
+
+/* Hero entrance */
+.hero-content > * { animation: fade-up .7s cubic-bezier(.2, .7, .2, 1) both; }
+.hero-content > :nth-child(2) { animation-delay: .1s; }
+.hero-content > :nth-child(3) { animation-delay: .2s; }
+.hero-content > :nth-child(4) { animation-delay: .3s; }
+.hero-img { animation: fade-in 1s both; }
+
+/* Scroll reveal stagger inside grids */
+.js .grid > .reveal:nth-child(2) { --d: .08s; }
+.js .grid > .reveal:nth-child(3) { --d: .16s; }
+.js .grid > .reveal:nth-child(4) { --d: .24s; }
+.js .grid > .reveal:nth-child(5) { --d: .32s; }
+.js .grid > .reveal:nth-child(6) { --d: .4s; }
+
+/* Buttons and cards */
+.btn:hover { transform: translateY(-2px); }
+.btn:active { transform: translateY(0) scale(.97); }
+.card:hover { translate: 0 -3px; }
+.drink-tab { transition: background .2s, color .2s, border-color .2s, transform .15s; }
+.drink-tab:active { transform: scale(.96); }
+.theme-btn, .lang-btn, .brand { transition: transform .2s, color .2s; }
+.theme-btn:hover { transform: rotate(20deg); }
+.theme-btn:active { transform: rotate(180deg) scale(.9); }
+
+/* Drinks list: items rise in when a category is chosen */
+.drink-item { animation: fade-up .4s cubic-bezier(.2, .7, .2, 1) both; animation-delay: calc(var(--i, 0) * 50ms); }
+
+/* Events: smooth open/close (modern browsers) plus a fade for the rest */
+.event::details-content { block-size: 0; overflow: hidden; transition: block-size .35s ease, content-visibility .35s allow-discrete; }
+.event[open]::details-content { block-size: auto; }
+.event[open] .event-more { animation: fade-up .4s .05s both; }
+
+/* Open/closed badge */
+.status.open::before { animation: pulse 2s infinite; }
+
+/* Desktop nav underline */
+@media (min-width: 900px) {
+    .nav a { position: relative; }
+    .nav a::after { content: ""; position: absolute; left: 0; right: 0; bottom: 0; height: 2px; background: var(--accent); transform: scaleX(0); transform-origin: left; transition: transform .25s; }
+    .nav a:hover::after { transform: scaleX(1); }
+}
+
+/* Lightbox */
+.lightbox[open] { animation: fade-in .25s both; }
+.lightbox[open] img { animation: pop-in .3s both; }
+.lightbox::backdrop { background: transparent; }
 
 @media (prefers-reduced-motion: reduce) {
     html { scroll-behavior: auto; }
-    *, *::before, *::after { transition: none !important; }
+    *, *::before, *::after { transition: none !important; animation: none !important; }
     .js .reveal { opacity: 1; transform: none; }
 }
 
@@ -272,8 +327,8 @@ address strong { color: var(--text); font-size: 1.1rem; }
 .event summary::-webkit-details-marker { display: none; }
 .event summary h3 { margin-bottom: .5em; }
 .event summary p { margin: 0; }
-.event summary::after { content: "+"; display: block; margin-top: 1rem; font: 800 1.6rem/1 var(--font-body); color: var(--accent-text); transition: transform .2s; }
-.event[open] summary::after { content: "\2212"; }
+.event summary::after { content: "+"; display: block; margin-top: 1rem; font: 800 1.6rem/1 var(--font-body); color: var(--accent-text); transition: transform .3s; }
+.event[open] summary::after { transform: rotate(135deg); }
 .event .event-more { padding: 0 1.5rem 1.5rem; }
 .event .event-more p { margin: 0; color: var(--muted); }
 @media (min-width: 900px) { #events .grid-3 { grid-template-columns: repeat(2, 1fr); } }
