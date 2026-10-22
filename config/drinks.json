@@ -1,0 +1,45 @@
+{
+  "currency": "€",
+  "categories": [
+    {
+      "id": "tap",
+      "name": { "de": "Frisch gezapft", "en": "Fresh on tap" },
+      "items": [
+        { "name": "Pils", "size": "0,3 l", "price": 3.4 },
+        { "name": "Pils", "size": "0,5 l", "price": 4.6 },
+        { "name": { "de": "Weizen", "en": "Wheat beer" }, "size": "0,5 l", "price": 4.8 },
+        { "name": { "de": "Radler", "en": "Shandy" }, "size": "0,5 l", "price": 4.6 }
+      ]
+    },
+    {
+      "id": "cocktails",
+      "name": "Cocktails",
+      "items": [
+        { "name": "Mojito", "price": 9.5, "ingredients": { "de": "Weißer Rum, Limette, Minze, Rohrzucker, Soda", "en": "White rum, lime, mint, cane sugar, soda" } },
+        { "name": "Aperol Spritz", "price": 7.5, "ingredients": { "de": "Aperol, Prosecco, Soda, Orange", "en": "Aperol, prosecco, soda, orange" } },
+        { "name": "Gin Tonic", "price": 8.5, "ingredients": { "de": "Gin, Tonic Water, Limette", "en": "Gin, tonic water, lime" } },
+        { "name": "Long Island Iced Tea", "price": 10.5, "ingredients": { "de": "Wodka, Gin, Rum, Tequila, Triple Sec, Zitrone, Cola", "en": "Vodka, gin, rum, tequila, triple sec, lemon, cola" } }
+      ]
+    },
+    {
+      "id": "spirits",
+      "name": { "de": "Spirituosen", "en": "Spirits" },
+      "items": [
+        { "name": "Whisky", "size": "4 cl", "price": 5.5 },
+        { "name": "Gin", "size": "4 cl", "price": 5.0 },
+        { "name": { "de": "Rum", "en": "Rum" }, "size": "4 cl", "price": 5.0 },
+        { "name": { "de": "Wodka", "en": "Vodka" }, "size": "4 cl", "price": 4.5 }
+      ]
+    },
+    {
+      "id": "soft",
+      "name": { "de": "Alkoholfrei", "en": "Non-alcoholic" },
+      "items": [
+        { "name": "Cola / Fanta / Sprite", "size": "0,33 l", "price": 3.2 },
+        { "name": { "de": "Apfelschorle", "en": "Apple spritzer" }, "size": "0,4 l", "price": 3.5 },
+        { "name": { "de": "Alkoholfreies Bier", "en": "Alcohol-free beer" }, "size": "0,5 l", "price": 4.2 },
+        { "name": { "de": "Wasser", "en": "Water" }, "size": "0,75 l", "price": 6.0 }
+      ]
+    }
+  ]
+}

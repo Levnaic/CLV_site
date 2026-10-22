@@ -97,12 +97,10 @@
         <section class="section" id="drinks">
             <div class="container">
                 <h2 data-i18n="drinksTitle">Getränke</h2>
-                <p class="lead" data-i18n="drinksLead">Eine Auswahl unserer Favoriten. Die aktuelle Karte gibt's an der Theke.</p>
-                <div class="grid grid-4">
-                    <article class="card reveal"><h3 data-i18n="drink1Title">Frisch gezapft</h3><p data-i18n="drink1">Pils, Weizen und wechselnde Fassbiere.</p></article>
-                    <article class="card reveal"><h3>Cocktails</h3><p data-i18n="drink2">Klassiker und Hausmischungen.</p></article>
-                    <article class="card reveal"><h3 data-i18n="drink3Title">Spirituosen</h3><p data-i18n="drink3">Whisky, Gin, Rum und mehr – pur oder gemixt.</p></article>
-                    <article class="card reveal"><h3 data-i18n="drink4Title">Alkoholfrei</h3><p data-i18n="drink4">Softdrinks, Säfte und alkoholfreies Bier.</p></article>
+                <p class="lead" data-i18n="drinksLead">Wähle eine Kategorie und sieh alle Getränke mit Preisen. Änderungen vorbehalten.</p>
+                <div class="drinks" id="drinks-menu">
+                    <div class="drink-tabs" role="tablist" id="drinkTabs"></div>
+                    <div class="drink-panel" id="drinkPanel" role="tabpanel" tabindex="0" aria-live="polite"></div>
                 </div>
             </div>
         </section>

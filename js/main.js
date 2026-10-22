@@ -17,11 +17,7 @@
         sport3: "Europe's best teams on midweek evenings.",
         sport4Title: 'More highlights', sport4: 'Formula 1, darts, internationals and major tournaments.',
         sport5: 'Several big screens and sound that lets you hear every goal.',
-        drinksTitle: 'Drinks', drinksLead: 'A selection of our favourites. The current menu is available at the bar.',
-        drink1Title: 'Fresh on tap', drink1: 'Pils, wheat beer and rotating draught beers.',
-        drink2: 'Classics and house creations.',
-        drink3Title: 'Spirits', drink3: 'Whisky, gin, rum and more – neat or mixed.',
-        drink4Title: 'Non-alcoholic', drink4: 'Soft drinks, juices and alcohol-free beer.',
+        drinksTitle: 'Drinks', drinksLead: 'Pick a category to see all drinks with prices. Subject to change.', drinksError: 'The drinks menu could not be loaded. Please ask at the bar.',
         ev1Tag: 'Every matchday', ev1: 'Kick-off, atmosphere, drink specials. Come early, seats go fast.',
         ev2Tag: 'Regularly', ev2Title: 'Party nights', ev2: 'Music, drinks and good vibes late into the night.',
         ev3Tag: 'On request', ev3Title: 'Private parties', ev3: 'Birthday, club night or company party – just talk to us.',
@@ -47,7 +43,7 @@
         de: ['Sonntag', 'Montag', 'Dienstag', 'Mittwoch', 'Donnerstag', 'Freitag', 'Samstag'],
         en: ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday']
     };
-    const DE_DYN = { open: 'Jetzt geöffnet', closed: 'Gerade geschlossen', until: 'bis', lbClose: 'Schließen', lbPrev: 'Zurück', lbNext: 'Weiter', zoom: 'Bild vergrößern', menuOpen: 'Menü öffnen', menuClose: 'Menü schließen' };
+    const DE_DYN = { drinksError: 'Die Getränkekarte konnte nicht geladen werden. Bitte frag an der Theke.', open: 'Jetzt geöffnet', closed: 'Gerade geschlossen', until: 'bis', lbClose: 'Schließen', lbPrev: 'Zurück', lbNext: 'Weiter', zoom: 'Bild vergrößern', menuOpen: 'Menü öffnen', menuClose: 'Menü schließen' };
 
     // Opening hours (PLACEHOLDER) – index 0 = Sunday. Close > 24 means after midnight.
     const HOURS = [[14, 24], [16, 25], [16, 25], [16, 25], [16, 25], [16, 27], [16, 27]];
@@ -88,6 +84,7 @@
         }
         setMenu(menuOpen);
         renderHours();
+        renderDrinks();
     }
     $('#langBtn').addEventListener('click', () => {
         lang = lang === 'en' ? 'de' : 'en';
@@ -145,6 +142,52 @@
         status.textContent = close ? `${t('open')} · ${t('until')} ${fmt(close)}` : t('closed');
     }
     setInterval(renderHours, 60000);
+
+    // ---------- Drinks menu (data lives in config/drinks.json) ----------
+    let drinks = null, activeCat = null;
+    const loc = v => (v && typeof v === 'object') ? (v[lang] ?? v.de ?? '') : (v ?? '');
+    const price = n => n.toLocaleString(lang === 'en' ? 'en-GB' : 'de-DE', { minimumFractionDigits: 2, maximumFractionDigits: 2 }) + '\u00a0' + (drinks.currency || '€');
+    const el = (tag, cls, text) => { const e = document.createElement(tag); if (cls) e.className = cls; if (text !== undefined) e.textContent = text; return e; };
+    function renderDrinks() {
+        const tabs = $('#drinkTabs'), panel = $('#drinkPanel');
+        if (!tabs) return;
+        if (!drinks) return;
+        const cats = drinks.categories || [];
+        if (!cats.some(c => c.id === activeCat)) activeCat = cats[0] && cats[0].id;
+        tabs.replaceChildren(...cats.map(c => {
+            const b = el('button', 'drink-tab', loc(c.name));
+            b.type = 'button'; b.id = 'tab-' + c.id; b.setAttribute('role', 'tab');
+            b.setAttribute('aria-selected', String(c.id === activeCat));
+            b.setAttribute('aria-controls', 'drinkPanel');
+            b.tabIndex = c.id === activeCat ? 0 : -1;
+            b.addEventListener('click', () => { activeCat = c.id; renderDrinks(); });
+            return b;
+        }));
+        const cat = cats.find(c => c.id === activeCat);
+        panel.setAttribute('aria-labelledby', 'tab-' + activeCat);
+        panel.replaceChildren(...((cat && cat.items) || []).map(it => {
+            const li = el('div', 'drink-item');
+            const head = el('div', 'drink-head');
+            const name = el('span', 'drink-name', loc(it.name));
+            if (it.size) name.append(el('span', 'drink-size', it.size));
+            head.append(name, el('span', 'drink-dots'), el('span', 'drink-price', price(it.price)));
+            li.append(head);
+            const extra = loc(it.ingredients) || loc(it.description);
+            if (extra) li.append(el('p', 'drink-desc', extra));
+            return li;
+        }));
+    }
+    $('#drinkTabs')?.addEventListener('keydown', e => {
+        if (e.key !== 'ArrowRight' && e.key !== 'ArrowLeft') return;
+        const tabs = $$('.drink-tab'), i = tabs.indexOf(document.activeElement);
+        if (i < 0) return;
+        const n = tabs[(i + (e.key === 'ArrowRight' ? 1 : -1) + tabs.length) % tabs.length];
+        n.click(); $('#' + n.id).focus();
+    });
+    if ($('#drinkTabs')) fetch('config/drinks.json')
+        .then(r => { if (!r.ok) throw new Error(r.status); return r.json(); })
+        .then(d => { drinks = d; renderDrinks(); })
+        .catch(() => { $('#drinkPanel').replaceChildren(el('p', 'drink-desc', t('drinksError'))); });
 
     // ---------- Lightbox ----------
     const lb = $('#lightbox'), lbImg = $('#lbImg'), items = $$('.gallery-item');

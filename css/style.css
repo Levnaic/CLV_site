@@ -196,3 +196,17 @@ address strong { color: var(--text); font-size: 1.1rem; }
     .gallery { grid-template-columns: repeat(3, 1fr); gap: 1rem; }
     .card { padding: 2rem; }
 }
+
+/* ---------- Drinks menu ---------- */
+.drink-tabs { display: flex; flex-wrap: wrap; gap: .5rem; margin-bottom: 1.5rem; }
+.drink-tab { min-height: 44px; padding: .5rem 1.1rem; background: transparent; border: 2px solid var(--surface-2); border-radius: var(--radius); color: var(--text); font: 800 .9rem var(--font-body); text-transform: uppercase; letter-spacing: .08em; cursor: pointer; transition: background .2s, color .2s, border-color .2s; }
+.drink-tab:hover { border-color: var(--accent); }
+.drink-tab[aria-selected="true"] { background: var(--accent); border-color: var(--accent); color: var(--on-accent); }
+.drink-panel { display: grid; gap: 1.25rem 3rem; background: var(--surface); border: 1px solid var(--surface-2); border-top: 4px solid var(--accent); border-radius: var(--radius); padding: 1.5rem; }
+.drink-head { display: flex; align-items: baseline; gap: .6rem; color: var(--text); }
+.drink-name { font-weight: 700; }
+.drink-size { margin-left: .5rem; color: var(--muted); font-size: .85rem; font-weight: 500; }
+.drink-dots { flex: 1; border-bottom: 1px dotted var(--muted); transform: translateY(-.25em); min-width: 1rem; }
+.drink-price { font-weight: 800; color: var(--accent-text); white-space: nowrap; }
+.drink-desc { margin: .25rem 0 0; color: var(--muted); font-size: .95rem; }
+@media (min-width: 760px) { .drink-panel { grid-template-columns: 1fr 1fr; } }
