@@ -4,7 +4,7 @@
     // ---------- Translations (German text lives in the HTML, English here) ----------
     const EN = {
         title: "C'est la vie Sports Bar – Frankfurt-Niederrad",
-        skip: 'Skip to content', navLabel: 'Main menu', menuOpen: 'Open menu', menuClose: 'Close menu',
+        skip: 'Skip to content', navLabel: 'Main menu', menuOpen: 'Open menu', menuClose: 'Close menu', themeLight: 'Switch to light mode', themeDark: 'Switch to dark mode',
         navAbout: 'About', navSport: 'Live Sport', navDrinks: 'Drinks', navEvents: 'Events', navGallery: 'Gallery', navVisit: 'Find us', navContact: 'Contact',
         heroAlt: 'Bar interior (placeholder)', tagline: 'Live Sport · Cold Drinks · Good People', btnLive: 'Live today', btnRoute: 'Find us',
         aboutTitle: 'About us',
@@ -48,7 +48,7 @@
         de: ['Sonntag', 'Montag', 'Dienstag', 'Mittwoch', 'Donnerstag', 'Freitag', 'Samstag'],
         en: ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday']
     };
-    const DE_DYN = { drinksError: 'Die Getränkekarte konnte nicht geladen werden. Bitte frag an der Theke.', open: 'Jetzt geöffnet', closed: 'Gerade geschlossen', until: 'bis', lbClose: 'Schließen', lbPrev: 'Zurück', lbNext: 'Weiter', zoom: 'Bild vergrößern', menuOpen: 'Menü öffnen', menuClose: 'Menü schließen' };
+    const DE_DYN = { themeLight: 'Helles Design aktivieren', themeDark: 'Dunkles Design aktivieren', drinksError: 'Die Getränkekarte konnte nicht geladen werden. Bitte frag an der Theke.', open: 'Jetzt geöffnet', closed: 'Gerade geschlossen', until: 'bis', lbClose: 'Schließen', lbPrev: 'Zurück', lbNext: 'Weiter', zoom: 'Bild vergrößern', menuOpen: 'Menü öffnen', menuClose: 'Menü schließen' };
 
     // Opening hours (PLACEHOLDER) – index 0 = Sunday. Close > 24 means after midnight.
     const HOURS = [[14, 24], [16, 25], [16, 25], [16, 25], [16, 25], [16, 27], [16, 27]];
@@ -62,6 +62,23 @@
 
     let lang = store.get('lang') === 'en' ? 'en' : 'de';
     const t = key => (lang === 'en' ? EN[key] : DE_DYN[key]) ?? key;
+
+    // ---------- Theme (system default, manual override remembered) ----------
+    const darkMq = window.matchMedia('(prefers-color-scheme: dark)');
+    const isDark = () => (document.documentElement.dataset.theme || (darkMq.matches ? 'dark' : 'light')) === 'dark';
+    function renderTheme() {
+        const btn = $('#themeBtn');
+        if (!btn) return;
+        btn.textContent = isDark() ? '☀' : '☾';
+        btn.setAttribute('aria-label', t(isDark() ? 'themeLight' : 'themeDark'));
+    }
+    $('#themeBtn')?.addEventListener('click', () => {
+        const next = isDark() ? 'light' : 'dark';
+        document.documentElement.dataset.theme = next;
+        store.set('theme', next);
+        renderTheme();
+    });
+    darkMq.addEventListener('change', renderTheme);
 
     // ---------- Language switch ----------
     function translate() {
@@ -90,6 +107,7 @@
         setMenu(menuOpen);
         renderHours();
         renderDrinks();
+        renderTheme();
     }
     $('#langBtn').addEventListener('click', () => {
         lang = lang === 'en' ? 'de' : 'en';
@@ -250,5 +268,6 @@
         reveals.forEach(el => el.classList.add('visible'));
     }
 
+    renderTheme();
     if (lang === 'en') translate(); else renderHours();
 })();

@@ -5,12 +5,14 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>C'est la vie Sports Bar – Frankfurt-Niederrad</title>
     <meta name="description" content="C'est la vie Sports Bar in Frankfurt-Niederrad: Live-Sport auf großen Screens, kühle Drinks und gute Stimmung.">
-    <meta name="theme-color" content="#111214">
+    <meta name="theme-color" content="#111214" media="(prefers-color-scheme: dark)">
+    <meta name="theme-color" content="#e4e9c4" media="(prefers-color-scheme: light)">
     <meta property="og:type" content="website">
     <meta property="og:title" content="C'est la vie Sports Bar – Frankfurt-Niederrad">
     <meta property="og:description" content="Live-Sport, kühle Drinks, gute Leute.">
     <meta property="og:image" content="assets/img/hero.svg">
     <link rel="icon" href="assets/icons/favicon.svg" type="image/svg+xml">
+    <script>try{var t=localStorage.getItem("theme");if(t==="light"||t==="dark")document.documentElement.dataset.theme=t}catch(e){}</script>
     <link rel="stylesheet" href="css/style.css">
     <script type="application/ld+json">
     {
@@ -46,6 +48,7 @@
                 </ul>
             </nav>
             <div class="header-actions">
+                <button class="theme-btn" id="themeBtn" type="button" aria-label="Design wechseln"></button>
                 <button class="lang-btn" id="langBtn" type="button" aria-label="Switch to English"><span data-l="en">en</span> / <span class="is-active" data-l="de">de</span></button>
                 <button class="menu-btn" id="menuBtn" type="button" aria-expanded="false" aria-controls="nav" aria-label="Menü öffnen" data-i18n-label="menuOpen">
                     <span></span><span></span><span></span>
