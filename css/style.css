@@ -29,7 +29,9 @@
     --bg: #e4e9c4;
     --surface: #f1f4d8;
     --surface-2: #bcc592;
-    --accent-text: #3d5100;
+    --accent: #2e6b34;
+    --accent-text: #2e6b34;
+    --on-accent: #f1f4d8;
     --text: #182008;
     --text-2: #33401c;
     --muted: #566338;
@@ -45,7 +47,9 @@
     --bg: #e4e9c4;
     --surface: #f1f4d8;
     --surface-2: #bcc592;
-    --accent-text: #3d5100;
+    --accent: #2e6b34;
+    --accent-text: #2e6b34;
+    --on-accent: #f1f4d8;
     --text: #182008;
     --text-2: #33401c;
     --muted: #566338;

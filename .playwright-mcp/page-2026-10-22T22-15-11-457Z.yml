@@ -1,0 +1,207 @@
+- generic [active] [ref=f13e1]:
+  - link "Skip to content" [ref=f13e2] [cursor=pointer]:
+    - /url: "#main"
+  - banner [ref=f13e3]:
+    - generic [ref=f13e4]:
+      - link "C'est la vie Sports Bar" [ref=f13e5] [cursor=pointer]:
+        - /url: "#top"
+        - text: C'est la vie
+      - navigation "Main menu" [ref=f13e6]:
+        - list [ref=f13e7]:
+          - listitem [ref=f13e8]:
+            - link "About" [ref=f13e9] [cursor=pointer]:
+              - /url: "#about"
+          - listitem [ref=f13e10]:
+            - link "Live Sport" [ref=f13e11] [cursor=pointer]:
+              - /url: "#sport"
+          - listitem [ref=f13e12]:
+            - link "Drinks" [ref=f13e13] [cursor=pointer]:
+              - /url: "#drinks"
+          - listitem [ref=f13e14]:
+            - link "Events" [ref=f13e15] [cursor=pointer]:
+              - /url: "#events"
+          - listitem [ref=f13e16]:
+            - link "Gallery" [ref=f13e17] [cursor=pointer]:
+              - /url: "#gallery"
+          - listitem [ref=f13e18]:
+            - link "Find us" [ref=f13e19] [cursor=pointer]:
+              - /url: "#visit"
+          - listitem [ref=f13e20]:
+            - link "Contact" [ref=f13e21] [cursor=pointer]:
+              - /url: "#contact"
+      - generic [ref=f13e22]:
+        - button "Switch to dark mode" [ref=f13e23] [cursor=pointer]: ☾
+        - button "Auf Deutsch wechseln" [ref=f13e24] [cursor=pointer]: en / de
+  - main [ref=f13e25]:
+    - generic [ref=f13e26]:
+      - img "Bar interior (placeholder)" [ref=f13e27]
+      - generic [ref=f13e29]:
+        - paragraph [ref=f13e30]: Frankfurt · Niederrad
+        - heading "C'est la vie Sports Bar" [level=1] [ref=f13e31]: C'est la vieSports Bar
+        - paragraph [ref=f13e32]: Live Sport · Cold Drinks · Good People
+        - generic [ref=f13e33]:
+          - link "Live today" [ref=f13e34] [cursor=pointer]:
+            - /url: "#sport"
+          - link "Find us" [ref=f13e35] [cursor=pointer]:
+            - /url: "#visit"
+    - generic [ref=f13e37]:
+      - generic [ref=f13e38]:
+        - heading "About us" [level=2] [ref=f13e39]
+        - paragraph [ref=f13e40]: In the heart of Frankfurt-Niederrad, fans, neighbours and friends meet at our place. Bundesliga, Champions League or a relaxed evening after work – there is always something going on.
+        - paragraph [ref=f13e41]: Big screens, proper sound and a team that knows how to pour a good drink. Welcome to C'est la vie.
+      - img "The team behind the bar (placeholder)" [ref=f13e42]
+    - generic [ref=f13e44]:
+      - heading "Live Sport" [level=2] [ref=f13e45]
+      - paragraph [ref=f13e46]: Never miss a match – we show the sport you want to see.
+      - generic [ref=f13e47]:
+        - article [ref=f13e48]:
+          - heading "Bundesliga" [level=3] [ref=f13e49]
+          - paragraph [ref=f13e50]: Every matchday live, including the Saturday conference.
+        - article [ref=f13e51]:
+          - heading "Eintracht Frankfurt" [level=3] [ref=f13e52]
+          - paragraph [ref=f13e53]: Home or away – watch the SGE from kick-off to the final whistle.
+        - article [ref=f13e54]:
+          - heading "Champions League" [level=3] [ref=f13e55]
+          - paragraph [ref=f13e56]: Europe's best teams on midweek evenings.
+        - article [ref=f13e57]:
+          - heading "More highlights" [level=3] [ref=f13e58]
+          - paragraph [ref=f13e59]: Formula 1, darts, internationals and major tournaments.
+        - article [ref=f13e60]:
+          - heading "Screens & Sound" [level=3] [ref=f13e61]
+          - paragraph [ref=f13e62]: Several big screens and sound that lets you hear every goal.
+    - generic [ref=f13e64]:
+      - heading "Drinks" [level=2] [ref=f13e65]
+      - paragraph [ref=f13e66]: Pick a category to see all drinks with prices. Subject to change.
+      - generic [ref=f13e67]:
+        - tablist [ref=f13e68]:
+          - tab "Fresh on tap" [selected] [ref=f13e69] [cursor=pointer]
+          - tab "Cocktails" [ref=f13e70] [cursor=pointer]
+          - tab "Spirits" [ref=f13e71] [cursor=pointer]
+          - tab "Non-alcoholic" [ref=f13e72] [cursor=pointer]
+        - tabpanel "Fresh on tap" [ref=f13e73]:
+          - generic [ref=f13e75]:
+            - generic [ref=f13e76]: Pils0,3 l
+            - generic [ref=f13e78]: 3.40 €
+          - generic [ref=f13e80]:
+            - generic [ref=f13e81]: Pils0,5 l
+            - generic [ref=f13e83]: 4.60 €
+          - generic [ref=f13e85]:
+            - generic [ref=f13e86]: Wheat beer0,5 l
+            - generic [ref=f13e88]: 4.80 €
+          - generic [ref=f13e90]:
+            - generic [ref=f13e91]: Shandy0,5 l
+            - generic [ref=f13e93]: 4.60 €
+    - generic [ref=f13e95]:
+      - heading "Events" [level=2] [ref=f13e96]
+      - generic [ref=f13e97]:
+        - group [ref=f13e98]:
+          - generic "Every matchday Match Day Kick-off, atmosphere, drink specials. Come early, seats go fast. +" [ref=f13e99] [cursor=pointer]:
+            - generic [ref=f13e100]: Every matchday
+            - heading "Match Day" [level=3] [ref=f13e101]
+            - paragraph [ref=f13e102]: Kick-off, atmosphere, drink specials. Come early, seats go fast.
+            - text: +
+        - group [ref=f13e103]:
+          - generic "Regularly Party nights Music, drinks and good vibes late into the night. +" [ref=f13e104] [cursor=pointer]:
+            - generic [ref=f13e105]: Regularly
+            - heading "Party nights" [level=3] [ref=f13e106]
+            - paragraph [ref=f13e107]: Music, drinks and good vibes late into the night.
+            - text: +
+        - group [ref=f13e108]:
+          - generic "On request Private parties Birthday, club night or company party – just talk to us. +" [ref=f13e109] [cursor=pointer]:
+            - generic [ref=f13e110]: On request
+            - heading "Private parties" [level=3] [ref=f13e111]
+            - paragraph [ref=f13e112]: Birthday, club night or company party – just talk to us.
+            - text: +
+        - group [ref=f13e113]:
+          - generic "Weekly Quiz night Test your knowledge as a team and win drinks. +" [ref=f13e114] [cursor=pointer]:
+            - generic [ref=f13e115]: Weekly
+            - heading "Quiz night" [level=3] [ref=f13e116]
+            - paragraph [ref=f13e117]: Test your knowledge as a team and win drinks.
+            - text: +
+    - generic [ref=f13e119]:
+      - heading "Gallery" [level=2] [ref=f13e120]
+      - generic [ref=f13e121]:
+        - button "Enlarge image" [ref=f13e122]:
+          - img "Galeriebild 1 (Platzhalter)" [ref=f13e123]
+        - button "Enlarge image" [ref=f13e124]:
+          - img "Galeriebild 2 (Platzhalter)" [ref=f13e125]
+        - button "Enlarge image" [ref=f13e126]:
+          - img "Galeriebild 3 (Platzhalter)" [ref=f13e127]
+        - button "Enlarge image" [ref=f13e128]:
+          - img "Galeriebild 4 (Platzhalter)" [ref=f13e129]
+        - button "Enlarge image" [ref=f13e130]:
+          - img "Galeriebild 5 (Platzhalter)" [ref=f13e131]
+        - button "Enlarge image" [ref=f13e132]:
+          - img "Galeriebild 6 (Platzhalter)" [ref=f13e133]
+    - generic [ref=f13e135]:
+      - heading "Opening hours & directions" [level=2] [ref=f13e136]
+      - generic [ref=f13e137]:
+        - generic [ref=f13e138]:
+          - paragraph [ref=f13e139]: Open now · until 01:00
+          - table [ref=f13e140]:
+            - rowgroup [ref=f13e141]:
+              - row [ref=f13e142]:
+                - rowheader "Monday" [ref=f13e143]
+                - cell "16:00 – 01:00" [ref=f13e144]
+              - row [ref=f13e145]:
+                - rowheader "Tuesday" [ref=f13e146]
+                - cell "16:00 – 01:00" [ref=f13e147]
+              - row [ref=f13e148]:
+                - rowheader "Wednesday" [ref=f13e149]
+                - cell "16:00 – 01:00" [ref=f13e150]
+              - row [ref=f13e151]:
+                - rowheader "Thursday" [ref=f13e152]
+                - cell "16:00 – 01:00" [ref=f13e153]
+              - row [ref=f13e154]:
+                - rowheader "Friday" [ref=f13e155]
+                - cell "16:00 – 03:00" [ref=f13e156]
+              - row [ref=f13e157]:
+                - rowheader "Saturday" [ref=f13e158]
+                - cell "16:00 – 03:00" [ref=f13e159]
+              - row [ref=f13e160]:
+                - rowheader "Sunday" [ref=f13e161]
+                - cell "14:00 – 00:00" [ref=f13e162]
+          - generic [ref=f13e163]:
+            - strong [ref=f13e164]: C'est la vie Sports Bar
+            - text: Musterstraße 1 60528 Frankfurt am Main
+          - link "Plan route" [ref=f13e165] [cursor=pointer]:
+            - /url: https://www.openstreetmap.org/search?query=Frankfurt%20Niederrad
+        - generic [ref=f13e166]:
+          - paragraph [ref=f13e167]: Loading the map connects to OpenStreetMap and transfers data (e.g. your IP address).
+          - button "Load map" [ref=f13e168] [cursor=pointer]
+    - generic [ref=f13e170]:
+      - heading "Contact" [level=2] [ref=f13e171]
+      - generic [ref=f13e172]:
+        - link [ref=f13e173] [cursor=pointer]:
+          - /url: tel:+49690000000
+          - heading "Phone" [level=3] [ref=f13e174]
+          - paragraph [ref=f13e175]: +49 69 000000
+        - link [ref=f13e176] [cursor=pointer]:
+          - /url: https://wa.me/49690000000
+          - heading "WhatsApp" [level=3] [ref=f13e177]
+          - paragraph [ref=f13e178]: Send us a message
+        - link [ref=f13e179] [cursor=pointer]:
+          - /url: mailto:info@example.com
+          - heading "E-Mail" [level=3] [ref=f13e180]
+          - paragraph [ref=f13e181]: info@example.com
+        - link [ref=f13e182] [cursor=pointer]:
+          - /url: https://instagram.com/
+          - heading "Instagram" [level=3] [ref=f13e183]
+          - paragraph [ref=f13e184]: "@cestlavie_sportsbar"
+        - link [ref=f13e185] [cursor=pointer]:
+          - /url: https://facebook.com/
+          - heading "Facebook" [level=3] [ref=f13e186]
+          - paragraph [ref=f13e187]: C'est la vie Sports Bar
+        - link [ref=f13e188] [cursor=pointer]:
+          - /url: https://www.tiktok.com/
+          - heading "TikTok" [level=3] [ref=f13e189]
+          - paragraph [ref=f13e190]: "@cestlavie_sportsbar"
+  - contentinfo [ref=f13e191]:
+    - generic [ref=f13e192]:
+      - paragraph [ref=f13e193]: © 2026 C'est la vie Sports Bar · Frankfurt-Niederrad
+      - paragraph [ref=f13e194]:
+        - link "Impressum" [ref=f13e195] [cursor=pointer]:
+          - /url: impressum.html
+        - text: ·
+        - link "Privacy policy" [ref=f13e196] [cursor=pointer]:
+          - /url: datenschutz.html
