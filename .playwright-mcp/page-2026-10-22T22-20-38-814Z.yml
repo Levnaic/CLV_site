@@ -1,0 +1,190 @@
+- generic [active] [ref=f38e1]:
+  - link "Zum Inhalt springen" [ref=f38e2] [cursor=pointer]:
+    - /url: "#main"
+  - banner [ref=f38e3]:
+    - generic [ref=f38e4]:
+      - link "C'est la vie Sports Bar" [ref=f38e5] [cursor=pointer]:
+        - /url: "#top"
+        - generic [ref=f38e6]: LOGO
+      - generic [ref=f38e7]:
+        - button "Dunkles Design aktivieren" [ref=f38e8] [cursor=pointer]: ☾
+        - button "Switch to English" [ref=f38e9] [cursor=pointer]: en / de
+        - button "Menü öffnen" [ref=f38e10] [cursor=pointer]
+  - main [ref=f38e14]:
+    - generic [ref=f38e15]:
+      - img "Innenraum der Bar (Platzhalter)" [ref=f38e16]
+      - generic [ref=f38e18]:
+        - paragraph [ref=f38e19]: Frankfurt · Niederrad
+        - heading "C'est la vie Sports Bar" [level=1] [ref=f38e20]: C'est la vieSports Bar
+        - paragraph [ref=f38e21]: Live Sport · Kühle Drinks · Gute Leute
+        - generic [ref=f38e22]:
+          - link "Heute live" [ref=f38e23] [cursor=pointer]:
+            - /url: "#sport"
+          - link "Anfahrt" [ref=f38e24] [cursor=pointer]:
+            - /url: "#visit"
+    - generic [ref=f38e26]:
+      - generic [ref=f38e27]:
+        - heading "Über uns" [level=2] [ref=f38e28]
+        - paragraph [ref=f38e29]: Im Herzen von Frankfurt-Niederrad treffen sich bei uns Fans, Nachbarn und Freunde. Ob Bundesliga, Champions League oder ein entspannter Abend nach der Arbeit – bei uns ist immer was los.
+        - paragraph [ref=f38e30]: Große Screens, ordentlicher Sound und ein Team, das weiß, wie man ein gutes Getränk einschenkt. Willkommen im C'est la vie.
+      - img "Das Team hinter der Theke (Platzhalter)" [ref=f38e31]
+    - generic [ref=f38e33]:
+      - heading "Live Sport" [level=2] [ref=f38e34]
+      - paragraph [ref=f38e35]: Kein Spiel verpassen – wir zeigen den Sport, den ihr sehen wollt.
+      - generic [ref=f38e36]:
+        - article [ref=f38e37]:
+          - heading "Bundesliga" [level=3] [ref=f38e38]
+          - paragraph [ref=f38e39]: Jeder Spieltag live, mit Konferenz am Samstag.
+        - article [ref=f38e40]:
+          - heading "Eintracht Frankfurt" [level=3] [ref=f38e41]
+          - paragraph [ref=f38e42]: Heimspiel oder Auswärts – bei uns gibt's die SGE in voller Länge.
+        - article [ref=f38e43]:
+          - heading "Champions League" [level=3] [ref=f38e44]
+          - paragraph [ref=f38e45]: Europas beste Teams an den Abenden unter der Woche.
+        - article [ref=f38e46]:
+          - heading "Weitere Highlights" [level=3] [ref=f38e47]
+          - paragraph [ref=f38e48]: Formel 1, Darts, Länderspiele und große Turniere.
+        - article [ref=f38e49]:
+          - heading "Screens & Sound" [level=3] [ref=f38e50]
+          - paragraph [ref=f38e51]: Mehrere große Bildschirme und Ton, bei dem man jedes Tor hört.
+    - generic [ref=f38e53]:
+      - heading "Getränke" [level=2] [ref=f38e54]
+      - paragraph [ref=f38e55]: Wähle eine Kategorie und sieh alle Getränke mit Preisen. Änderungen vorbehalten.
+      - generic [ref=f38e56]:
+        - tablist [ref=f38e57]:
+          - tab "Frisch gezapft" [selected] [ref=f38e58] [cursor=pointer]
+          - tab "Cocktails" [ref=f38e59] [cursor=pointer]
+          - tab "Spirituosen" [ref=f38e60] [cursor=pointer]
+          - tab "Alkoholfrei" [ref=f38e61] [cursor=pointer]
+        - tabpanel "Frisch gezapft" [ref=f38e62]:
+          - generic [ref=f38e64]:
+            - generic [ref=f38e65]: Pils0,3 l
+            - generic [ref=f38e67]: 3,40 €
+          - generic [ref=f38e69]:
+            - generic [ref=f38e70]: Pils0,5 l
+            - generic [ref=f38e72]: 4,60 €
+          - generic [ref=f38e74]:
+            - generic [ref=f38e75]: Weizen0,5 l
+            - generic [ref=f38e77]: 4,80 €
+          - generic [ref=f38e79]:
+            - generic [ref=f38e80]: Radler0,5 l
+            - generic [ref=f38e82]: 4,60 €
+    - generic [ref=f38e84]:
+      - heading "Events" [level=2] [ref=f38e85]
+      - generic [ref=f38e86]:
+        - group [ref=f38e87]:
+          - generic "Jeden Spieltag Match Day Anstoß, Stimmung, Getränkeangebote. Kommt früh, die Plätze sind begehrt. +" [ref=f38e88] [cursor=pointer]:
+            - generic [ref=f38e89]: Jeden Spieltag
+            - heading "Match Day" [level=3] [ref=f38e90]
+            - paragraph [ref=f38e91]: Anstoß, Stimmung, Getränkeangebote. Kommt früh, die Plätze sind begehrt.
+            - text: +
+        - group [ref=f38e92]:
+          - generic "Regelmäßig Partyabende Musik, Drinks und gute Laune bis spät in die Nacht. +" [ref=f38e93] [cursor=pointer]:
+            - generic [ref=f38e94]: Regelmäßig
+            - heading "Partyabende" [level=3] [ref=f38e95]
+            - paragraph [ref=f38e96]: Musik, Drinks und gute Laune bis spät in die Nacht.
+            - text: +
+        - group [ref=f38e97]:
+          - generic "Auf Anfrage Private Feiern Geburtstag, Vereinsabend oder Firmenfeier – sprecht uns einfach an. +" [ref=f38e98] [cursor=pointer]:
+            - generic [ref=f38e99]: Auf Anfrage
+            - heading "Private Feiern" [level=3] [ref=f38e100]
+            - paragraph [ref=f38e101]: Geburtstag, Vereinsabend oder Firmenfeier – sprecht uns einfach an.
+            - text: +
+        - group [ref=f38e102]:
+          - generic "Wöchentlich Quizabend Teste dein Wissen im Team und gewinne Getränke. +" [ref=f38e103] [cursor=pointer]:
+            - generic [ref=f38e104]: Wöchentlich
+            - heading "Quizabend" [level=3] [ref=f38e105]
+            - paragraph [ref=f38e106]: Teste dein Wissen im Team und gewinne Getränke.
+            - text: +
+    - generic [ref=f38e108]:
+      - heading "Galerie" [level=2] [ref=f38e109]
+      - generic [ref=f38e110]:
+        - button "Bild 1 vergrößern" [ref=f38e111]:
+          - img "Galeriebild 1 (Platzhalter)" [ref=f38e112]
+        - button "Bild 2 vergrößern" [ref=f38e113]:
+          - img "Galeriebild 2 (Platzhalter)" [ref=f38e114]
+        - button "Bild 3 vergrößern" [ref=f38e115]:
+          - img "Galeriebild 3 (Platzhalter)" [ref=f38e116]
+        - button "Bild 4 vergrößern" [ref=f38e117]:
+          - img "Galeriebild 4 (Platzhalter)" [ref=f38e118]
+        - button "Bild 5 vergrößern" [ref=f38e119]:
+          - img "Galeriebild 5 (Platzhalter)" [ref=f38e120]
+        - button "Bild 6 vergrößern" [ref=f38e121]:
+          - img "Galeriebild 6 (Platzhalter)" [ref=f38e122]
+    - generic [ref=f38e124]:
+      - heading "Öffnungszeiten & Anfahrt" [level=2] [ref=f38e125]
+      - generic [ref=f38e126]:
+        - generic [ref=f38e127]:
+          - paragraph [ref=f38e128]: Jetzt geöffnet · bis 01:00
+          - table [ref=f38e129]:
+            - rowgroup [ref=f38e130]:
+              - row [ref=f38e131]:
+                - rowheader "Montag" [ref=f38e132]
+                - cell "16:00 – 01:00" [ref=f38e133]
+              - row [ref=f38e134]:
+                - rowheader "Dienstag" [ref=f38e135]
+                - cell "16:00 – 01:00" [ref=f38e136]
+              - row [ref=f38e137]:
+                - rowheader "Mittwoch" [ref=f38e138]
+                - cell "16:00 – 01:00" [ref=f38e139]
+              - row [ref=f38e140]:
+                - rowheader "Donnerstag" [ref=f38e141]
+                - cell "16:00 – 01:00" [ref=f38e142]
+              - row [ref=f38e143]:
+                - rowheader "Freitag" [ref=f38e144]
+                - cell "16:00 – 03:00" [ref=f38e145]
+              - row [ref=f38e146]:
+                - rowheader "Samstag" [ref=f38e147]
+                - cell "16:00 – 03:00" [ref=f38e148]
+              - row [ref=f38e149]:
+                - rowheader "Sonntag" [ref=f38e150]
+                - cell "14:00 – 00:00" [ref=f38e151]
+          - generic [ref=f38e152]:
+            - strong [ref=f38e153]: C'est la vie Sports Bar
+            - text: Musterstraße 1 60528 Frankfurt am Main
+          - link "Route planen" [ref=f38e154] [cursor=pointer]:
+            - /url: https://www.openstreetmap.org/search?query=Frankfurt%20Niederrad
+        - generic [ref=f38e155]:
+          - paragraph [ref=f38e156]: Zum Laden der Karte wird eine Verbindung zu OpenStreetMap aufgebaut. Dabei werden Daten (z. B. deine IP-Adresse) übertragen.
+          - button "Karte laden" [ref=f38e157] [cursor=pointer]
+    - generic [ref=f38e159]:
+      - heading "Kontakt" [level=2] [ref=f38e160]
+      - generic [ref=f38e161]:
+        - link [ref=f38e162] [cursor=pointer]:
+          - /url: tel:+49690000000
+          - heading "Telefon" [level=3] [ref=f38e163]
+          - paragraph [ref=f38e164]: +49 69 000000
+        - link [ref=f38e165] [cursor=pointer]:
+          - /url: https://wa.me/49690000000
+          - heading "WhatsApp" [level=3] [ref=f38e166]
+          - paragraph [ref=f38e167]: Schreib uns eine Nachricht
+        - link [ref=f38e168] [cursor=pointer]:
+          - /url: mailto:info@example.com
+          - heading "E-Mail" [level=3] [ref=f38e169]
+          - paragraph [ref=f38e170]: info@example.com
+        - link [ref=f38e171] [cursor=pointer]:
+          - /url: https://instagram.com/
+          - heading "Instagram" [level=3] [ref=f38e172]
+          - paragraph [ref=f38e173]: "@cestlavie_sportsbar"
+        - link [ref=f38e174] [cursor=pointer]:
+          - /url: https://facebook.com/
+          - heading "Facebook" [level=3] [ref=f38e175]
+          - paragraph [ref=f38e176]: C'est la vie Sports Bar
+        - link [ref=f38e177] [cursor=pointer]:
+          - /url: https://www.tiktok.com/
+          - heading "TikTok" [level=3] [ref=f38e178]
+          - paragraph [ref=f38e179]: "@cestlavie_sportsbar"
+  - contentinfo [ref=f38e180]:
+    - generic [ref=f38e181]:
+      - paragraph [ref=f38e182]: © 2026 C'est la vie Sports Bar · Frankfurt-Niederrad
+      - paragraph [ref=f38e183]:
+        - link "Impressum" [ref=f38e184] [cursor=pointer]:
+          - /url: impressum.html
+        - text: ·
+        - link "Datenschutz" [ref=f38e185] [cursor=pointer]:
+          - /url: datenschutz.html
+  - generic "Schnellaktionen" [ref=f38e186]:
+    - link "Anrufen" [ref=f38e187] [cursor=pointer]:
+      - /url: tel:+49690000000
+    - link "Route" [ref=f38e188] [cursor=pointer]:
+      - /url: https://www.openstreetmap.org/search?query=Frankfurt%20Niederrad

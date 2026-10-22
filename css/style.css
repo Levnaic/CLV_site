@@ -75,9 +75,9 @@ body {
 ::selection { background: var(--accent); color: var(--on-accent); }
 img { display: block; max-width: 100%; height: auto; }
 a { color: inherit; }
-h1, h2, h3 { font-family: var(--font-head); font-weight: 700; text-transform: uppercase; color: var(--text); margin: 0 0 .6em; }
+h1, h2, h3 { font-family: var(--font-head); font-weight: 700; text-transform: uppercase; color: var(--text); margin: 0 0 .6em; overflow-wrap: break-word; hyphens: auto; }
 h1 { font-size: clamp(3.25rem, 15vw, 7.5rem); line-height: .92; letter-spacing: .01em; }
-h2 { font-size: clamp(2.5rem, 8vw, 4.25rem); line-height: 1; letter-spacing: .02em; margin-bottom: .5em; }
+h2 { font-size: clamp(1.6rem, 8.5vw, 4.25rem); line-height: 1; letter-spacing: .02em; margin-bottom: .5em; }
 h3 { font-size: 1.4rem; line-height: 1.15; letter-spacing: .04em; margin-bottom: .45em; }
 p { margin: 0 0 1em; }
 
@@ -91,11 +91,12 @@ p { margin: 0 0 1em; }
 .site-header.scrolled { box-shadow: 0 4px 24px var(--shadow); }
 .header-inner { height: 100%; display: flex; align-items: center; justify-content: space-between; gap: 1rem; }
 .brand { font-family: var(--font-head); font-size: 1.6rem; font-weight: 700; color: var(--text); text-transform: uppercase; letter-spacing: .04em; text-decoration: none; }
-.brand span { color: var(--accent-text); }
+.brand { display: block; flex-shrink: 0; }
+.logo-ph { display: grid; place-items: center; width: 96px; height: 40px; border: 2px dashed var(--muted); border-radius: var(--radius); color: var(--muted); font: 800 .8rem var(--font-body); letter-spacing: .2em; }
 .header-actions { display: flex; align-items: center; gap: .5rem; }
 .theme-btn { width: 44px; height: 44px; display: grid; place-items: center; background: none; border: 0; color: var(--muted); font-size: 1.25rem; line-height: 1; cursor: pointer; }
 .theme-btn:hover { color: var(--text); }
-.lang-btn { min-width: 44px; min-height: 44px; padding: 0 .25rem; background: none; border: 0; color: var(--muted); font: 600 .95rem var(--font-body); letter-spacing: .08em; text-transform: uppercase; cursor: pointer; }
+.lang-btn { white-space: nowrap; min-width: 44px; min-height: 44px; padding: 0 .25rem; background: none; border: 0; color: var(--muted); font: 600 .95rem var(--font-body); letter-spacing: .08em; text-transform: uppercase; cursor: pointer; }
 .lang-btn span { transition: color .2s; }
 .lang-btn .is-active { color: var(--accent-text); font-weight: 800; text-decoration: underline; text-underline-offset: .3em; text-decoration-thickness: 2px; }
 .lang-btn:hover span:not(.is-active) { color: var(--text); }
@@ -138,6 +139,7 @@ p { margin: 0 0 1em; }
 .section h2::before { content: "0" counter(sec); display: block; margin-bottom: .75rem; font: 800 .85rem var(--font-body); letter-spacing: .25em; color: var(--accent-text); }
 .section h2::after { content: ""; display: block; width: 56px; height: 5px; margin-top: .45em; background: var(--accent); }
 .lead { color: var(--text-2); font-size: 1.2rem; max-width: 52ch; margin-bottom: 2.5rem; }
+.split > * { min-width: 0; }
 .split { display: grid; gap: 2rem; align-items: center; }
 .media { width: 100%; border-radius: var(--radius); }
 .grid { display: grid; gap: 1rem; }
@@ -193,7 +195,7 @@ address strong { color: var(--text); font-size: 1.1rem; }
 
 /* Legal pages */
 .legal { padding-block: 3rem; max-width: 760px; }
-.legal h1 { font-size: clamp(2.5rem, 10vw, 4.25rem); }
+.legal h1 { font-size: clamp(1.6rem, 8.5vw, 4.25rem); }
 .legal h2 { font-size: 1.6rem; margin-top: 2.25rem; color: var(--accent-text); }
 .legal p { color: var(--text-2); }
 .legal a { color: var(--accent-text); }
@@ -243,7 +245,7 @@ address strong { color: var(--text); font-size: 1.1rem; }
 
 /* ---------- Drinks menu ---------- */
 .drink-tabs { display: grid; grid-template-columns: 1fr 1fr; gap: .5rem; margin-bottom: 1.5rem; }
-.drink-tab { min-height: 44px; padding: .5rem .75rem; background: transparent; border: 2px solid var(--surface-2); border-radius: var(--radius); color: var(--text); font: 800 .9rem var(--font-body); text-transform: uppercase; letter-spacing: .08em; cursor: pointer; transition: background .2s, color .2s, border-color .2s; }
+.drink-tab { min-width: 0; overflow-wrap: anywhere; min-height: 44px; padding: .5rem .75rem; background: transparent; border: 2px solid var(--surface-2); border-radius: var(--radius); color: var(--text); font: 800 .9rem var(--font-body); text-transform: uppercase; letter-spacing: .08em; cursor: pointer; transition: background .2s, color .2s, border-color .2s; }
 .drink-tab:hover { border-color: var(--accent); }
 .drink-tab[aria-selected="true"] { background: var(--accent); border-color: var(--accent); color: var(--on-accent); }
 .drink-panel { display: grid; gap: 1.25rem 3rem; background: var(--surface); border: 1px solid var(--surface-2); border-top: 4px solid var(--accent); border-radius: var(--radius); padding: 1.5rem; }
@@ -275,3 +277,5 @@ address strong { color: var(--text); font-size: 1.1rem; }
 .event .event-more { padding: 0 1.5rem 1.5rem; }
 .event .event-more p { margin: 0; color: var(--muted); }
 @media (min-width: 900px) { #events .grid-3 { grid-template-columns: repeat(2, 1fr); } }
+
+@media (max-width: 359px) { .drink-tab { font-size: .8rem; letter-spacing: .04em; padding-inline: .4rem; } .header-actions { gap: 0; } }
