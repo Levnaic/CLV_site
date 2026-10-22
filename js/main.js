@@ -20,6 +20,11 @@
         drinksTitle: 'Drinks', drinksLead: 'Pick a category to see all drinks with prices. Subject to change.', drinksError: 'The drinks menu could not be loaded. Please ask at the bar.',
         ev1Tag: 'Every matchday', ev1: 'Kick-off, atmosphere, drink specials. Come early, seats go fast.',
         ev2Tag: 'Regularly', ev2Title: 'Party nights', ev2: 'Music, drinks and good vibes late into the night.',
+        ev1More: 'We show Bundesliga, Champions League and more on several screens. Drink specials during matches – table reservations on request. (Placeholder – to be adjusted.)',
+        ev2More: 'With a DJ or playlist, cocktail specials and no fixed end. Find current dates on Instagram. (Placeholder – to be adjusted.)',
+        ev3More: 'We reserve areas or the whole bar, with buffet and drink packages if needed. Message us on WhatsApp or by email. (Placeholder – to be adjusted.)',
+        ev4Tag: 'Weekly', ev4Title: 'Quiz night', ev4: 'Test your knowledge as a team and win drinks.',
+        ev4More: 'New questions on sport, music and general knowledge every week. Teams of up to six, sign up on site. (Placeholder – to be adjusted.)',
         ev3Tag: 'On request', ev3Title: 'Private parties', ev3: 'Birthday, club night or company party – just talk to us.',
         galleryTitle: 'Gallery',
         visitTitle: 'Opening hours & directions', btnRoute2: 'Plan route',
@@ -74,7 +79,7 @@
             document.title = lang === 'en' ? EN.title : $('title').dataset.de;
         }
         const btn = $('#langBtn');
-        btn.textContent = lang === 'en' ? 'DE' : 'EN';
+        $$('[data-l]', btn).forEach(s => s.classList.toggle('is-active', s.dataset.l === lang));
         btn.setAttribute('aria-label', lang === 'en' ? 'Auf Deutsch wechseln' : 'Switch to English');
         $$('.gallery-item').forEach(b => b.setAttribute('aria-label', t('zoom')));
         if (lb) {

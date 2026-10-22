@@ -46,7 +46,7 @@
                 </ul>
             </nav>
             <div class="header-actions">
-                <button class="lang-btn" id="langBtn" type="button" aria-label="Switch to English">EN</button>
+                <button class="lang-btn" id="langBtn" type="button" aria-label="Switch to English"><span data-l="en">en</span> / <span class="is-active" data-l="de">de</span></button>
                 <button class="menu-btn" id="menuBtn" type="button" aria-expanded="false" aria-controls="nav" aria-label="Menü öffnen" data-i18n-label="menuOpen">
                     <span></span><span></span><span></span>
                 </button>
@@ -109,9 +109,10 @@
             <div class="container">
                 <h2>Events</h2>
                 <div class="grid grid-3">
-                    <article class="card event reveal"><span class="tag" data-i18n="ev1Tag">Jeden Spieltag</span><h3>Match Day</h3><p data-i18n="ev1">Anstoß, Stimmung, Getränkeangebote. Kommt früh, die Plätze sind begehrt.</p></article>
-                    <article class="card event reveal"><span class="tag" data-i18n="ev2Tag">Regelmäßig</span><h3 data-i18n="ev2Title">Partyabende</h3><p data-i18n="ev2">Musik, Drinks und gute Laune bis spät in die Nacht.</p></article>
-                    <article class="card event reveal"><span class="tag" data-i18n="ev3Tag">Auf Anfrage</span><h3 data-i18n="ev3Title">Private Feiern</h3><p data-i18n="ev3">Geburtstag, Vereinsabend oder Firmenfeier – sprecht uns einfach an.</p></article>
+                    <details class="card event reveal"><summary><span class="tag" data-i18n="ev1Tag">Jeden Spieltag</span><h3>Match Day</h3><p data-i18n="ev1">Anstoß, Stimmung, Getränkeangebote. Kommt früh, die Plätze sind begehrt.</p></summary><div class="event-more"><p data-i18n="ev1More">Wir zeigen Bundesliga, Champions League und mehr auf mehreren Screens. Zu den Spielen gibt es Getränkeangebote – Platzreservierung auf Anfrage. (Platzhalter – bitte anpassen.)</p></div></details>
+                    <details class="card event reveal"><summary><span class="tag" data-i18n="ev2Tag">Regelmäßig</span><h3 data-i18n="ev2Title">Partyabende</h3><p data-i18n="ev2">Musik, Drinks und gute Laune bis spät in die Nacht.</p></summary><div class="event-more"><p data-i18n="ev2More">Mit DJ oder Playlist, Cocktail-Specials und offenem Ende. Aktuelle Termine findest du auf Instagram. (Platzhalter – bitte anpassen.)</p></div></details>
+                    <details class="card event reveal"><summary><span class="tag" data-i18n="ev3Tag">Auf Anfrage</span><h3 data-i18n="ev3Title">Private Feiern</h3><p data-i18n="ev3">Geburtstag, Vereinsabend oder Firmenfeier – sprecht uns einfach an.</p></summary><div class="event-more"><p data-i18n="ev3More">Wir reservieren Bereiche oder die ganze Bar, bei Bedarf mit Buffet und Getränkepaketen. Schreib uns per WhatsApp oder E-Mail. (Platzhalter – bitte anpassen.)</p></div></details>
+                    <details class="card event reveal"><summary><span class="tag" data-i18n="ev4Tag">Wöchentlich</span><h3 data-i18n="ev4Title">Quizabend</h3><p data-i18n="ev4">Teste dein Wissen im Team und gewinne Getränke.</p></summary><div class="event-more"><p data-i18n="ev4More">Jede Woche neue Fragen zu Sport, Musik und Allgemeinwissen. Teams bis zu sechs Personen, Anmeldung vor Ort. (Platzhalter – bitte anpassen.)</p></div></details>
                 </div>
             </div>
         </section>
@@ -161,6 +162,7 @@
                     <a class="card contact-card reveal" href="mailto:info@example.com"><h3>E-Mail</h3><p>info@example.com</p></a>
                     <a class="card contact-card reveal" href="https://instagram.com/" target="_blank" rel="noopener"><h3>Instagram</h3><p>@cestlavie_sportsbar</p></a>
                     <a class="card contact-card reveal" href="https://facebook.com/" target="_blank" rel="noopener"><h3>Facebook</h3><p>C'est la vie Sports Bar</p></a>
+                    <a class="card contact-card reveal" href="https://www.tiktok.com/" target="_blank" rel="noopener"><h3>TikTok</h3><p>@cestlavie_sportsbar</p></a>
                 </div>
             </div>
         </section>

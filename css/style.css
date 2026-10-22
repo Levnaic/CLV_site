@@ -23,7 +23,6 @@
 html { scroll-behavior: smooth; scroll-padding-top: var(--header-h); }
 body {
     margin: 0;
-    padding-bottom: 64px; /* room for the mobile action bar */
     background: var(--bg);
     color: var(--text-2);
     font-family: var(--font-body);
@@ -52,8 +51,10 @@ p { margin: 0 0 1em; }
 .brand { font-family: var(--font-head); font-size: 1.6rem; font-weight: 700; color: var(--text); text-transform: uppercase; letter-spacing: .04em; text-decoration: none; }
 .brand span { color: var(--accent-text); }
 .header-actions { display: flex; align-items: center; gap: .5rem; }
-.lang-btn { min-width: 44px; min-height: 44px; background: none; border: 1px solid var(--surface-2); border-radius: var(--radius); color: var(--text); font-weight: 700; cursor: pointer; }
-.lang-btn:hover { border-color: var(--accent); }
+.lang-btn { min-width: 44px; min-height: 44px; padding: 0 .25rem; background: none; border: 0; color: var(--muted); font: 600 .95rem var(--font-body); letter-spacing: .08em; text-transform: uppercase; cursor: pointer; }
+.lang-btn span { transition: color .2s; }
+.lang-btn .is-active { color: var(--accent-text); font-weight: 800; text-decoration: underline; text-underline-offset: .3em; text-decoration-thickness: 2px; }
+.lang-btn:hover span:not(.is-active) { color: var(--text); }
 .menu-btn { width: 44px; height: 44px; background: none; border: 0; cursor: pointer; display: grid; place-content: center; gap: 6px; }
 .menu-btn span { display: block; width: 26px; height: 3px; background: var(--text); transition: transform .25s, opacity .2s; }
 .menu-btn[aria-expanded="true"] span:nth-child(1) { transform: translateY(9px) rotate(45deg); }
@@ -68,7 +69,7 @@ p { margin: 0 0 1em; }
 .nav a:hover { color: var(--accent-text); }
 
 /* Hero */
-.hero { position: relative; min-height: calc(100svh - var(--header-h) - 64px); display: flex; align-items: flex-end; overflow: hidden; }
+.hero { position: relative; min-height: calc(100svh - var(--header-h)); display: flex; align-items: flex-end; overflow: hidden; }
 .hero-img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; }
 .hero-overlay { position: absolute; inset: 0; background: linear-gradient(to top, var(--bg) 8%, rgba(17, 18, 20, .75) 55%, rgba(17, 18, 20, .55)); }
 .hero-content { position: relative; padding-block: 3rem; }
@@ -142,7 +143,7 @@ address strong { color: var(--text); font-size: 1.1rem; }
 .footer-inner { display: grid; gap: .5rem; }
 .footer-inner p { margin: 0; }
 .footer-inner a:hover { color: var(--accent); }
-.mobile-bar { position: fixed; left: 0; right: 0; bottom: 0; z-index: 90; height: 64px; display: grid; grid-template-columns: 1fr 1fr; background: var(--accent); }
+.mobile-bar { height: 64px; display: grid; grid-template-columns: 1fr 1fr; background: var(--accent); }
 .mobile-bar a { display: grid; place-items: center; color: var(--on-accent); font-weight: 800; text-transform: uppercase; letter-spacing: .06em; text-decoration: none; }
 .mobile-bar a + a { border-left: 1px solid rgba(0, 0, 0, .25); }
 
@@ -174,7 +175,6 @@ address strong { color: var(--text); font-size: 1.1rem; }
 /* Small desktop: inline nav, no mobile bar */
 @media (min-width: 900px) {
     :root { --header-h: 72px; --gutter: 2rem; }
-    body { padding-bottom: 0; }
     .menu-btn, .mobile-bar { display: none; }
     .nav { position: static; transform: none; visibility: visible; padding: 0; overflow: visible; background: none; }
     .nav ul { display: flex; gap: 1.5rem; }
@@ -198,8 +198,8 @@ address strong { color: var(--text); font-size: 1.1rem; }
 }
 
 /* ---------- Drinks menu ---------- */
-.drink-tabs { display: flex; flex-wrap: wrap; gap: .5rem; margin-bottom: 1.5rem; }
-.drink-tab { min-height: 44px; padding: .5rem 1.1rem; background: transparent; border: 2px solid var(--surface-2); border-radius: var(--radius); color: var(--text); font: 800 .9rem var(--font-body); text-transform: uppercase; letter-spacing: .08em; cursor: pointer; transition: background .2s, color .2s, border-color .2s; }
+.drink-tabs { display: grid; grid-template-columns: 1fr 1fr; gap: .5rem; margin-bottom: 1.5rem; }
+.drink-tab { min-height: 44px; padding: .5rem .75rem; background: transparent; border: 2px solid var(--surface-2); border-radius: var(--radius); color: var(--text); font: 800 .9rem var(--font-body); text-transform: uppercase; letter-spacing: .08em; cursor: pointer; transition: background .2s, color .2s, border-color .2s; }
 .drink-tab:hover { border-color: var(--accent); }
 .drink-tab[aria-selected="true"] { background: var(--accent); border-color: var(--accent); color: var(--on-accent); }
 .drink-panel { display: grid; gap: 1.25rem 3rem; background: var(--surface); border: 1px solid var(--surface-2); border-top: 4px solid var(--accent); border-radius: var(--radius); padding: 1.5rem; }
@@ -209,4 +209,25 @@ address strong { color: var(--text); font-size: 1.1rem; }
 .drink-dots { flex: 1; border-bottom: 1px dotted var(--muted); transform: translateY(-.25em); min-width: 1rem; }
 .drink-price { font-weight: 800; color: var(--accent-text); white-space: nowrap; }
 .drink-desc { margin: .25rem 0 0; color: var(--muted); font-size: .95rem; }
-@media (min-width: 760px) { .drink-panel { grid-template-columns: 1fr 1fr; } }
+@media (min-width: 560px) { .drink-tabs { display: flex; flex-wrap: wrap; } .drink-tab { padding: .5rem 1.1rem; } }
+@media (min-width: 760px) {
+    .drink-panel { grid-template-columns: 1fr 1fr; align-items: start; padding: 1.75rem 2rem; background-image: linear-gradient(var(--surface-2), var(--surface-2)); background-repeat: no-repeat; background-size: 1px calc(100% - 3.5rem); background-position: center; }
+}
+
+/* Drinks: centered on larger screens */
+@media (min-width: 760px) {
+    .drink-tabs { justify-content: center; }
+}
+
+/* Events: independently expandable cards */
+#events .grid { align-items: start; }
+.event { text-align: center; padding: 0; }
+.event summary { list-style: none; cursor: pointer; padding: 1.5rem; }
+.event summary::-webkit-details-marker { display: none; }
+.event summary h3 { margin-bottom: .5em; }
+.event summary p { margin: 0; }
+.event summary::after { content: "+"; display: block; margin-top: 1rem; font: 800 1.6rem/1 var(--font-body); color: var(--accent-text); transition: transform .2s; }
+.event[open] summary::after { content: "\2212"; }
+.event .event-more { padding: 0 1.5rem 1.5rem; }
+.event .event-more p { margin: 0; color: var(--muted); }
+@media (min-width: 900px) { #events .grid-3 { grid-template-columns: repeat(2, 1fr); } }
