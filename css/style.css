@@ -91,8 +91,31 @@ p { margin: 0 0 1em; }
 .site-header.scrolled { box-shadow: 0 4px 24px var(--shadow); }
 .header-inner { height: 100%; display: flex; align-items: center; justify-content: space-between; gap: 1rem; }
 .brand { font-family: var(--font-head); font-size: 1.6rem; font-weight: 700; color: var(--text); text-transform: uppercase; letter-spacing: .04em; text-decoration: none; }
-.brand { display: block; flex-shrink: 0; }
-.logo-ph { display: grid; place-items: center; width: 96px; height: 40px; border: 2px dashed var(--muted); border-radius: var(--radius); color: var(--muted); font: 800 .8rem var(--font-body); letter-spacing: .2em; }
+.brand { display: inline-flex; align-items: center; flex-shrink: 0; min-width: 0; }
+.logo-mark { width: 36px; height: 36px; margin-right: .5rem; flex-shrink: 0; fill: none; stroke-linecap: round; stroke-linejoin: round; overflow: visible; }
+.logo-mark path { stroke-dasharray: 1; }
+.lm-c { stroke: var(--accent); stroke-width: 4; }
+.lm-l, .lm-v { stroke: currentColor; stroke-width: 4; }
+.brand-title { font-size: 1.05rem; line-height: 1; white-space: nowrap; }
+.brand-title span { display: block; color: var(--accent-text); }
+@media (min-width: 600px) {
+    .logo-mark { width: 40px; height: 40px; margin-right: .6rem; }
+    .brand-title { font-size: 1.35rem; }
+    .brand-title span { display: inline; }
+}
+
+/* Logo intro: the mark draws itself, then the name wipes out from behind it */
+@keyframes draw { from { stroke-dashoffset: 1; opacity: 0; } 2% { opacity: 1; } }
+@keyframes title-in { from { opacity: 0; transform: translateX(-14px); clip-path: inset(0 100% 0 0); } }
+.lm-c { animation: draw .7s .15s cubic-bezier(.6, 0, .2, 1) both; }
+.lm-l { animation: draw .35s .6s cubic-bezier(.6, 0, .2, 1) both; }
+.lm-v { animation: draw .4s .85s cubic-bezier(.6, 0, .2, 1) both; }
+.brand-title { animation: title-in .7s 1.2s cubic-bezier(.2, .7, .2, 1) both; }
+/* Very narrow phones: no room for both, so the mark hands over to the name */
+@keyframes mark-out { 0%, 66% { width: 36px; margin-right: .5rem; opacity: 1; } 80% { opacity: 0; } }
+@media (max-width: 369px) {
+    .logo-mark { width: 0; margin-right: 0; opacity: 0; animation: mark-out 1.9s cubic-bezier(.6, 0, .2, 1) both; }
+}
 .header-actions { display: flex; align-items: center; gap: .5rem; }
 .theme-btn { width: 44px; height: 44px; display: grid; place-items: center; background: none; border: 0; color: var(--muted); font-size: 1.25rem; line-height: 1; cursor: pointer; }
 .theme-btn:hover { color: var(--text); }
@@ -279,6 +302,7 @@ address strong { color: var(--text); font-size: 1.1rem; }
     .menu-btn, .mobile-bar { display: none; }
     .nav { position: static; transform: none; visibility: visible; padding: 0; overflow: visible; background: none; }
     .nav ul { display: flex; gap: 1.5rem; }
+    .nav a { white-space: nowrap; }
     .nav a { padding: .5rem 0; font-family: var(--font-body); font-size: .85rem; font-weight: 700; letter-spacing: .12em; color: var(--text-2); border: 0; }
     .nav a:hover { color: var(--accent-text); }
     .header-inner { gap: 2rem; }
@@ -334,3 +358,12 @@ address strong { color: var(--text); font-size: 1.1rem; }
 @media (min-width: 900px) { #events .grid-3 { grid-template-columns: repeat(2, 1fr); } }
 
 @media (max-width: 359px) { .drink-tab { font-size: .8rem; letter-spacing: .04em; padding-inline: .4rem; } .header-actions { gap: 0; } }
+@media (min-width: 900px) and (max-width: 1199px) {
+    .header-inner { gap: 1.25rem; }
+    .nav ul { gap: 1rem; }
+    .nav a { letter-spacing: .08em; }
+}
+@media (min-width: 900px) and (max-width: 1023px) {
+    .brand-title { font-size: 1.05rem; }
+    .brand-title span { display: block; }
+}
