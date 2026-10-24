@@ -1,22 +1,22 @@
 /* C'est la vie Sports Bar – mobile first */
 :root {
-    --bg: #111214;            /* asphalt */
-    --surface: #1a1c1f;       /* raised concrete */
-    --surface-2: #2c2f33;     /* borders, dividers */
-    --accent: #c8f031;        /* hi-vis lime, the only accent */
-    --accent-text: #c8f031;
-    --on-accent: #111214;
-    --text: #f2f1ec;
-    --text-2: #c3c6c9;        /* body copy */
-    --muted: #8f949a;         /* captions, secondary */
-    --ok: #3ddc84;
-    --bad: #ff5a5f;
-    --bg-rgb: 17, 18, 20;
-    --footer-bg: #0a0b0c;
-    --shadow: rgba(0, 0, 0, .6);
-    --font-head: "Oswald", "Bebas Neue", Impact, "Haettenschweiler", "Arial Narrow Bold", sans-serif;
+    --bg: #08040f;            /* asphalt */
+    --surface: #130a24;       /* raised concrete */
+    --surface-2: #32195a;     /* borders, dividers */
+    --accent: #ff2bd6;        /* hi-vis lime, the only accent */
+    --accent-text: #ff5ce0;
+    --on-accent: #08040f;
+    --text: #f6f0ff;
+    --text-2: #cdbfee;        /* body copy */
+    --muted: #9a8bc4;         /* captions, secondary */
+    --ok: #19ffb0;
+    --bad: #ff4d6d;
+    --bg-rgb: 8, 4, 15;
+    --footer-bg: #04020a;
+    --shadow: rgba(0, 0, 0, .7);
+    --font-head: "Orbitron", "Audiowide", "Oswald", Impact, "Arial Narrow Bold", sans-serif;
     --font-body: Inter, system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
-    --radius: 4px;
+    --radius: 0;
     --header-h: 60px;
     --gutter: 1.25rem;
     --section-pad: clamp(3.5rem, 9vw, 7rem);
@@ -26,38 +26,38 @@
 @media (prefers-color-scheme: light) {
   :root:not([data-theme="dark"]) {
     color-scheme: light;
-    --bg: #e4e9c4;
-    --surface: #f1f4d8;
-    --surface-2: #bcc592;
-    --accent: #2e6b34;
-    --accent-text: #2e6b34;
-    --on-accent: #f1f4d8;
-    --text: #182008;
-    --text-2: #33401c;
-    --muted: #566338;
-    --ok: #0f7a3d;
-    --bad: #c4272d;
-    --bg-rgb: 228, 233, 196;
-    --footer-bg: #cdd6a0;
-    --shadow: rgba(40, 55, 10, .25);
+    --bg: #f2e8ff;
+    --surface: #fbf6ff;
+    --surface-2: #cdb6f0;
+    --accent: #a8089a;
+    --accent-text: #a8089a;
+    --on-accent: #fbf6ff;
+    --text: #1a0a33;
+    --text-2: #3c2766;
+    --muted: #62498f;
+    --ok: #00855a;
+    --bad: #c4153f;
+    --bg-rgb: 242, 232, 255;
+    --footer-bg: #e3d2fa;
+    --shadow: rgba(70, 20, 120, .25);
   }
 }
 :root[data-theme="light"] {
     color-scheme: light;
-    --bg: #e4e9c4;
-    --surface: #f1f4d8;
-    --surface-2: #bcc592;
-    --accent: #2e6b34;
-    --accent-text: #2e6b34;
-    --on-accent: #f1f4d8;
-    --text: #182008;
-    --text-2: #33401c;
-    --muted: #566338;
-    --ok: #0f7a3d;
-    --bad: #c4272d;
-    --bg-rgb: 228, 233, 196;
-    --footer-bg: #cdd6a0;
-    --shadow: rgba(40, 55, 10, .25);
+    --bg: #f2e8ff;
+    --surface: #fbf6ff;
+    --surface-2: #cdb6f0;
+    --accent: #a8089a;
+    --accent-text: #a8089a;
+    --on-accent: #fbf6ff;
+    --text: #1a0a33;
+    --text-2: #3c2766;
+    --muted: #62498f;
+    --ok: #00855a;
+    --bad: #c4153f;
+    --bg-rgb: 242, 232, 255;
+    --footer-bg: #e3d2fa;
+    --shadow: rgba(70, 20, 120, .25);
 }
 :root[data-theme="dark"] { color-scheme: dark; }
 
@@ -367,3 +367,14 @@ address strong { color: var(--text); font-size: 1.1rem; }
     .brand-title { font-size: 1.05rem; }
     .brand-title span { display: block; }
 }
+
+/* Neon: glow */
+:root { --glow: #25f4ee; }
+:root[data-theme="light"] { --glow: #a8089a; }
+@media (prefers-color-scheme: light) { :root:not([data-theme="dark"]) { --glow: #a8089a; } }
+h1, .brand-title span { text-shadow: 0 0 .35em color-mix(in srgb, var(--accent) 70%, transparent), 0 0 1.2em color-mix(in srgb, var(--accent) 35%, transparent); }
+h1 { letter-spacing: .04em; }
+.btn-primary { box-shadow: 0 0 18px color-mix(in srgb, var(--accent) 60%, transparent); }
+.btn-ghost { border-color: var(--glow); box-shadow: inset 0 0 12px color-mix(in srgb, var(--glow) 30%, transparent), 0 0 12px color-mix(in srgb, var(--glow) 30%, transparent); }
+.card, .drink-panel { border-color: color-mix(in srgb, var(--glow) 40%, var(--surface-2)); box-shadow: 0 0 22px color-mix(in srgb, var(--glow) 12%, transparent); }
+.site-header { border-bottom-color: var(--glow); box-shadow: 0 1px 16px color-mix(in srgb, var(--glow) 35%, transparent); }

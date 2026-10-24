@@ -1,6 +1,6 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 800" width="800" height="800" role="img" aria-label="GALLERY 5">
-<rect width="800" height="800" fill="#1f2225"/>
-<path d="M0 0L800 800M800 0L0 800" stroke="#2c2f33" stroke-width="2"/>
-<text x="50%" y="50%" fill="#8f949a" font-family="Arial,sans-serif" font-size="44" font-weight="700" text-anchor="middle">GALLERY 5</text>
-<text x="50%" y="50%" dy="57" fill="#C8F031" font-family="Arial,sans-serif" font-size="26" text-anchor="middle">800×800</text>
+<rect width="800" height="800" fill="#130a24"/>
+<path d="M0 0L800 800M800 0L0 800" stroke="#32195a" stroke-width="2"/>
+<text x="50%" y="50%" fill="#9a8bc4" font-family="Arial,sans-serif" font-size="44" font-weight="700" text-anchor="middle">GALLERY 5</text>
+<text x="50%" y="50%" dy="57" fill="#ff2bd6" font-family="Arial,sans-serif" font-size="26" text-anchor="middle">800×800</text>
 </svg>
