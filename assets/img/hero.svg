@@ -1,6 +1,6 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 1600" width="1200" height="1600" role="img" aria-label="HERO PHOTO">
-<rect width="1200" height="1600" fill="#1f2225"/>
-<path d="M0 0L1200 1600M1200 0L0 1600" stroke="#2c2f33" stroke-width="2"/>
-<text x="50%" y="50%" fill="#8f949a" font-family="Arial,sans-serif" font-size="66" font-weight="700" text-anchor="middle">HERO PHOTO</text>
-<text x="50%" y="50%" dy="85" fill="#C8F031" font-family="Arial,sans-serif" font-size="40" text-anchor="middle">1200×1600</text>
+<rect width="1200" height="1600" fill="#2a1a14"/>
+<path d="M0 0L1200 1600M1200 0L0 1600" stroke="#4a2e22" stroke-width="2"/>
+<text x="50%" y="50%" fill="#b09580" font-family="Arial,sans-serif" font-size="66" font-weight="700" text-anchor="middle">HERO PHOTO</text>
+<text x="50%" y="50%" dy="85" fill="#ff8c42" font-family="Arial,sans-serif" font-size="40" text-anchor="middle">1200×1600</text>
 </svg>

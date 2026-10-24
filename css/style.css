@@ -1,22 +1,22 @@
 /* C'est la vie Sports Bar – mobile first */
 :root {
-    --bg: #111214;            /* asphalt */
-    --surface: #1a1c1f;       /* raised concrete */
-    --surface-2: #2c2f33;     /* borders, dividers */
-    --accent: #c8f031;        /* hi-vis lime, the only accent */
-    --accent-text: #c8f031;
-    --on-accent: #111214;
-    --text: #f2f1ec;
-    --text-2: #c3c6c9;        /* body copy */
-    --muted: #8f949a;         /* captions, secondary */
-    --ok: #3ddc84;
-    --bad: #ff5a5f;
-    --bg-rgb: 17, 18, 20;
-    --footer-bg: #0a0b0c;
+    --bg: #1c110d;            /* asphalt */
+    --surface: #2a1a14;       /* raised concrete */
+    --surface-2: #4a2e22;     /* borders, dividers */
+    --accent: #ff8c42;        /* hi-vis lime, the only accent */
+    --accent-text: #ffa05f;
+    --on-accent: #1c110d;
+    --text: #fbefe2;
+    --text-2: #e0cbb8;        /* body copy */
+    --muted: #b09580;         /* captions, secondary */
+    --ok: #9ad96b;
+    --bad: #ff6b5a;
+    --bg-rgb: 28, 17, 13;
+    --footer-bg: #120a07;
     --shadow: rgba(0, 0, 0, .6);
-    --font-head: "Oswald", "Bebas Neue", Impact, "Haettenschweiler", "Arial Narrow Bold", sans-serif;
+    --font-head: "Bebas Neue", "Oswald", Impact, "Arial Narrow Bold", sans-serif;
     --font-body: Inter, system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
-    --radius: 4px;
+    --radius: 8px;
     --header-h: 60px;
     --gutter: 1.25rem;
     --section-pad: clamp(3.5rem, 9vw, 7rem);
@@ -26,38 +26,38 @@
 @media (prefers-color-scheme: light) {
   :root:not([data-theme="dark"]) {
     color-scheme: light;
-    --bg: #e4e9c4;
-    --surface: #f1f4d8;
-    --surface-2: #bcc592;
-    --accent: #2e6b34;
-    --accent-text: #2e6b34;
-    --on-accent: #f1f4d8;
-    --text: #182008;
-    --text-2: #33401c;
-    --muted: #566338;
-    --ok: #0f7a3d;
-    --bad: #c4272d;
-    --bg-rgb: 228, 233, 196;
-    --footer-bg: #cdd6a0;
-    --shadow: rgba(40, 55, 10, .25);
+    --bg: #f7e7d4;
+    --surface: #fdf3e6;
+    --surface-2: #e3c3a0;
+    --accent: #b2410f;
+    --accent-text: #b2410f;
+    --on-accent: #fdf3e6;
+    --text: #2b140a;
+    --text-2: #5a3220;
+    --muted: #7d5640;
+    --ok: #4f7a1c;
+    --bad: #b3261e;
+    --bg-rgb: 247, 231, 212;
+    --footer-bg: #efd6ba;
+    --shadow: rgba(90, 40, 10, .22);
   }
 }
 :root[data-theme="light"] {
     color-scheme: light;
-    --bg: #e4e9c4;
-    --surface: #f1f4d8;
-    --surface-2: #bcc592;
-    --accent: #2e6b34;
-    --accent-text: #2e6b34;
-    --on-accent: #f1f4d8;
-    --text: #182008;
-    --text-2: #33401c;
-    --muted: #566338;
-    --ok: #0f7a3d;
-    --bad: #c4272d;
-    --bg-rgb: 228, 233, 196;
-    --footer-bg: #cdd6a0;
-    --shadow: rgba(40, 55, 10, .25);
+    --bg: #f7e7d4;
+    --surface: #fdf3e6;
+    --surface-2: #e3c3a0;
+    --accent: #b2410f;
+    --accent-text: #b2410f;
+    --on-accent: #fdf3e6;
+    --text: #2b140a;
+    --text-2: #5a3220;
+    --muted: #7d5640;
+    --ok: #4f7a1c;
+    --bad: #b3261e;
+    --bg-rgb: 247, 231, 212;
+    --footer-bg: #efd6ba;
+    --shadow: rgba(90, 40, 10, .22);
 }
 :root[data-theme="dark"] { color-scheme: dark; }
 
@@ -367,3 +367,9 @@ address strong { color: var(--text); font-size: 1.1rem; }
     .brand-title { font-size: 1.05rem; }
     .brand-title span { display: block; }
 }
+
+/* Sunset: topli gradijent */
+h1 { background: linear-gradient(100deg, var(--text) 30%, var(--accent)); -webkit-background-clip: text; background-clip: text; color: transparent; }
+.site-header { border-bottom: 3px solid transparent; border-image: linear-gradient(90deg, #ffcc4d, var(--accent), #e0457b) 1; }
+.btn-primary { background: linear-gradient(100deg, #ffb347, var(--accent)); border-color: transparent; }
+.card, .drink-panel { border-top-color: var(--accent); }
