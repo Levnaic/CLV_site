@@ -68,6 +68,15 @@ def rel_root(lang, depth=0):
     return "../" * (depth + (0 if lang == DEFAULT_LANG else 1))
 
 
+def img_alt(text):
+    """Descriptive alt only for real photos; the placeholder illustrations are decorative (alt="")."""
+    if SITE.get("images", {}).get("photos_are_real"):
+        return attr(text)
+    if "images.photos_are_real" not in TODOS:
+        TODOS.append("images.photos_are_real (real photos missing: placeholder images are marked decorative, alt=\"\")")
+    return ""
+
+
 def digits(s):
     return "".join(ch for ch in str(s) if ch.isdigit())
 
@@ -263,7 +272,7 @@ def render_home(lang, other_href=None):
     mobile_cls = "mobile-bar" + ("" if phone else " single")
     call = f'<a href="tel:+{digits(phone)}">{esc(t["call"])}</a>' if phone else ""
     gallery = "\n                    ".join(
-        f'<button type="button" class="gallery-item" aria-label="{attr(t["zoom"])}"><img src="{r}assets/img/gallery-{n}.svg" width="800" height="800" loading="lazy" decoding="async" alt="{attr(t["galleryItemAlt"].format(n=n))}"></button>'
+        f'<button type="button" class="gallery-item" aria-label="{attr(t["zoom"])}"><img src="{r}assets/img/gallery-{n}.svg" width="800" height="800" loading="lazy" decoding="async" alt="{img_alt(t["galleryItemAlt"].format(n=n))}"></button>'
         for n in range(1, 7))
     contact = contact_cards(lang)
     contact_section = f'''
@@ -319,7 +328,7 @@ def render_home(lang, other_href=None):
 
     <main id="main">
         <section class="hero" id="top">
-            <img class="hero-img" src="{r}assets/img/hero.svg" width="1200" height="1600" fetchpriority="high" alt="{attr(t["heroAlt"])}">
+            <img class="hero-img" src="{r}assets/img/hero.svg" width="1200" height="1600" fetchpriority="high" alt="{img_alt(t["heroAlt"])}">
             <div class="hero-overlay"></div>
             <div class="container hero-content">
                 <p class="eyebrow">Frankfurt · Niederrad</p>
@@ -339,7 +348,7 @@ def render_home(lang, other_href=None):
                     <p>{esc(t["aboutP1"])}</p>
                     <p>{esc(t["aboutP2"])}</p>
                 </div>
-                <img class="reveal media" src="{r}assets/img/about.svg" width="1200" height="900" loading="lazy" decoding="async" alt="{attr(t["aboutAlt"])}">
+                <img class="reveal media" src="{r}assets/img/about.svg" width="1200" height="900" loading="lazy" decoding="async" alt="{img_alt(t["aboutAlt"])}">
             </div>
         </section>
 
