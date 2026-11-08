@@ -1,17 +1,17 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 900" width="1200" height="900" role="img" aria-label="ABOUT PHOTO (placeholder)">
 <defs>
-<linearGradient id="g" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#16261f"/><stop offset="1" stop-color="#0a1210"/></linearGradient>
+<linearGradient id="g" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#221d1e"/><stop offset="1" stop-color="#0b0b0c"/></linearGradient>
 </defs>
 <rect width="1200" height="900" fill="url(#g)"/>
-<g fill="none" stroke="#eef4e6" stroke-opacity=".18" stroke-width="6">
+<g fill="none" stroke="#ffffff" stroke-opacity=".16" stroke-width="6">
 <path d="M0 90H1200M0 810H1200"/>
 <rect x="300" y="90" width="600" height="260"/>
 <rect x="450" y="90" width="300" height="110"/>
 <path d="M480 350A130 130 0 0 0 720 350"/>
 <path d="M0 90L120 0M1200 90L1080 0" stroke-opacity=".1"/>
 </g>
-<rect x="480" y="60" width="240" height="30" fill="none" stroke="#c8f031" stroke-width="6"/>
-<circle cx="600" cy="262" r="12" fill="#c8f031"/>
-<text x="50%" y="58%" fill="#9db0a4" font-family="Arial,sans-serif" font-size="66" font-weight="700" text-anchor="middle">ABOUT PHOTO</text>
-<text x="50%" y="58%" dy="85" fill="#c8f031" font-family="Arial,sans-serif" font-size="40" text-anchor="middle">1200×900</text>
+<rect x="480" y="60" width="240" height="30" fill="none" stroke="#e1000f" stroke-width="6"/>
+<circle cx="600" cy="262" r="12" fill="#e1000f"/>
+<text x="50%" y="58%" fill="#aaa29e" font-family="Arial,sans-serif" font-size="66" font-weight="700" text-anchor="middle">ABOUT PHOTO</text>
+<text x="50%" y="58%" dy="85" fill="#ff4d55" font-family="Arial,sans-serif" font-size="40" text-anchor="middle">1200×900</text>
 </svg>

@@ -194,7 +194,13 @@
     "efReserve": "Tisch reservieren",
     "efReserveWa": "Per WhatsApp anfragen",
     "efCtaTitle": "Platz fürs nächste Spiel",
-    "efCtaText": "Bei der Eintracht sind die Plätze begehrt. Meldet euch rechtzeitig."
+    "efCtaText": "Bei der Eintracht sind die Plätze begehrt. Meldet euch rechtzeitig.",
+    "schedKicker": "Live in Niederrad",
+    "efKicker": "Spieltag in Niederrad",
+    "efNext": "Nächstes Spiel",
+    "efLast": "Letztes Spiel",
+    "efJumpLabel": "Auf dieser Seite",
+    "efTicketStub": "Eintracht · Live"
   },
   "en": {
     "title": "C'est la vie Sports Bar Frankfurt-Niederrad | Watch Bundesliga & Eintracht live",
@@ -391,6 +397,12 @@
     "efReserve": "Reserve a table",
     "efReserveWa": "Ask on WhatsApp",
     "efCtaTitle": "A seat for the next match",
-    "efCtaText": "Seats go fast on Eintracht match days. Get in touch early."
+    "efCtaText": "Seats go fast on Eintracht match days. Get in touch early.",
+    "schedKicker": "Live in Niederrad",
+    "efKicker": "Matchday in Niederrad",
+    "efNext": "Next match",
+    "efLast": "Last match",
+    "efJumpLabel": "On this page",
+    "efTicketStub": "Eintracht · Live"
   }
 }

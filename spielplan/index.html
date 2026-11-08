@@ -25,11 +25,13 @@
     <meta name="twitter:description" content="Die nächsten Spiele, die die C&#x27;est la vie Sports Bar in Frankfurt-Niederrad live zeigt: Bundesliga, Eintracht Frankfurt und mehr.">
     <meta name="twitter:image" content="https://DOMAIN/assets/img/og-image.jpg">
     <meta name="twitter:image:alt" content="C&#x27;est la vie Sports Bar – Frankfurt-Niederrad">
-    <meta name="theme-color" content="#0a1210" media="(prefers-color-scheme: dark)">
-    <meta name="theme-color" content="#f1f5e6" media="(prefers-color-scheme: light)">
+    <meta name="theme-color" content="#0b0b0c" media="(prefers-color-scheme: dark)">
+    <meta name="theme-color" content="#0b0b0c" media="(prefers-color-scheme: light)">
     <link rel="icon" href="../assets/icons/favicon.svg" type="image/svg+xml">
     <script>try{var t=localStorage.getItem("theme");if(t==="light"||t==="dark")document.documentElement.dataset.theme=t}catch(e){}</script>
-    <link rel="stylesheet" href="../css/palette.css">
+    <link rel="preload" href="../assets/fonts/barlow-condensed-latin-800-italic.woff2" as="font" type="font/woff2" crossorigin>
+    <link rel="stylesheet" href="../css/fonts.css">
+    <link rel="stylesheet" href="../css/themes/eintracht.css">
     <link rel="stylesheet" href="../css/style.css">
     <script type="application/ld+json">
     {
@@ -84,15 +86,27 @@
             </div>
         </div>
     </header>
-    <main class="container legal schedule" id="main">
-        <p class="back-row"><a class="back-link" href="../"><span class="back-arrow" aria-hidden="true">←</span>Zur Startseite</a></p>
-        <h1>Spielplan</h1>
-        <p>Diese Spiele zeigen wir live in der C'est la vie Sports Bar in Frankfurt-Niederrad.</p>
-        <ul class="match-list"><li class="match" id="beispiel-1"><time datetime="2027-02-06T15:30:00+01:00">Sa., 06.02.2027, 15:30 Uhr</time><h3 class="match-title">Beispiel-Team A – Beispiel-Team B</h3><span class="match-comp">Beispiel</span><span class="tag">Beispiel – kein echter Termin</span></li><li class="match" id="beispiel-2"><time datetime="2027-02-13T18:30:00+01:00">Sa., 13.02.2027, 18:30 Uhr</time><h3 class="match-title">Beispiel-Team C – Beispiel-Team D</h3><span class="match-comp">Beispiel</span><span class="tag">Beispiel – kein echter Termin</span></li><li class="match" id="beispiel-3"><time datetime="2027-02-20T20:45:00+01:00">Sa., 20.02.2027, 20:45 Uhr</time><h3 class="match-title">Beispiel-Team E – Beispiel-Team F</h3><span class="match-comp">Beispiel</span><span class="tag">Beispiel – kein echter Termin</span></li></ul>
-        <p class="match-note">Mit „Beispiel“ markierte Einträge zeigen nur das Format des späteren Spielplans.</p>
-        <h2>Anfahrt &amp; Umgebung</h2>
-        <div class="local"><p>Die C'est la vie Sports Bar liegt in Frankfurt-Niederrad.</p></div>
-        <p class="back-row back-row-end"><a class="back-link" href="../"><span class="back-arrow" aria-hidden="true">←</span>Zur Startseite</a></p>
+    <main id="main">
+        <section class="page-head" aria-labelledby="page-h1">
+            <div class="page-head-stripes" aria-hidden="true"></div>
+            
+            <div class="container page-head-inner">
+                <p class="back-row"><a class="back-link" href="../"><span class="back-arrow" aria-hidden="true">←</span>Zur Startseite</a></p>
+                <p class="kicker">Live in Niederrad</p>
+                <h1 id="page-h1">Spielplan</h1>
+                <p class="lead">Diese Spiele zeigen wir live in der C'est la vie Sports Bar in Frankfurt-Niederrad.</p>
+                
+            </div>
+        </section>
+        <div class="container page-body schedule">
+            <ul class="match-list"><li class="match" id="beispiel-1"><time class="kickoff" datetime="2027-02-06T15:30:00+01:00"><span class="ko-day">Sa.</span> <span class="ko-date">06.02.<span class="ko-year">2027</span></span> <span class="ko-time">15:30<span class="ko-suffix"> Uhr</span></span></time><div class="match-body"><h3 class="match-title"><span class="team team-home">Beispiel-Team A</span> <span class="vs">–</span> <span class="team team-away">Beispiel-Team B</span></h3><p class="match-meta"><span class="match-comp">Beispiel</span><span class="tag">Beispiel – kein echter Termin</span></p></div></li><li class="match" id="beispiel-2"><time class="kickoff" datetime="2027-02-13T18:30:00+01:00"><span class="ko-day">Sa.</span> <span class="ko-date">13.02.<span class="ko-year">2027</span></span> <span class="ko-time">18:30<span class="ko-suffix"> Uhr</span></span></time><div class="match-body"><h3 class="match-title"><span class="team team-home">Beispiel-Team C</span> <span class="vs">–</span> <span class="team team-away">Beispiel-Team D</span></h3><p class="match-meta"><span class="match-comp">Beispiel</span><span class="tag">Beispiel – kein echter Termin</span></p></div></li><li class="match" id="beispiel-3"><time class="kickoff" datetime="2027-02-20T20:45:00+01:00"><span class="ko-day">Sa.</span> <span class="ko-date">20.02.<span class="ko-year">2027</span></span> <span class="ko-time">20:45<span class="ko-suffix"> Uhr</span></span></time><div class="match-body"><h3 class="match-title"><span class="team team-home">Beispiel-Team E</span> <span class="vs">–</span> <span class="team team-away">Beispiel-Team F</span></h3><p class="match-meta"><span class="match-comp">Beispiel</span><span class="tag">Beispiel – kein echter Termin</span></p></div></li></ul>
+            <p class="match-note">Mit „Beispiel“ markierte Einträge zeigen nur das Format des späteren Spielplans.</p>
+            <section class="page-sec" aria-labelledby="sched-local">
+                <h2 class="sec-head" id="sched-local">Anfahrt &amp; Umgebung</h2>
+                <div class="local"><p>Die C'est la vie Sports Bar liegt in Frankfurt-Niederrad.</p></div>
+            </section>
+            <p class="back-row back-row-end"><a class="back-link" href="../"><span class="back-arrow" aria-hidden="true">←</span>Zur Startseite</a></p>
+        </div>
     </main>
     <footer class="site-footer">
         <div class="container footer-inner">

@@ -25,11 +25,13 @@
     <meta name="twitter:description" content="Eintracht Frankfurt live in der C&#x27;est la vie Sports Bar in Frankfurt-Niederrad: nächste Spiele, letzte Ergebnisse, Tabellenplatz und Reservierung.">
     <meta name="twitter:image" content="https://DOMAIN/assets/img/og-image.jpg">
     <meta name="twitter:image:alt" content="C&#x27;est la vie Sports Bar – Frankfurt-Niederrad">
-    <meta name="theme-color" content="#0a1210" media="(prefers-color-scheme: dark)">
-    <meta name="theme-color" content="#f1f5e6" media="(prefers-color-scheme: light)">
+    <meta name="theme-color" content="#0b0b0c" media="(prefers-color-scheme: dark)">
+    <meta name="theme-color" content="#0b0b0c" media="(prefers-color-scheme: light)">
     <link rel="icon" href="../assets/icons/favicon.svg" type="image/svg+xml">
     <script>try{var t=localStorage.getItem("theme");if(t==="light"||t==="dark")document.documentElement.dataset.theme=t}catch(e){}</script>
-    <link rel="stylesheet" href="../css/palette.css">
+    <link rel="preload" href="../assets/fonts/barlow-condensed-latin-800-italic.woff2" as="font" type="font/woff2" crossorigin>
+    <link rel="stylesheet" href="../css/fonts.css">
+    <link rel="stylesheet" href="../css/themes/eintracht.css">
     <link rel="stylesheet" href="../css/style.css">
     <script type="application/ld+json">
     {
@@ -84,33 +86,52 @@
             </div>
         </div>
     </header>
-    <main class="container legal schedule eintracht" id="main">
-        <p class="back-row"><a class="back-link" href="../"><span class="back-arrow" aria-hidden="true">←</span>Zur Startseite</a></p>
-        <h1>Eintracht Frankfurt</h1>
-        <p class="lead">Alles zur SGE auf einen Blick: die nächsten Spiele, die letzten Ergebnisse und der aktuelle Tabellenplatz.</p>
-        <div class="cta-row"><a class="btn btn-primary" href="tel:+491744800000">Tisch reservieren</a><a class="btn btn-ghost" href="https://wa.me/491744800000" target="_blank" rel="noopener">Per WhatsApp anfragen</a></div>
-        <section aria-labelledby="ef-fixtures">
-            <h2 id="ef-fixtures">Nächste Spiele</h2>
-            <p class="pending-note"><span class="tag tag-pending">Wird noch ergänzt</span>Die nächsten Eintracht-Spiele tragen wir hier bald ein.</p>
-            <ol class="match-list"><li class="match is-pending"><p class="match-when">Termin folgt</p><h3 class="match-title">Eintracht Frankfurt – Gegner folgt</h3><span class="match-comp">Wettbewerb folgt</span></li><li class="match is-pending"><p class="match-when">Termin folgt</p><h3 class="match-title">Eintracht Frankfurt – Gegner folgt</h3><span class="match-comp">Wettbewerb folgt</span></li><li class="match is-pending"><p class="match-when">Termin folgt</p><h3 class="match-title">Eintracht Frankfurt – Gegner folgt</h3><span class="match-comp">Wettbewerb folgt</span></li></ol>
-            <p class="match-note"><a href="../spielplan/">Alle Spiele, die wir zeigen, im Spielplan</a></p>
+    <main id="main" class="eintracht">
+        <section class="page-head ef-head" aria-labelledby="page-h1">
+            <div class="page-head-stripes" aria-hidden="true"></div>
+            <svg class="wing page-wing" viewBox="0 0 400 304" aria-hidden="true" focusable="false"><polygon class="wing-f0" points="46,10 390,10 364,44 20,44"/><polygon class="wing-f1" points="82,60 376,60 350,94 56,94"/><polygon class="wing-f2" points="126,110 362,110 336,144 100,144"/><polygon class="wing-f3" points="174,160 348,160 322,194 148,194"/><polygon class="wing-f4" points="220,210 334,210 308,244 194,244"/><polygon class="wing-f5" points="262,260 320,260 294,294 236,294"/></svg>
+            <div class="container page-head-inner">
+                <p class="back-row"><a class="back-link" href="../"><span class="back-arrow" aria-hidden="true">←</span>Zur Startseite</a></p>
+                <p class="kicker">Spieltag in Niederrad</p>
+                <h1 id="page-h1"><span class="h1-line">Eintracht</span> <span class="h1-line h1-flag">Frankfurt</span></h1>
+                <p class="lead">Alles zur SGE auf einen Blick: die nächsten Spiele, die letzten Ergebnisse und der aktuelle Tabellenplatz.</p>
+                <div class="cta-row"><a class="btn btn-primary" href="tel:+491744800000">Tisch reservieren</a><a class="btn btn-ghost" href="https://wa.me/491744800000" target="_blank" rel="noopener">Per WhatsApp anfragen</a></div><nav class="ef-jump" aria-label="Auf dieser Seite"><ol><li><a href="#ef-fixtures"><span class="jump-n" aria-hidden="true">01</span>Nächste Spiele</a></li><li><a href="#ef-results"><span class="jump-n" aria-hidden="true">02</span>Letzte Ergebnisse</a></li><li><a href="#ef-table"><span class="jump-n" aria-hidden="true">03</span>Tabelle</a></li></ol></nav>
+            </div>
         </section>
-        <section aria-labelledby="ef-results">
-            <h2 id="ef-results">Letzte Ergebnisse</h2>
-            <p class="pending-note"><span class="tag tag-pending">Wird noch ergänzt</span>Die letzten Ergebnisse tragen wir hier bald ein.</p>
-            <ol class="match-list"><li class="match result is-pending"><p class="match-when">Termin folgt</p><h3 class="match-title"><span>Eintracht Frankfurt</span> <span class="score"><span aria-hidden="true">–</span><span class="sr-only">noch offen</span></span> <span>Gegner folgt</span></h3><span class="match-comp">Wettbewerb folgt</span></li><li class="match result is-pending"><p class="match-when">Termin folgt</p><h3 class="match-title"><span>Eintracht Frankfurt</span> <span class="score"><span aria-hidden="true">–</span><span class="sr-only">noch offen</span></span> <span>Gegner folgt</span></h3><span class="match-comp">Wettbewerb folgt</span></li><li class="match result is-pending"><p class="match-when">Termin folgt</p><h3 class="match-title"><span>Eintracht Frankfurt</span> <span class="score"><span aria-hidden="true">–</span><span class="sr-only">noch offen</span></span> <span>Gegner folgt</span></h3><span class="match-comp">Wettbewerb folgt</span></li></ol>
-        </section>
-        <section aria-labelledby="ef-table">
-            <h2 id="ef-table">Tabelle</h2>
-            <p class="pending-note"><span class="tag tag-pending">Wird noch ergänzt</span>Den aktuellen Tabellenplatz tragen wir hier bald ein.</p>
-            <div class="standing is-pending"><p class="standing-pos"><span class="standing-n"><span aria-hidden="true">–</span><span class="sr-only">noch offen</span></span><span class="standing-label">Tabellenplatz</span></p><dl class="standing-stats"><div><dt>Spiele</dt><dd><span aria-hidden="true">–</span><span class="sr-only">noch offen</span></dd></div><div><dt>Punkte</dt><dd><span aria-hidden="true">–</span><span class="sr-only">noch offen</span></dd></div><div><dt>Tordifferenz</dt><dd><span aria-hidden="true">–</span><span class="sr-only">noch offen</span></dd></div></dl></div>
-        </section>
-        <section class="cta-band" aria-labelledby="ef-reserve">
-            <h2 id="ef-reserve">Platz fürs nächste Spiel</h2>
-            <p>Bei der Eintracht sind die Plätze begehrt. Meldet euch rechtzeitig.</p>
-            <div class="cta-row"><a class="btn btn-primary" href="tel:+491744800000">Tisch reservieren</a><a class="btn btn-ghost" href="https://wa.me/491744800000" target="_blank" rel="noopener">Per WhatsApp anfragen</a></div>
-        </section>
-        <p class="back-row back-row-end"><a class="back-link" href="../"><span class="back-arrow" aria-hidden="true">←</span>Zur Startseite</a></p>
+        <div class="ticker ticker-alt"><div class="ticker-track" aria-hidden="true"><ul><li>Eintracht Frankfurt</li><li>Spieltag in Niederrad</li><li>Nächste Spiele</li><li>Letzte Ergebnisse</li><li>Tabelle</li></ul><ul class="ticker-dup"><li>Eintracht Frankfurt</li><li>Spieltag in Niederrad</li><li>Nächste Spiele</li><li>Letzte Ergebnisse</li><li>Tabelle</li></ul><ul class="ticker-dup"><li>Eintracht Frankfurt</li><li>Spieltag in Niederrad</li><li>Nächste Spiele</li><li>Letzte Ergebnisse</li><li>Tabelle</li></ul><ul class="ticker-dup"><li>Eintracht Frankfurt</li><li>Spieltag in Niederrad</li><li>Nächste Spiele</li><li>Letzte Ergebnisse</li><li>Tabelle</li></ul></div></div>
+        <div class="container page-body ef-body">
+            <div class="ef-grid">
+                <div class="ef-main">
+                <section class="page-sec ef-fixtures" aria-labelledby="ef-fixtures">
+                    <h2 class="sec-head" id="ef-fixtures"><span class="sec-n" aria-hidden="true">01</span>Nächste Spiele</h2>
+                    <p class="pending-note"><span class="tag tag-pending">Wird noch ergänzt</span>Die nächsten Eintracht-Spiele tragen wir hier bald ein.</p>
+                    <ol class="match-list fixtures"><li class="match fixture is-next is-pending"><p class="kickoff kickoff-tbd"><span class="ko-day" aria-hidden="true">–</span> <span class="ko-date">Termin folgt</span><span class="ko-time" aria-hidden="true">--:--</span></p><div class="match-body"><p class="match-flag">Nächstes Spiel</p><h3 class="match-title"><span class="team team-home">Eintracht Frankfurt</span> <span class="vs">–</span> <span class="team team-away">Gegner folgt</span></h3><p class="match-meta"><span class="match-comp">Wettbewerb folgt</span></p></div></li><li class="match fixture is-pending"><p class="kickoff kickoff-tbd"><span class="ko-day" aria-hidden="true">–</span> <span class="ko-date">Termin folgt</span><span class="ko-time" aria-hidden="true">--:--</span></p><div class="match-body"><h3 class="match-title"><span class="team team-home">Eintracht Frankfurt</span> <span class="vs">–</span> <span class="team team-away">Gegner folgt</span></h3><p class="match-meta"><span class="match-comp">Wettbewerb folgt</span></p></div></li><li class="match fixture is-pending"><p class="kickoff kickoff-tbd"><span class="ko-day" aria-hidden="true">–</span> <span class="ko-date">Termin folgt</span><span class="ko-time" aria-hidden="true">--:--</span></p><div class="match-body"><h3 class="match-title"><span class="team team-home">Eintracht Frankfurt</span> <span class="vs">–</span> <span class="team team-away">Gegner folgt</span></h3><p class="match-meta"><span class="match-comp">Wettbewerb folgt</span></p></div></li></ol>
+                    <p class="more-link"><a href="../spielplan/">Alle Spiele, die wir zeigen, im Spielplan<span aria-hidden="true"> →</span></a></p>
+                </section>
+                <section class="page-sec ef-results" aria-labelledby="ef-results">
+                    <h2 class="sec-head" id="ef-results"><span class="sec-n" aria-hidden="true">02</span>Letzte Ergebnisse</h2>
+                    <p class="pending-note"><span class="tag tag-pending">Wird noch ergänzt</span>Die letzten Ergebnisse tragen wir hier bald ein.</p>
+                    <ol class="match-list results"><li class="match result is-pending"><p class="kickoff kickoff-tbd"><span class="ko-day" aria-hidden="true">–</span> <span class="ko-date">Termin folgt</span></p><div class="match-body"><p class="match-flag">Letztes Spiel</p><h3 class="match-title"><span class="team team-home">Eintracht Frankfurt</span> <span class="score"><span aria-hidden="true">–</span><span class="sr-only">noch offen</span></span> <span class="team team-away">Gegner folgt</span></h3><p class="match-meta"><span class="match-comp">Wettbewerb folgt</span></p></div></li><li class="match result is-pending"><p class="kickoff kickoff-tbd"><span class="ko-day" aria-hidden="true">–</span> <span class="ko-date">Termin folgt</span></p><div class="match-body"><h3 class="match-title"><span class="team team-home">Eintracht Frankfurt</span> <span class="score"><span aria-hidden="true">–</span><span class="sr-only">noch offen</span></span> <span class="team team-away">Gegner folgt</span></h3><p class="match-meta"><span class="match-comp">Wettbewerb folgt</span></p></div></li><li class="match result is-pending"><p class="kickoff kickoff-tbd"><span class="ko-day" aria-hidden="true">–</span> <span class="ko-date">Termin folgt</span></p><div class="match-body"><h3 class="match-title"><span class="team team-home">Eintracht Frankfurt</span> <span class="score"><span aria-hidden="true">–</span><span class="sr-only">noch offen</span></span> <span class="team team-away">Gegner folgt</span></h3><p class="match-meta"><span class="match-comp">Wettbewerb folgt</span></p></div></li></ol>
+                </section>
+                </div>
+                <div class="ef-side">
+                <section class="page-sec ef-table" aria-labelledby="ef-table">
+                    <h2 class="sec-head" id="ef-table"><span class="sec-n" aria-hidden="true">03</span>Tabelle</h2>
+                    <p class="pending-note"><span class="tag tag-pending">Wird noch ergänzt</span>Den aktuellen Tabellenplatz tragen wir hier bald ein.</p>
+                    <div class="standing is-pending"><p class="standing-pos"><span class="standing-n"><span aria-hidden="true">–</span><span class="sr-only">noch offen</span></span><span class="standing-label">Tabellenplatz</span></p><dl class="standing-stats"><div><dt>Spiele</dt><dd><span aria-hidden="true">–</span><span class="sr-only">noch offen</span></dd></div><div><dt>Punkte</dt><dd><span aria-hidden="true">–</span><span class="sr-only">noch offen</span></dd></div><div><dt>Tordifferenz</dt><dd><span aria-hidden="true">–</span><span class="sr-only">noch offen</span></dd></div></dl></div>
+                </section>
+                <section class="cta-band ticket" aria-labelledby="ef-reserve">
+                    <p class="ticket-stub" aria-hidden="true"><span>Eintracht · Live</span></p>
+                    <div class="ticket-main">
+                        <h2 id="ef-reserve">Platz fürs nächste Spiel</h2>
+                        <p>Bei der Eintracht sind die Plätze begehrt. Meldet euch rechtzeitig.</p>
+                        <div class="cta-row"><a class="btn btn-primary" href="tel:+491744800000">Tisch reservieren</a><a class="btn btn-ghost" href="https://wa.me/491744800000" target="_blank" rel="noopener">Per WhatsApp anfragen</a></div>
+                    </div>
+                </section>
+                </div>
+            </div>
+            <p class="back-row back-row-end"><a class="back-link" href="../"><span class="back-arrow" aria-hidden="true">←</span>Zur Startseite</a></p>
+        </div>
     </main>
     <footer class="site-footer">
         <div class="container footer-inner">

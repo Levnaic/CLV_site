@@ -1,8 +1,8 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 800" width="800" height="800" role="img" aria-label="GALLERY 2 (placeholder)">
-<defs><linearGradient id="g" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#16261f"/><stop offset="1" stop-color="#0a1210"/></linearGradient></defs>
+<defs><linearGradient id="g" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#221d1e"/><stop offset="1" stop-color="#0b0b0c"/></linearGradient></defs>
 <rect width="800" height="800" fill="url(#g)"/>
-<g fill="none" stroke="#eef4e6" stroke-opacity=".18" stroke-width="5"><path d="M110 0V690H800"/><path d="M110 590A100 100 0 0 0 210 690" stroke-opacity=".5"/></g>
-<path d="M110 690V470L260 530L110 590" fill="#c8f031" fill-opacity=".9"/>
-<text x="50%" y="88%" fill="#9db0a4" font-family="Arial,sans-serif" font-size="44" font-weight="700" text-anchor="middle">GALLERY 2</text>
-<text x="50%" y="88%" dy="46" fill="#c8f031" font-family="Arial,sans-serif" font-size="26" text-anchor="middle">800×800</text>
+<g fill="none" stroke="#ffffff" stroke-opacity=".16" stroke-width="5"><path d="M110 0V690H800"/><path d="M110 590A100 100 0 0 0 210 690" stroke-opacity=".5"/></g>
+<path d="M110 690V470L260 530L110 590" fill="#e1000f" fill-opacity=".9"/>
+<text x="50%" y="88%" fill="#aaa29e" font-family="Arial,sans-serif" font-size="44" font-weight="700" text-anchor="middle">GALLERY 2</text>
+<text x="50%" y="88%" dy="46" fill="#ff4d55" font-family="Arial,sans-serif" font-size="26" text-anchor="middle">800×800</text>
 </svg>

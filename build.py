@@ -21,7 +21,22 @@ LANGS = ["de", "en"]
 DEFAULT_LANG = "de"
 # Colour palette (all colour tokens live in this one file, loaded before css/style.css).
 # Default "pitch" = css/palette.css. Alternatives: css/themes/ember.css, volt.css, derby.css, gold.css
-PALETTE = "css/palette.css"
+# Branch design-eintracht: black / red / white matchday theme.
+PALETTE = "css/themes/eintracht.css"
+THEME_COLOR = {"dark": "#0b0b0c", "light": "#0b0b0c"}  # static <meta theme-color> fallback (= the always-dark header)
+
+# Self-hosted fonts (no CDN). css/fonts.css is linked only when every file below exists in
+# assets/fonts/, so a checkout without the font files falls back to the local font stacks
+# in css/style.css and never requests a missing file. Licence: SIL OFL 1.1 (assets/fonts/OFL.txt).
+FONT_FILES = [
+    "barlow-condensed-latin-700-normal.woff2",
+    "barlow-condensed-latin-800-normal.woff2",
+    "barlow-condensed-latin-800-italic.woff2",
+    "barlow-latin-400-normal.woff2",
+    "barlow-latin-600-normal.woff2",
+    "barlow-latin-700-normal.woff2",
+]
+FONT_PRELOAD = "barlow-condensed-latin-800-italic.woff2"  # the hero / page headline face
 
 DATA = Path(os.environ.get("CLV_DATA_DIR", ROOT / "data"))  # override only for tests
 OUT = Path(os.environ.get("CLV_OUT_DIR", ROOT))
@@ -405,14 +420,24 @@ def jsonld_scripts(lang, blocks=None):
 
 
 # ---------------------------------------------------------------- page fragments
+def fonts_ready():
+    return all((ROOT / "assets" / "fonts" / f).is_file() for f in FONT_FILES)
+
+
 def head_common(lang, depth, extra=""):
     r = rel_root(lang, depth)
-    # theme-color: static fallback for the default palette; js/main.js replaces it with the active palette's background
-    return f'''    <meta name="theme-color" content="#0a1210" media="(prefers-color-scheme: dark)">
-    <meta name="theme-color" content="#f1f5e6" media="(prefers-color-scheme: light)">
+    fonts = ""
+    if fonts_ready():
+        fonts = (f'    <link rel="preload" href="{r}assets/fonts/{FONT_PRELOAD}" as="font" type="font/woff2" crossorigin>\n'
+                 f'    <link rel="stylesheet" href="{r}css/fonts.css">\n')
+    elif "assets/fonts" not in " ".join(TODOS):
+        TODOS.append("assets/fonts: self-hosted Barlow / Barlow Condensed files missing (local font fallbacks in use), see FONT_FILES in build.py")
+    # theme-color: static fallback for the active palette; js/main.js replaces it with the live background
+    return f'''    <meta name="theme-color" content="{THEME_COLOR["dark"]}" media="(prefers-color-scheme: dark)">
+    <meta name="theme-color" content="{THEME_COLOR["light"]}" media="(prefers-color-scheme: light)">
     <link rel="icon" href="{r}assets/icons/favicon.svg" type="image/svg+xml">
     <script>try{{var t=localStorage.getItem("theme");if(t==="light"||t==="dark")document.documentElement.dataset.theme=t}}catch(e){{}}</script>
-    <link rel="stylesheet" href="{r}{PALETTE}">
+{fonts}    <link rel="stylesheet" href="{r}{PALETTE}">
     <link rel="stylesheet" href="{r}css/style.css">
 {extra}'''
 
@@ -439,6 +464,50 @@ def lang_switch(lang, other_href):
 def home_href(path):
     """Relative link from a page (path relative to its language root) to that language's home page."""
     return "../" * path.count("/") or "./"
+
+
+def wing_svg(cls):
+    """Decorative, generic abstract wing: six slanted 'feather' bars. Not a club crest or logo."""
+    bars = []
+    for i, (xl, xr) in enumerate([(20, 390), (56, 376), (100, 362), (148, 348), (194, 334), (236, 320)]):
+        y = 10 + i * 50
+        bars.append(f'<polygon class="wing-f{i}" points="{xl + 26},{y} {xr},{y} {xr - 26},{y + 34} {xl},{y + 34}"/>')
+    return (f'<svg class="{cls}" viewBox="0 0 400 304" aria-hidden="true" focusable="false">'
+            + "".join(bars) + "</svg>")
+
+
+def ticker_html(items, extra_cls=""):
+    """Decorative marquee band. The same words are on the page already, so the track is hidden
+    from screen readers. Four identical groups let the CSS loop scroll by exactly one group (-25%).
+    js/main.js adds the pause button outside the hidden track."""
+    group = "".join(f"<li>{esc(x)}</li>" for x in items)
+    cls = "ticker" + (f" {extra_cls}" if extra_cls else "")
+    return (f'<div class="{cls}"><div class="ticker-track" aria-hidden="true">'
+            f'<ul>{group}</ul>' + f'<ul class="ticker-dup">{group}</ul>' * 3 + '</div></div>')
+
+
+def kickoff_html(lang, start, with_time=True):
+    """Scoreboard date block: day / date (+ year) / kick-off time. Reads as one date for screen readers."""
+    t = I18N[lang]
+    d = start.astimezone(TZ)
+    wd = t["dayShort"][(d.weekday() + 1) % 7]
+    if lang == "de":
+        day, date, year = f"{wd}.", f"{d.day:02d}.{d.month:02d}.", f"{d.year}"
+    else:
+        day, date, year = wd, f"{d.day} {t['months'][d.month - 1]}", f" {d.year}"
+    when = (f' <span class="ko-time">{d:%H:%M}<span class="ko-suffix">{esc(t["timeSuffix"])}</span></span>'
+            if with_time else "")
+    iso = start.isoformat() if with_time else d.date().isoformat()
+    return (f'<time class="kickoff" datetime="{attr(iso)}"><span class="ko-day">{esc(day)}</span> '
+            f'<span class="ko-date">{esc(date)}<span class="ko-year">{esc(year)}</span></span>{when}</time>')
+
+
+def kickoff_tbd(lang, with_time=True):
+    """Scoreboard block for a date that is not known yet."""
+    t = I18N[lang]
+    clock = '<span class="ko-time" aria-hidden="true">--:--</span>' if with_time else ""
+    return (f'<p class="kickoff kickoff-tbd"><span class="ko-day" aria-hidden="true">–</span> '
+            f'<span class="ko-date">{esc(t["efDateTbd"])}</span>{clock}</p>')
 
 
 HOME_ICON = ('<svg class="nav-icon" viewBox="0 0 24 24" aria-hidden="true" focusable="false">'
@@ -633,12 +702,8 @@ def render_home(lang, other_href=None):
     status = '<p class="status" id="status" data-status aria-live="polite"></p>\n                        ' if has_hours else ""
     hero_chip = '<p class="status hero-status" data-status></p>\n                ' if has_hours else ""
     ticker_items = [p.strip() for p in t["tagline"].split("·") if p.strip()] + ["Bundesliga", "Eintracht Frankfurt", "Champions League"]
-    ticker_group = "".join(f"<li>{esc(x)}</li>" for x in ticker_items)
-    # Decorative: the same words are in the hero and the sport section, so the track is hidden from
-    # screen readers. Four identical groups let the CSS loop scroll by exactly one group (-25%).
-    # js/main.js adds the pause button outside the hidden track.
-    ticker = ('<div class="ticker"><div class="ticker-track" aria-hidden="true">'
-              f'<ul>{ticker_group}</ul>' + f'<ul class="ticker-dup">{ticker_group}</ul>' * 3 + '</div></div>')
+    # Decorative: the same words are in the hero and the sport section
+    ticker = ticker_html(ticker_items)
     head = head_common(lang, 0, jsonld_scripts(lang))
     facts = venue_facts(lang)
     facts_html = ('<ul class="facts">' + "".join(f"<li>{esc(f)}</li>" for f in facts) + "</ul>") if facts else ""
@@ -685,9 +750,11 @@ def render_home(lang, other_href=None):
         <section class="hero" id="top">
             <img class="hero-img" src="{r}assets/img/hero.svg" width="1200" height="1600" fetchpriority="high" alt="{img_alt(t["heroAlt"])}">
             <div class="hero-overlay"></div>
+            <div class="hero-slab" aria-hidden="true"></div>
+            {wing_svg("wing hero-wing")}
             <div class="container hero-content">
                 {hero_chip}<p class="eyebrow">Frankfurt · Niederrad</p>
-                <h1>C'est la vie<br><span>Sports Bar</span></h1>
+                <h1><span class="h1-line">C'est la vie</span> <span class="h1-line h1-flag">Sports Bar</span></h1>
                 <p class="tagline">{esc(t["tagline"])}</p>
                 <div class="hero-buttons">
                     <a class="btn btn-primary" href="{sched_href}">{esc(t["btnLive"])}</a>
@@ -924,6 +991,32 @@ def local_section(lang):
 '''
 
 
+def match_title(home, away, score=None):
+    """'Home – Away' (or 'Home 2:1 Away') as three parts the CSS can lay out like a scoreboard."""
+    mid = f'<span class="score">{score}</span>' if score is not None else '<span class="vs">–</span>'
+    return (f'<h3 class="match-title"><span class="team team-home">{esc(home)}</span> {mid} '
+            f'<span class="team team-away">{esc(away)}</span></h3>')
+
+
+def page_head(lang, path, h1, intro, kicker, extra="", art=False, cls=""):
+    """Dark matchday band at the top of the schedule and Eintracht pages."""
+    parts = h1.split(" ", 1)
+    title = (f'<span class="h1-line">{esc(parts[0])}</span> <span class="h1-line h1-flag">{esc(parts[1])}</span>'
+             if len(parts) == 2 else esc(h1))
+    wing = wing_svg("wing page-wing") if art else ""
+    return f'''        <section class="page-head{" " + cls if cls else ""}" aria-labelledby="page-h1">
+            <div class="page-head-stripes" aria-hidden="true"></div>
+            {wing}
+            <div class="container page-head-inner">
+                {back_link(lang, path)}
+                <p class="kicker">{esc(kicker)}</p>
+                <h1 id="page-h1">{title}</h1>
+                <p class="lead">{esc(intro)}</p>
+                {extra}
+            </div>
+        </section>'''
+
+
 def render_schedule(lang, other_href):
     t = I18N[lang]
     path = PAGES["schedule"][lang]
@@ -937,9 +1030,10 @@ def render_schedule(lang, other_href):
         comp = f'<span class="match-comp">{esc(m["competition"])}</span>' if m.get("competition") else ""
         note = loc(m.get("note"), lang)
         note_html = f'<p class="match-note">{esc(note)}</p>' if note else ""
+        meta = f'<p class="match-meta">{comp}{badge}</p>' if comp or badge else ""
         items.append(
-            f'<li class="match" id="{attr(m["id"])}"><time datetime="{attr(start.isoformat())}">{esc(fmt_match_time(lang, start))}</time>'
-            f'<h3 class="match-title">{esc(m["home"])} – {esc(m["away"])}</h3>{comp}{badge}{note_html}</li>')
+            f'<li class="match" id="{attr(m["id"])}">{kickoff_html(lang, start)}<div class="match-body">'
+            f'{match_title(m["home"], m["away"])}{meta}{note_html}</div></li>')
         if not ex:
             blocks.append(sports_event_schema(lang, start, m))
     body = ('<ul class="match-list">' + "".join(items) + "</ul>") if items else f'<p>{esc(t["schedEmpty"])}</p>'
@@ -956,15 +1050,17 @@ def render_schedule(lang, other_href):
 <body>
     <a class="skip-link" href="#main">{esc(t["skip"])}</a>
 {subpage_header(lang, path, "schedule", other_href)}
-    <main class="container legal schedule" id="main">
-        {back_link(lang, path)}
-        <h1>{esc(t["schedH1"])}</h1>
-        <p>{esc(t["schedIntro"])}</p>
-        {body}
-        {example_note}
-        <h2>{esc(t["localTitle"])}</h2>
-        <div class="local">{local}</div>
-        {back_link(lang, path, end=True)}
+    <main id="main">
+{page_head(lang, path, t["schedH1"], t["schedIntro"], t["schedKicker"])}
+        <div class="container page-body schedule">
+            {body}
+            {example_note}
+            <section class="page-sec" aria-labelledby="sched-local">
+                <h2 class="sec-head" id="sched-local">{esc(t["localTitle"])}</h2>
+                <div class="local">{local}</div>
+            </section>
+            {back_link(lang, path, end=True)}
+        </div>
     </main>
 {site_footer(lang, home_href(path))}
     <script type="application/json" id="ui-data">{ui_data(lang)}</script>
@@ -1048,35 +1144,42 @@ def venue_tag(lang, e):
     return f'<span class="match-venue">{esc(t["efHome"] if e.get("home", True) else t["efAway"])}</span>'
 
 
-def fixture_item(lang, start, e):
+def match_flag(lang, key):
+    """Small label above the first card of a list ('Next match' / 'Last match')."""
+    return f'<p class="match-flag">{esc(I18N[lang][key])}</p>'
+
+
+def fixture_item(lang, start, e, first=False):
     t = I18N[lang]
+    flag = match_flag(lang, "efNext") if first else ""
+    cls = "match fixture" + (" is-next" if first else "")
     if e.get("placeholder"):
-        return (f'<li class="match is-pending"><p class="match-when">{esc(t["efDateTbd"])}</p>'
-                f'<h3 class="match-title">{esc(EINTRACHT)} – {esc(t["efOpponentTbd"])}</h3>'
-                f'<span class="match-comp">{esc(t["efCompTbd"])}</span></li>')
+        return (f'<li class="{cls} is-pending">{kickoff_tbd(lang)}<div class="match-body">{flag}'
+                f'{match_title(EINTRACHT, t["efOpponentTbd"])}'
+                f'<p class="match-meta"><span class="match-comp">{esc(t["efCompTbd"])}</span></p></div></li>')
     home, away = teams(e, e["opponent"])
     comp = f'<span class="match-comp">{esc(e["competition"])}</span>' if e.get("competition") else ""
     badge = f'<span class="tag">{esc(t["exampleBadge"])}</span>' if e.get("example") else ""
-    return (f'<li class="match"><time datetime="{attr(start.isoformat())}">{esc(fmt_match_time(lang, start))}</time>'
-            f'<h3 class="match-title">{esc(home)} – {esc(away)}</h3>{comp}{venue_tag(lang, e)}{badge}</li>')
+    return (f'<li class="{cls}">{kickoff_html(lang, start)}<div class="match-body">{flag}'
+            f'{match_title(home, away)}<p class="match-meta">{comp}{venue_tag(lang, e)}{badge}</p></div></li>')
 
 
-def result_item(lang, e):
+def result_item(lang, e, first=False):
     t = I18N[lang]
+    flag = match_flag(lang, "efLast") if first else ""
     if e.get("placeholder"):
-        return (f'<li class="match result is-pending"><p class="match-when">{esc(t["efDateTbd"])}</p>'
-                f'<h3 class="match-title"><span>{esc(EINTRACHT)}</span> <span class="score">{tbd_html(lang)}</span> '
-                f'<span>{esc(t["efOpponentTbd"])}</span></h3>'
-                f'<span class="match-comp">{esc(t["efCompTbd"])}</span></li>')
+        return (f'<li class="match result is-pending">{kickoff_tbd(lang, with_time=False)}<div class="match-body">{flag}'
+                f'{match_title(EINTRACHT, t["efOpponentTbd"], tbd_html(lang))}'
+                f'<p class="match-meta"><span class="match-comp">{esc(t["efCompTbd"])}</span></p></div></li>')
     home, away = teams(e, e["opponent"])
     gf, ga = int(e["goals_for"]), int(e["goals_against"])
     hg, ag = (gf, ga) if e.get("home", True) else (ga, gf)
-    outcome = t["efWin"] if gf > ga else t["efDraw"] if gf == ga else t["efLoss"]
-    d = datetime.fromisoformat(e["date"]).date()
+    outcome, ocls = (t["efWin"], "win") if gf > ga else (t["efDraw"], "draw") if gf == ga else (t["efLoss"], "loss")
+    d = datetime.fromisoformat(e["date"])
     comp = f'<span class="match-comp">{esc(e["competition"])}</span>' if e.get("competition") else ""
-    return (f'<li class="match result"><time datetime="{d.isoformat()}">{esc(fmt_date(lang, d))}</time>'
-            f'<h3 class="match-title"><span>{esc(home)}</span> <span class="score">{hg}:{ag}</span> <span>{esc(away)}</span></h3>'
-            f'{comp}{venue_tag(lang, e)}<span class="tag">{esc(outcome)}</span></li>')
+    return (f'<li class="match result">{kickoff_html(lang, d.replace(tzinfo=d.tzinfo or TZ), with_time=False)}'
+            f'<div class="match-body">{flag}{match_title(home, away, f"{hg}:{ag}")}'
+            f'<p class="match-meta">{comp}{venue_tag(lang, e)}<span class="tag outcome outcome-{ocls}">{esc(outcome)}</span></p></div></li>')
 
 
 def standing_html(lang):
@@ -1131,21 +1234,30 @@ def render_eintracht(lang, other_href):
         msg = f"EINTRACHT_DATA['{key}'] in build.py (placeholder shown on /{path})"
         if pend and msg not in TODOS:
             TODOS.append(msg)
-    fx = ("".join(fixture_item(lang, s, e) for s, e in fixtures))
-    fx_html = (f'<ol class="match-list">{fx}</ol>' if fx else f'<p>{esc(t["efFixturesEmpty"])}</p>')
+    fx = ("".join(fixture_item(lang, s, e, first=(i == 0)) for i, (s, e) in enumerate(fixtures)))
+    fx_html = (f'<ol class="match-list fixtures">{fx}</ol>' if fx else f'<p>{esc(t["efFixturesEmpty"])}</p>')
     fx_note = pending_note(lang, "efPendingFixtures") if any(e.get("placeholder") for _, e in fixtures) else ""
-    rs = "".join(result_item(lang, e) for e in results)
-    rs_html = (f'<ol class="match-list">{rs}</ol>' if rs else f'<p>{esc(t["efResultsEmpty"])}</p>')
+    rs = "".join(result_item(lang, e, first=(i == 0)) for i, e in enumerate(results))
+    rs_html = (f'<ol class="match-list results">{rs}</ol>' if rs else f'<p>{esc(t["efResultsEmpty"])}</p>')
     rs_note = pending_note(lang, "efPendingResults") if any(e.get("placeholder") for e in results) else ""
     tb_note = pending_note(lang, "efPendingTable") if (EINTRACHT_DATA.get("standing") or {}).get("placeholder") else ""
     cta = reserve_buttons(lang)
     cta_band = f'''
-        <section class="cta-band" aria-labelledby="ef-reserve">
-            <h2 id="ef-reserve">{esc(t["efCtaTitle"])}</h2>
-            <p>{esc(t["efCtaText"])}</p>
-            {cta}
-        </section>''' if cta else ""
+                <section class="cta-band ticket" aria-labelledby="ef-reserve">
+                    <p class="ticket-stub" aria-hidden="true"><span>{esc(t["efTicketStub"])}</span></p>
+                    <div class="ticket-main">
+                        <h2 id="ef-reserve">{esc(t["efCtaTitle"])}</h2>
+                        <p>{esc(t["efCtaText"])}</p>
+                        {cta}
+                    </div>
+                </section>''' if cta else ""
     sched = home_href(path) + PAGES["schedule"][lang]
+    jump = "".join(
+        f'<li><a href="#{hid}"><span class="jump-n" aria-hidden="true">{n:02d}</span>{esc(t[key])}</a></li>'
+        for n, (hid, key) in enumerate((("ef-fixtures", "efFixtures"), ("ef-results", "efResults"), ("ef-table", "efTable")), 1))
+    jump_nav = f'<nav class="ef-jump" aria-label="{attr(t["efJumpLabel"])}"><ol>{jump}</ol></nav>'
+    head = page_head(lang, path, t["efH1"], t["efIntro"], t["efKicker"], extra=cta + jump_nav, art=True, cls="ef-head")
+    ticker = ticker_html([EINTRACHT, t["efKicker"], t["efFixtures"], t["efResults"], t["efTable"]], "ticker-alt")
     return f'''<!DOCTYPE html>
 <html lang="{lang}">
 <head>
@@ -1157,28 +1269,34 @@ def render_eintracht(lang, other_href):
 <body>
     <a class="skip-link" href="#main">{esc(t["skip"])}</a>
 {subpage_header(lang, path, "eintracht", other_href)}
-    <main class="container legal schedule eintracht" id="main">
-        {back_link(lang, path)}
-        <h1>{esc(t["efH1"])}</h1>
-        <p class="lead">{esc(t["efIntro"])}</p>
-        {cta}
-        <section aria-labelledby="ef-fixtures">
-            <h2 id="ef-fixtures">{esc(t["efFixtures"])}</h2>
-            {fx_note}
-            {fx_html}
-            <p class="match-note"><a href="{sched}">{esc(t["efAllMatches"])}</a></p>
-        </section>
-        <section aria-labelledby="ef-results">
-            <h2 id="ef-results">{esc(t["efResults"])}</h2>
-            {rs_note}
-            {rs_html}
-        </section>
-        <section aria-labelledby="ef-table">
-            <h2 id="ef-table">{esc(t["efTable"])}</h2>
-            {tb_note}
-            {standing_html(lang)}
-        </section>{cta_band}
-        {back_link(lang, path, end=True)}
+    <main id="main" class="eintracht">
+{head}
+        {ticker}
+        <div class="container page-body ef-body">
+            <div class="ef-grid">
+                <div class="ef-main">
+                <section class="page-sec ef-fixtures" aria-labelledby="ef-fixtures">
+                    <h2 class="sec-head" id="ef-fixtures"><span class="sec-n" aria-hidden="true">01</span>{esc(t["efFixtures"])}</h2>
+                    {fx_note}
+                    {fx_html}
+                    <p class="more-link"><a href="{sched}">{esc(t["efAllMatches"])}<span aria-hidden="true"> →</span></a></p>
+                </section>
+                <section class="page-sec ef-results" aria-labelledby="ef-results">
+                    <h2 class="sec-head" id="ef-results"><span class="sec-n" aria-hidden="true">02</span>{esc(t["efResults"])}</h2>
+                    {rs_note}
+                    {rs_html}
+                </section>
+                </div>
+                <div class="ef-side">
+                <section class="page-sec ef-table" aria-labelledby="ef-table">
+                    <h2 class="sec-head" id="ef-table"><span class="sec-n" aria-hidden="true">03</span>{esc(t["efTable"])}</h2>
+                    {tb_note}
+                    {standing_html(lang)}
+                </section>{cta_band}
+                </div>
+            </div>
+            {back_link(lang, path, end=True)}
+        </div>
     </main>
 {site_footer(lang, home_href(path))}
     <script type="application/json" id="ui-data">{ui_data(lang)}</script>

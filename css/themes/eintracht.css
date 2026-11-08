@@ -1,0 +1,65 @@
+/* ==========================================================================
+   THEME "eintracht": matchday black, red and white.
+   Mood: home end on a Saturday, scarf red, floodlight white, terrace black.
+   Same tokens as css/palette.css, plus two extras used by this design:
+     --ink    hard borders (cards, tickets, scoreboards)
+     --hard   hard offset shadows (no blur)
+   css/style.css falls back to --text when a palette lacks the extras.
+
+   How light and dark work: light-dark(<light>, <dark>) picks by the used colour
+   scheme. It follows the system, unless the visitor chose a theme with the header
+   button (the script then sets data-theme="light|dark" on <html>).
+
+   Contrast (WCAG 2.2 AA, computed from these values):
+     text      on bg / surface      light 17.4 / 19.4   dark 18.1 / 16.7
+     text-2    on bg / surface      light 13.2 / 14.8   dark 12.9 / 11.9
+     muted     on bg / surface      light  6.5 /  7.3   dark  7.2 /  6.7
+     accent-text on bg / surface    light  5.4 /  6.1   dark  6.0 /  5.6
+     on-accent (white) on accent    5.0  (red fill #e1000f; never black on red: 3.9)
+     ok, bad (status dots)          >= 4.8 on bg and surface
+     night pairs on night / night-2 accent-text 6.0 / 5.4, muted 7.8 / 7.1, text 17.7+
+   Red is never the only signal: states always carry a text label.
+   ========================================================================== */
+
+:root { color-scheme: light dark; }
+:root[data-theme="light"] { color-scheme: light; }
+:root[data-theme="dark"] { color-scheme: dark; }
+
+:root {
+    /* Page colours (light | dark) */
+    --bg:          light-dark(#f4f2ee, #0b0b0c);   /* page background: programme paper | floodlit night */
+    --surface:     light-dark(#ffffff, #161517);   /* cards, alternate sections */
+    --line:        light-dark(#d6d0c8, #322e2f);   /* hairlines, dividers */
+    --text:        light-dark(#0d0d0d, #f7f5f2);   /* headings, strong text */
+    --text-2:      light-dark(#2b2727, #d6d0cc);   /* body copy */
+    --muted:       light-dark(#5c5555, #a39b97);   /* captions, secondary */
+
+    /* Accent: club red. Fills use --accent, red text and thin lines use --accent-text */
+    --accent:      light-dark(#e1000f, #e1000f);
+    --accent-text: light-dark(#c8000d, #ff4d55);
+    --on-accent:   light-dark(#ffffff, #ffffff);
+
+    /* Status */
+    --ok:          light-dark(#0f7a3d, #3fd47f);
+    --bad:         light-dark(#c8000d, #ff6b70);
+
+    --shadow:      light-dark(rgb(13 13 13 / .18), rgb(0 0 0 / .65));
+
+    /* Eintracht extras */
+    --ink:         light-dark(#0d0d0d, #5a5354);
+    --hard:        light-dark(#0d0d0d, #a8000b);
+
+    /* Always-dark zones (header, hero, scoreboards, drinks board, footer) */
+    --night:             #0b0b0c;
+    --night-2:           #19181a;   /* raised on night */
+    --night-line:        #3a3536;
+    --night-text:        #ffffff;
+    --night-muted:       #aaa29e;
+    --night-accent:      #e1000f;   /* fills on night */
+    --night-accent-text: #ff4d55;   /* red text and lines on night */
+    --night-on-accent:   #ffffff;
+    --night-ok:          #3fd47f;
+    --night-bad:         #ff6b70;
+    --night-ink:         #5a5354;
+    --night-hard:        #e1000f;
+}
