@@ -8,6 +8,7 @@ Never edit the generated HTML by hand: change the data files or this script.
 """
 import html
 import json
+import os
 import sys
 from pathlib import Path
 from urllib.parse import quote
@@ -17,9 +18,11 @@ SITE_URL = "https://DOMAIN"  # the ONE place to set the domain (no trailing slas
 LANGS = ["de"]
 DEFAULT_LANG = "de"
 
-SITE = json.loads((ROOT / "data/site.json").read_text(encoding="utf-8"))
-DRINKS = json.loads((ROOT / "data/drinks.json").read_text(encoding="utf-8"))
-I18N = json.loads((ROOT / "data/i18n.json").read_text(encoding="utf-8"))
+DATA = Path(os.environ.get("CLV_DATA_DIR", ROOT / "data"))  # override only for tests
+OUT = Path(os.environ.get("CLV_OUT_DIR", ROOT))
+SITE = json.loads((DATA / "site.json").read_text(encoding="utf-8"))
+DRINKS = json.loads((DATA / "drinks.json").read_text(encoding="utf-8"))
+I18N = json.loads((DATA / "i18n.json").read_text(encoding="utf-8"))
 
 TODOS = []  # collected while building
 
@@ -126,6 +129,135 @@ def hours_numeric():
 def fmt_hour(x):
     x = x % 24
     return f"{int(x):02d}:{int(round((x % 1) * 60)):02d}"
+
+
+# ---------------------------------------------------------------- meta, facts, FAQ
+def page_url(lang, path=""):
+    return f"{SITE_URL}/{lang_prefix(lang)}{path}"
+
+
+def alternates(path):
+    """hreflang alternates (filled in once more than one language exists)."""
+    return []
+
+
+def home_description(lang):
+    t = I18N[lang]
+    n = get("venue.screens", report=False)
+    return t["description"].replace("{screens}", t["descScreens"].format(n=n) if n else "")
+
+
+def meta_block(lang, path, title, desc, social=True):
+    url = page_url(lang, path)
+    if len(desc) > 160:
+        print(f"WARNING: meta description >160 chars ({len(desc)}): {path or '/'}", file=sys.stderr)
+    t = I18N[lang]
+    lines = [f'<meta name="description" content="{attr(desc)}">', f'<link rel="canonical" href="{attr(url)}">']
+    lines += alternates(path)
+    if social:
+        img = f"{SITE_URL}/assets/img/og-image.jpg"
+        lines += [
+            '<meta property="og:type" content="website">',
+            f'<meta property="og:site_name" content="{attr(SITE["name"])}">',
+            f'<meta property="og:locale" content="{t["ogLocale"]}">',
+            f'<meta property="og:title" content="{attr(title)}">',
+            f'<meta property="og:description" content="{attr(desc)}">',
+            f'<meta property="og:url" content="{attr(url)}">',
+            f'<meta property="og:image" content="{img}">',
+            '<meta property="og:image:type" content="image/jpeg">',
+            '<meta property="og:image:width" content="1200">',
+            '<meta property="og:image:height" content="630">',
+            f'<meta property="og:image:alt" content="{attr(t["ogImageAlt"])}">',
+            '<meta name="twitter:card" content="summary_large_image">',
+            f'<meta name="twitter:title" content="{attr(title)}">',
+            f'<meta name="twitter:description" content="{attr(desc)}">',
+            f'<meta name="twitter:image" content="{img}">',
+            f'<meta name="twitter:image:alt" content="{attr(t["ogImageAlt"])}">',
+        ]
+    return "\n".join("    " + l for l in lines)
+
+
+def venue_facts(lang):
+    """Short quotable facts, only from confirmed data in site.json."""
+    t = I18N[lang]
+    out = []
+    n = get("venue.screens")
+    if n:
+        out.append(t["factScreens"].format(n=n))
+    n = get("venue.seats")
+    if n:
+        out.append(t["factSeats"].format(n=n))
+    if get("venue.sound_on_for_eintracht") is True:
+        out.append(t["factSound"])
+    subs = get("venue.subscriptions")
+    if subs:
+        out.append(t["factSubs"].format(subs=", ".join(subs) if isinstance(subs, list) else subs))
+    how = loc(get("venue.reservation_how"), lang) if get("venue.accepts_reservations") is True else ""
+    if how and not missing(how):
+        out.append(t["factReserve"].format(how=how))
+    pr = get("venue.price_range")
+    if pr:
+        out.append(t["factPrice"].format(pr=pr))
+    return out
+
+
+def hours_summary(lang):
+    days = SITE["hours"]["days"]
+    names = I18N[lang]["days"]
+    en = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"]
+    return "; ".join(f'{names[d]}: {days[en[d]]["open"]}–{days[en[d]]["close"]}' for d in [1, 2, 3, 4, 5, 6, 0] if en[d] in days)
+
+
+def faq_items(lang):
+    """[(question, answer)] built only from confirmed site.json data; entries without data are left out."""
+    t = I18N[lang]
+    items = []
+    if get("venue.shows_all_eintracht_matches") is True:
+        a = t["faqA1"] + (t["faqA1sound"] if get("venue.sound_on_for_eintracht") is True else "")
+        items.append((t["faqQ1"], a))
+    acc = get("venue.accepts_reservations")
+    how = loc(get("venue.reservation_how"), lang)
+    if acc is True and how and not missing(how):
+        items.append((t["faqQ2"], t["faqA2yes"].format(how=how)))
+    elif acc is False:
+        items.append((t["faqQ2"], t["faqA2no"]))
+    walk = loc(get("local.walk_from_stadium"), lang)
+    if walk and not missing(walk):
+        a = t["faqA3"].format(stadium=SITE["local"]["stadium_name"], walk=walk)
+        pt = loc(get("local.public_transport"), lang)
+        if pt and not missing(pt):
+            a += t["faqA3pt"].format(pt=pt)
+        items.append((t["faqQ3"], a))
+    if get("address.street"):
+        items.append((t["faqQ4"], t["faqA4"].format(addr=full_address_line())))
+    if SITE["hours"].get("confirmed") is True:
+        items.append((t["faqQ5"], hours_summary(lang) + "."))
+    parts = []
+    if get("venue.seats"):
+        parts.append(t["faqA6seats"].format(n=get("venue.seats")))
+    if get("venue.screens"):
+        parts.append(t["faqA6screens"].format(n=get("venue.screens")))
+    if parts:
+        items.append((t["faqQ6"], ", ".join(parts) + "."))
+    return items
+
+
+def faq_section(lang):
+    items = faq_items(lang)
+    if not items:
+        return ""
+    body = "\n                    ".join(
+        f'<div class="faq-item reveal"><h3>{esc(q)}</h3><p>{esc(a)}</p></div>' for q, a in items)
+    return f'''
+        <section class="section" id="faq">
+            <div class="container">
+                <h2>{esc(I18N[lang]["faqTitle"])}</h2>
+                <div class="faq">
+                    {body}
+                </div>
+            </div>
+        </section>
+'''
 
 
 # ---------------------------------------------------------------- page fragments
@@ -288,17 +420,18 @@ def render_home(lang, other_href=None):
     nav_contact = f'\n                    <li><a href="#contact">{esc(t["navContact"])}</a></li>' if contact else ""
     status = '<p class="status" id="status" aria-live="polite"></p>\n                        ' if SITE["hours"]["days"] else ""
     head = head_common(lang, 0, "")
+    facts = venue_facts(lang)
+    facts_html = ('<ul class="facts">' + "".join(f"<li>{esc(f)}</li>" for f in facts) + "</ul>") if facts else ""
+    n_screens = get("venue.screens", report=False)
+    sport5 = t["sport5Screens"].format(n=n_screens) if n_screens else t["sport5"]
+    faq = faq_section(lang)
     return f'''<!DOCTYPE html>
 <html lang="{lang}">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>{esc(t["title"])}</title>
-    <meta name="description" content="{attr(t["description"])}">
-    <meta property="og:type" content="website">
-    <meta property="og:title" content="{attr(t["title"])}">
-    <meta property="og:description" content="{attr(t["ogDescription"])}">
-    <meta property="og:image" content="{r}assets/img/hero.svg">
+{meta_block(lang, "", t["title"], home_description(lang))}
 {head}</head>
 <body>
     <a class="skip-link" href="#main">{esc(t["skip"])}</a>
@@ -356,12 +489,13 @@ def render_home(lang, other_href=None):
             <div class="container">
                 <h2>{esc(t["sportTitle"])}</h2>
                 <p class="lead">{esc(t["sportLead"])}</p>
+                {facts_html}
                 <div class="grid grid-3">
                     <article class="card reveal"><h3>Bundesliga</h3><p>{esc(t["sport1"])}</p></article>
                     <article class="card reveal"><h3>Eintracht Frankfurt</h3><p>{esc(t["sport2"])}</p></article>
                     <article class="card reveal"><h3>Champions League</h3><p>{esc(t["sport3"])}</p></article>
                     <article class="card reveal"><h3>{esc(t["sport4Title"])}</h3><p>{esc(t["sport4"])}</p></article>
-                    <article class="card reveal"><h3>{esc(t["sport5Title"])}</h3><p>{esc(t["sport5"])}</p></article>
+                    <article class="card reveal"><h3>{esc(t["sport5Title"])}</h3><p>{esc(sport5)}</p></article>
                 </div>
             </div>
         </section>
@@ -412,7 +546,7 @@ def render_home(lang, other_href=None):
                 </div>
             </div>
         </section>
-{contact_section}    </main>
+{faq}{contact_section}    </main>
 
     <footer class="site-footer">
         <div class="container footer-inner">
@@ -479,7 +613,8 @@ def render_legal(lang, kind, other_href=None):
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>{esc(title)}</title>
+    <title>{esc(title)} – {esc(SITE["name"])}</title>
+{meta_block(lang, kind + ".html", title + " – " + SITE["name"], t["legalDescription"] if kind == "impressum" else t["privacyDescription"], social=False)}
     <meta name="robots" content="noindex">
 {head_common(lang, 0)}</head>
 <body>
@@ -506,7 +641,7 @@ def render_legal(lang, kind, other_href=None):
 
 # ---------------------------------------------------------------- build
 def write(rel, content):
-    p = ROOT / rel
+    p = OUT / rel
     p.parent.mkdir(parents=True, exist_ok=True)
     p.write_text(content, encoding="utf-8")
     print("wrote", rel)
