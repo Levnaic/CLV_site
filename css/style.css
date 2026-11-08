@@ -248,11 +248,12 @@ p { margin: 0 0 1em; }
 .signboard::before, .cta-band::before { content: ""; position: absolute; inset: 10px; border: 4px double var(--accent); border-radius: 50% 50% 10px 10px / 3.8rem 3.8rem 10px 10px; opacity: .85; pointer-events: none; }
 .cta-band::before { border-radius: 50% 50% 8px 8px / 2.2rem 2.2rem 8px 8px; }
 .signboard::after { content: ""; position: absolute; top: 5px; left: 50%; width: 14px; height: 14px; translate: -50% 0; rotate: 45deg; background: var(--accent); box-shadow: 0 0 0 3px var(--bg); }
-.eyebrow { display: flex; align-items: center; justify-content: center; gap: .75rem; margin: 0 0 .9rem; color: var(--accent-text); font-size: 1.05rem; letter-spacing: .3em; line-height: 1.3; }
+.eyebrow { display: flex; align-items: center; justify-content: center; gap: .6rem; margin: 0 0 .9rem; color: var(--accent-text); font-size: 1rem; letter-spacing: .16em; line-height: 1.3; white-space: nowrap; }
+@media (min-width: 600px) { .eyebrow { gap: .75rem; font-size: 1.05rem; letter-spacing: .3em; } }
 .eyebrow::before, .eyebrow::after { content: ""; flex: none; width: 6px; height: 6px; rotate: 45deg; background: currentColor; }
 .signboard h1 { margin: .05em 0 .4em; color: var(--accent-text); font-size: clamp(2.75rem, 10.5vw, 5.6rem); line-height: .95; font-variation-settings: "SOFT" 100, "WONK" 1;
     text-shadow: 0 1px 0 rgb(0 0 0 / .45), 0 0 30px color-mix(in srgb, var(--accent) 30%, transparent); }
-.signboard h1 span { display: inline-flex; align-items: center; gap: .7em; margin-top: .45em; font: 600 clamp(1rem, 2.8vw, 1.4rem)/1 var(--font-body); font-variant-caps: all-small-caps; letter-spacing: .32em; color: var(--text); text-shadow: none; }
+.signboard h1 span { display: flex; justify-content: center; align-items: center; gap: .7em; margin-top: .55rem; font: 600 clamp(1rem, 2.8vw, 1.4rem)/1 var(--font-body); font-variant-caps: all-small-caps; letter-spacing: .32em; color: var(--text); text-shadow: none; }
 .signboard h1 span::before, .signboard h1 span::after { content: ""; flex: none; width: clamp(1.25rem, 7vw, 3.5rem); height: 5px; border-block: 1px solid var(--accent); }
 .tagline { margin: 0 auto 1.6rem; font: italic 400 clamp(1.1rem, 2.8vw, 1.35rem)/1.4 var(--font-head); font-variation-settings: "SOFT" 100; color: var(--text); }
 .hero-buttons { display: flex; flex-wrap: wrap; justify-content: center; gap: .75rem; }
@@ -444,7 +445,7 @@ a.contact-card p { color: var(--text-2); }
 /* ---------- Events: framed cards with a beer mat on top ---------- */
 #events .grid { align-items: start; row-gap: 3.75rem; margin-top: 3rem; }
 .event { padding: 0; }
-.event .tag { position: absolute; z-index: 1; top: 0; left: 50%; translate: -50% -55%; margin: 0; --mat-size: 5.4rem; padding: .6rem; font-size: .88rem; letter-spacing: .06em; line-height: 1.05; overflow-wrap: anywhere; }
+.event .tag { position: absolute; z-index: 1; top: 0; left: 50%; translate: -50% -55%; margin: 0; --mat-size: 5.75rem; padding: .7rem; font: italic 600 .95rem/1.05 var(--font-head); font-variant-caps: normal; letter-spacing: 0; hyphens: auto; overflow-wrap: normal; }
 .event summary { position: relative; list-style: none; cursor: pointer; padding: 3.5rem 3.75rem 1.75rem; }
 .event summary::-webkit-details-marker { display: none; }
 .event summary h3 { margin-bottom: .45em; }
@@ -505,6 +506,10 @@ address strong { color: var(--text); font: 600 1.2rem var(--font-head); }
     border: 3px double var(--brass, var(--line)); border-radius: 50% 50% var(--radius-lg) var(--radius-lg) / 22% 22% var(--radius-lg) var(--radius-lg);
     background-color: var(--surface); background-image: var(--grain, none); }
 .map p { margin: 0; max-width: 36ch; }
+#visit .split { align-items: stretch; }
+/* Contact: a centred row of equal cards, however many links exist */
+#contact .grid { display: flex; flex-wrap: wrap; justify-content: center; }
+#contact .card { flex: 1 1 15rem; max-width: 22rem; }
 .map iframe { width: 100%; height: 100%; min-height: 360px; border: 0; }
 .map:has(iframe) { padding: 0; }
 .faq { display: grid; gap: 1.5rem; max-width: 760px; margin-inline: auto; text-align: center; }
