@@ -3,8 +3,10 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title data-i18n="legalTitle">Impressum</title>
+    <title>Impressum</title>
     <meta name="robots" content="noindex">
+    <meta name="theme-color" content="#111214" media="(prefers-color-scheme: dark)">
+    <meta name="theme-color" content="#e4e9c4" media="(prefers-color-scheme: light)">
     <link rel="icon" href="assets/icons/favicon.svg" type="image/svg+xml">
     <script>try{var t=localStorage.getItem("theme");if(t==="light"||t==="dark")document.documentElement.dataset.theme=t}catch(e){}</script>
     <link rel="stylesheet" href="css/style.css">
@@ -12,23 +14,20 @@
 <body>
     <header class="site-header">
         <div class="container header-inner">
-            <a class="brand" href="index.html" aria-label="C'est la vie Sports Bar"><svg class="logo-mark" viewBox="0 0 48 48" aria-hidden="true" focusable="false"><path class="lm-c" pathLength="1" d="M38.14 9.86A20 20 0 1 0 38.14 38.14"/><path class="lm-l" pathLength="1" d="M15 13V33H27"/><path class="lm-v" pathLength="1" d="M20 13L27 33L40 6"/></svg><span class="brand-title">C'est la <span>vie</span></span></a>
+            <a class="brand" href="index.html" aria-label="C&#x27;est la vie Sports Bar"><svg class="logo-mark" viewBox="0 0 48 48" aria-hidden="true" focusable="false"><path class="lm-c" pathLength="1" d="M38.14 9.86A20 20 0 1 0 38.14 38.14"/><path class="lm-l" pathLength="1" d="M15 13V33H27"/><path class="lm-v" pathLength="1" d="M20 13L27 33L40 6"/></svg><span class="brand-title">C'est la <span>vie</span></span></a>
             <div class="header-actions">
                 <button class="theme-btn" id="themeBtn" type="button" aria-label="Design wechseln"></button>
-                <button class="lang-btn" id="langBtn" type="button" aria-label="Switch to English"><span data-l="en">en</span> / <span class="is-active" data-l="de">de</span></button>
+                
             </div>
         </div>
     </header>
     <main class="container legal">
-        <p><a href="index.html" data-i18n="legalBack">← Zurück zur Startseite</a></p>
-        <h1 data-i18n="legalTitle">Impressum</h1>
-        <h2 data-i18n="l1h">Angaben gemäß § 5 DDG</h2>
-        <p data-i18n="l1p">C'est la vie Sports Bar, [Name des Inhabers], Musterstraße 1, 60528 Frankfurt am Main. (Platzhalter – bitte ergänzen.)</p>
-        <h2 data-i18n="l2h">Kontakt</h2>
-        <p data-i18n="l2p">Telefon: +49 69 000000 · E-Mail: info@example.com</p>
-        <h2 data-i18n="l3h">Registereintrag &amp; USt-IdNr.</h2>
-        <p data-i18n="l3p">[Handelsregister / USt-IdNr. – bitte ergänzen]</p>
+        <p><a href="index.html">← Zurück zur Startseite</a></p>
+        <h1>Impressum</h1>
+        <h2>Angaben gemäß § 5 DDG</h2>
+        <p>C'est la vie Sports Bar, 60528 Frankfurt am Main</p>
     </main>
+    <script type="application/json" id="ui-data">{"strings":{"themeLight":"Helles Design aktivieren","themeDark":"Dunkles Design aktivieren","menuOpen":"Menü öffnen","menuClose":"Menü schließen","open":"Jetzt geöffnet","closed":"Gerade geschlossen","until":"bis","lbClose":"Schließen","lbPrev":"Zurück","lbNext":"Weiter","mapTitle":"OpenStreetMap-Karte"},"hours":[[14.0,24.0],[16.0,25.0],[16.0,25.0],[16.0,25.0],[16.0,25.0],[16.0,27.0],[16.0,27.0]],"mapUrl":"https://www.openstreetmap.org/export/embed.html?bbox=8.6150%2C50.0720%2C8.6600%2C50.0950&layer=mapnik"}</script>
     <script src="js/main.js"></script>
 </body>
 </html>

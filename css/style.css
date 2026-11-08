@@ -367,3 +367,15 @@ address strong { color: var(--text); font-size: 1.1rem; }
     .brand-title { font-size: 1.05rem; }
     .brand-title span { display: block; }
 }
+
+/* ---- generated-HTML support (build.py) ---- */
+[hidden] { display: none !important; }
+.drink-panel + .drink-panel { margin-top: 1.5rem; }
+.drink-cat-title { grid-column: 1 / -1; margin: 0; color: var(--accent-text); font-size: 1.3rem; }
+.drinks.tabs-on .drink-cat-title { position: absolute; width: 1px; height: 1px; overflow: hidden; clip-path: inset(50%); white-space: nowrap; }
+.drinks.tabs-on .drink-panel + .drink-panel { margin-top: 0; }
+a.lang-btn { display: inline-flex; align-items: center; justify-content: center; text-decoration: none; }
+.event-plain-body { padding: 1.5rem; }
+.event-plain-body h3 { margin-bottom: .5em; }
+.event-plain-body p { margin: 0; }
+.mobile-bar.single { grid-template-columns: 1fr; }
