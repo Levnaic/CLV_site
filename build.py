@@ -15,7 +15,7 @@ from urllib.parse import quote
 
 ROOT = Path(__file__).resolve().parent
 SITE_URL = "https://DOMAIN"  # the ONE place to set the domain (no trailing slash)
-LANGS = ["de"]
+LANGS = ["de", "en"]
 DEFAULT_LANG = "de"
 
 DATA = Path(os.environ.get("CLV_DATA_DIR", ROOT / "data"))  # override only for tests
@@ -136,9 +136,31 @@ def page_url(lang, path=""):
     return f"{SITE_URL}/{lang_prefix(lang)}{path}"
 
 
-def alternates(path):
-    """hreflang alternates (filled in once more than one language exists)."""
-    return []
+# page key -> {lang: path relative to that language's root}. Every key exists in every language.
+PAGES = {
+    "home": {"de": "", "en": ""},
+    "impressum": {"de": "impressum.html", "en": "impressum.html"},
+    "datenschutz": {"de": "datenschutz.html", "en": "datenschutz.html"},
+}
+
+
+def page_key(lang, path):
+    return next(k for k, v in PAGES.items() if v[lang] == path)
+
+
+def alternates(lang, path):
+    """hreflang alternates: every language + x-default (-> default language), absolute URLs."""
+    key = page_key(lang, path)
+    lines = [f'<link rel="alternate" hreflang="{l}" href="{attr(page_url(l, PAGES[key][l]))}">' for l in LANGS]
+    lines.append(f'<link rel="alternate" hreflang="x-default" href="{attr(page_url(DEFAULT_LANG, PAGES[key][DEFAULT_LANG]))}">')
+    return lines
+
+
+def switch_href(lang, path):
+    """Relative link from this page to the same page in the other language."""
+    other = [l for l in LANGS if l != lang][0]
+    up = "../" * (path.count("/") + (0 if lang == DEFAULT_LANG else 1))
+    return up + lang_prefix(other) + PAGES[page_key(lang, path)][other]
 
 
 def home_description(lang):
@@ -153,7 +175,7 @@ def meta_block(lang, path, title, desc, social=True):
         print(f"WARNING: meta description >160 chars ({len(desc)}): {path or '/'}", file=sys.stderr)
     t = I18N[lang]
     lines = [f'<meta name="description" content="{attr(desc)}">', f'<link rel="canonical" href="{attr(url)}">']
-    lines += alternates(path)
+    lines += alternates(lang, path)
     if social:
         img = f"{SITE_URL}/assets/img/og-image.jpg"
         lines += [
@@ -276,7 +298,7 @@ def bar_schema(lang):
         "@type": "BarOrPub",
         "@id": BAR_ID,
         "name": SITE["name"],
-        "url": page_url(lang),
+        "url": page_url(DEFAULT_LANG),
         "description": home_description(lang),
         "image": f"{SITE_URL}/assets/img/og-image.jpg",
     }
@@ -762,9 +784,9 @@ def write(rel, content):
 def main():
     for lang in LANGS:
         pre = lang_prefix(lang)
-        write(pre + "index.html", render_home(lang))
-        write(pre + "impressum.html", render_legal(lang, "impressum"))
-        write(pre + "datenschutz.html", render_legal(lang, "datenschutz"))
+        write(pre + "index.html", render_home(lang, switch_href(lang, "")))
+        write(pre + "impressum.html", render_legal(lang, "impressum", switch_href(lang, "impressum.html")))
+        write(pre + "datenschutz.html", render_legal(lang, "datenschutz", switch_href(lang, "datenschutz.html")))
     if TODOS:
         print("\nTODO – missing data in data/site.json (left out of the output):")
         for k in sorted(set(TODOS)):
