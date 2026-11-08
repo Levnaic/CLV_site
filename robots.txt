@@ -1,0 +1,5 @@
+# Everything may be crawled, including AI search/assistant crawlers (no per-bot rules on purpose).
+User-agent: *
+Allow: /
+
+Sitemap: https://DOMAIN/sitemap.xml
