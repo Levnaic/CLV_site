@@ -1,0 +1,44 @@
+/* ==========================================================================
+   THEME "derby": classic football red and white, near-black at night.
+   Mood: matchday scarf, terrace banners, no-nonsense.
+   Drop-in replacement for css/palette.css (same tokens). Use it by setting
+   PALETTE = "css/themes/derby.css" in build.py.
+
+   Contrast (WCAG 2.2 AA, computed): text, text-2, muted, accent-text on bg and
+   surface >= 4.5:1; on-accent (white) on red accent >= 4.5:1; status dots >= 3:1;
+   night-* text pairs >= 4.5:1. Red is never the only signal: open/closed always
+   comes with a text label.
+   ========================================================================== */
+
+:root { color-scheme: light dark; }
+:root[data-theme="light"] { color-scheme: light; }
+:root[data-theme="dark"] { color-scheme: dark; }
+
+:root {
+    --bg:          light-dark(#f7f5f3, #120b0c);
+    --surface:     light-dark(#ffffff, #1c1213);
+    --line:        light-dark(#ddd6d2, #3a2527);
+    --text:        light-dark(#1a1213, #fff7f5);
+    --text-2:      light-dark(#3d3032, #e0cfcc);
+    --muted:       light-dark(#655657, #ab9794);
+
+    --accent:      light-dark(#d6171f, #e5262e);
+    --accent-text: light-dark(#bf141c, #ff6a6f);
+    --on-accent:   light-dark(#ffffff, #ffffff);
+
+    --ok:          light-dark(#11793f, #4fd18b);
+    --bad:         light-dark(#b3202a, #ff8a8a);
+
+    --shadow:      light-dark(rgb(60 20 20 / .16), rgb(0 0 0 / .6));
+
+    --night:             #120b0c;
+    --night-2:           #1c1213;
+    --night-line:        #3a2527;
+    --night-text:        #fff7f5;
+    --night-muted:       #ab9794;
+    --night-accent:      #e5262e;
+    --night-accent-text: #ff6a6f;
+    --night-on-accent:   #ffffff;
+    --night-ok:          #4fd18b;
+    --night-bad:         #ff8a8a;
+}

@@ -1,0 +1,59 @@
+/* ==========================================================================
+   PALETTE "pitch" (default): hi-vis lime on night-pitch green.
+   Every colour of the site lives in this file. css/style.css only uses these tokens.
+
+   To switch the whole look, change PALETTE in build.py to one of
+     css/palette.css          pitch  lime on night-pitch green (default)
+     css/themes/ember.css     ember  amber and burgundy, sunset warmth
+     css/themes/volt.css      volt   electric blue and white, cool and crisp
+     css/themes/derby.css     derby  classic football red and white
+     css/themes/gold.css      gold   monochrome gold on black
+   (or copy a theme file over this one). Each file defines the SAME tokens.
+
+   How light and dark work: light-dark(<light>, <dark>) picks by the used colour
+   scheme. It follows the system, unless the visitor chose a theme with the header
+   button (the script then sets data-theme="light|dark" on <html>).
+
+   Contrast (WCAG 2.2 AA, computed from these values):
+     text, text-2, muted, accent-text on bg and surface   >= 4.5:1
+     on-accent on accent                                  >= 4.5:1
+     ok, bad (status dots) on bg and surface              >= 3:1
+     night-* text pairs on night and night-2              >= 4.5:1
+   ========================================================================== */
+
+:root { color-scheme: light dark; }
+:root[data-theme="light"] { color-scheme: light; }
+:root[data-theme="dark"] { color-scheme: dark; }
+
+:root {
+    /* Page colours (light | dark) */
+    --bg:          light-dark(#f1f5e6, #0a1210);   /* page background */
+    --surface:     light-dark(#fafcf2, #101c18);   /* raised panels, alternate sections */
+    --line:        light-dark(#cdd7b4, #243830);   /* borders, dividers */
+    --text:        light-dark(#0d1a12, #eef4e6);   /* headings, strong text */
+    --text-2:      light-dark(#2c3b30, #c4d0c4);   /* body copy */
+    --muted:       light-dark(#536150, #93a79a);   /* captions, secondary */
+
+    /* Accent: fills (buttons, chips) and the readable accent for text and lines */
+    --accent:      light-dark(#c8f031, #c8f031);
+    --accent-text: light-dark(#3d6300, #c8f031);
+    --on-accent:   light-dark(#0a1210, #0a1210);   /* text on --accent */
+
+    /* Status */
+    --ok:          light-dark(#0c7a3f, #3ddc84);
+    --bad:         light-dark(#bf2630, #ff6b6b);
+
+    --shadow:      light-dark(rgb(20 40 10 / .16), rgb(0 0 0 / .6));
+
+    /* Always-dark zones (hero, lightbox, drinks board, footer): the same in light and dark */
+    --night:             #0a1210;
+    --night-2:           #14231d;   /* raised on night */
+    --night-line:        #2b4137;
+    --night-text:        #f0f5ea;
+    --night-muted:       #9db0a4;
+    --night-accent:      #c8f031;   /* fills on night */
+    --night-accent-text: #c8f031;   /* accent text and lines on night */
+    --night-on-accent:   #0a1210;
+    --night-ok:          #3ddc84;
+    --night-bad:         #ff6b6b;
+}

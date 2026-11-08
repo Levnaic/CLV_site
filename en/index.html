@@ -25,10 +25,11 @@
     <meta name="twitter:description" content="Sports bar in Frankfurt-Niederrad: Bundesliga, Eintracht and Champions League live. Drinks menu, opening hours, directions.">
     <meta name="twitter:image" content="https://DOMAIN/assets/img/og-image.jpg">
     <meta name="twitter:image:alt" content="C&#x27;est la vie Sports Bar – Frankfurt-Niederrad">
-    <meta name="theme-color" content="#111214" media="(prefers-color-scheme: dark)">
-    <meta name="theme-color" content="#e4e9c4" media="(prefers-color-scheme: light)">
+    <meta name="theme-color" content="#0a1210" media="(prefers-color-scheme: dark)">
+    <meta name="theme-color" content="#f1f5e6" media="(prefers-color-scheme: light)">
     <link rel="icon" href="../assets/icons/favicon.svg" type="image/svg+xml">
     <script>try{var t=localStorage.getItem("theme");if(t==="light"||t==="dark")document.documentElement.dataset.theme=t}catch(e){}</script>
+    <link rel="stylesheet" href="../css/palette.css">
     <link rel="stylesheet" href="../css/style.css">
     <script type="application/ld+json">
     {
@@ -115,6 +116,7 @@
             <img class="hero-img" src="../assets/img/hero.svg" width="1200" height="1600" fetchpriority="high" alt="">
             <div class="hero-overlay"></div>
             <div class="container hero-content">
+                <p class="status hero-status" data-status></p>
                 <p class="eyebrow">Frankfurt · Niederrad</p>
                 <h1>C'est la vie<br><span>Sports Bar</span></h1>
                 <p class="tagline">Live Sport · Cold Drinks · Good People</p>
@@ -124,6 +126,7 @@
                 </div>
             </div>
         </section>
+        <div class="ticker"><div class="ticker-track" aria-hidden="true"><ul><li>Live Sport</li><li>Cold Drinks</li><li>Good People</li><li>Bundesliga</li><li>Eintracht Frankfurt</li><li>Champions League</li></ul><ul class="ticker-dup"><li>Live Sport</li><li>Cold Drinks</li><li>Good People</li><li>Bundesliga</li><li>Eintracht Frankfurt</li><li>Champions League</li></ul><ul class="ticker-dup"><li>Live Sport</li><li>Cold Drinks</li><li>Good People</li><li>Bundesliga</li><li>Eintracht Frankfurt</li><li>Champions League</li></ul><ul class="ticker-dup"><li>Live Sport</li><li>Cold Drinks</li><li>Good People</li><li>Bundesliga</li><li>Eintracht Frankfurt</li><li>Champions League</li></ul></div></div>
 
         <section class="section" id="about">
             <div class="container split">
@@ -141,12 +144,12 @@
                 <h2>Live Sport</h2>
                 <p class="lead">Never miss a match – we show the sport you want to see.</p>
                 
-                <div class="grid grid-3">
-                    <article class="card reveal"><h3>Bundesliga</h3><p>Every matchday live, including the Saturday conference.</p></article>
-                    <article class="card reveal"><h3>Eintracht Frankfurt</h3><p>Home or away – watch the SGE from kick-off to the final whistle.</p></article>
-                    <article class="card reveal"><h3>Champions League</h3><p>Europe's best teams on midweek evenings.</p></article>
-                    <article class="card reveal"><h3>More highlights</h3><p>Formula 1, darts, internationals and major tournaments.</p></article>
-                    <article class="card reveal"><h3>Screens &amp; Sound</h3><p>Several big screens and sound that lets you hear every goal.</p></article>
+                <div class="bento">
+                    <article class="card bento-card bento-a reveal"><span class="bento-n" aria-hidden="true">01</span><h3>Bundesliga</h3><p>Every matchday live, including the Saturday conference.</p></article>
+                    <article class="card bento-card bento-b reveal"><span class="bento-n" aria-hidden="true">02</span><h3>Eintracht Frankfurt</h3><p>Home or away – watch the SGE from kick-off to the final whistle.</p></article>
+                    <article class="card bento-card bento-c reveal"><span class="bento-n" aria-hidden="true">03</span><h3>Champions League</h3><p>Europe's best teams on midweek evenings.</p></article>
+                    <article class="card bento-card bento-d reveal"><span class="bento-n" aria-hidden="true">04</span><h3>More highlights</h3><p>Formula 1, darts, internationals and major tournaments.</p></article>
+                    <article class="card bento-card bento-e reveal"><span class="bento-n" aria-hidden="true">05</span><h3>Screens &amp; Sound</h3><p>Several big screens and sound that lets you hear every goal.</p></article>
                 </div>
             </div>
         </section>
@@ -196,7 +199,7 @@
                 <h2>Opening hours &amp; directions</h2>
                 <div class="split">
                     <div>
-                        <p class="status" id="status" aria-live="polite"></p>
+                        <p class="status" id="status" data-status aria-live="polite"></p>
                         <table class="hours"><tbody id="hours">
                             <tr data-d="1"><th scope="row">Monday</th><td>16:00 – 01:00</td></tr>
                             <tr data-d="2"><th scope="row">Tuesday</th><td>16:00 – 01:00</td></tr>
@@ -267,7 +270,7 @@
         <button type="button" class="lb-nav lb-next" id="lbNext" aria-label="Next">›</button>
     </dialog>
 
-    <script type="application/json" id="ui-data">{"strings":{"themeLight":"Switch to light mode","themeDark":"Switch to dark mode","menuOpen":"Open menu","menuClose":"Close menu","open":"Open now","closed":"Closed right now","until":"until","lbClose":"Close","lbPrev":"Previous","lbNext":"Next","mapTitle":"OpenStreetMap map"},"hours":[[14.0,24.0],[16.0,25.0],[16.0,25.0],[16.0,25.0],[16.0,25.0],[16.0,27.0],[16.0,27.0]],"mapUrl":"https://www.openstreetmap.org/export/embed.html?bbox=8.629535%2C50.074443%2C8.673535000000001%2C50.097443&layer=mapnik&marker=50.085943%2C8.651535"}</script>
+    <script type="application/json" id="ui-data">{"strings":{"themeLight":"Switch to light mode","themeDark":"Switch to dark mode","menuOpen":"Open menu","menuClose":"Close menu","open":"Open now","closed":"Closed right now","until":"until","lbClose":"Close","lbPrev":"Previous","lbNext":"Next","mapTitle":"OpenStreetMap map","tickerPause":"Pause ticker","tickerPlay":"Play ticker"},"hours":[[14.0,24.0],[16.0,25.0],[16.0,25.0],[16.0,25.0],[16.0,25.0],[16.0,27.0],[16.0,27.0]],"mapUrl":"https://www.openstreetmap.org/export/embed.html?bbox=8.629535%2C50.074443%2C8.673535000000001%2C50.097443&layer=mapnik&marker=50.085943%2C8.651535"}</script>
     <script src="../js/main.js"></script>
 </body>
 </html>

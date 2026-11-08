@@ -1,0 +1,43 @@
+/* ==========================================================================
+   THEME "ember": sunset amber on deep burgundy, warm cream in light mode.
+   Mood: late-evening glow, cosy, a little theatrical.
+   Drop-in replacement for css/palette.css (same tokens). Use it by setting
+   PALETTE = "css/themes/ember.css" in build.py.
+
+   Contrast (WCAG 2.2 AA, computed): text, text-2, muted, accent-text on bg and
+   surface >= 4.5:1; on-accent on accent >= 4.5:1; status dots >= 3:1;
+   night-* text pairs >= 4.5:1.
+   ========================================================================== */
+
+:root { color-scheme: light dark; }
+:root[data-theme="light"] { color-scheme: light; }
+:root[data-theme="dark"] { color-scheme: dark; }
+
+:root {
+    --bg:          light-dark(#fff3e3, #1b0c11);
+    --surface:     light-dark(#fffaf2, #2a1219);
+    --line:        light-dark(#ecd0b6, #4a2430);
+    --text:        light-dark(#2a0e16, #fdf0e4);
+    --text-2:      light-dark(#532a31, #ead3c6);
+    --muted:       light-dark(#7d5656, #b99d98);
+
+    --accent:      light-dark(#ffb23e, #ffb23e);
+    --accent-text: light-dark(#8f1d3d, #ffb23e);   /* burgundy on cream, amber on burgundy-black */
+    --on-accent:   light-dark(#2a0e16, #240c12);
+
+    --ok:          light-dark(#1d7a45, #5fd38d);
+    --bad:         light-dark(#b3202a, #ff7a7a);
+
+    --shadow:      light-dark(rgb(70 20 20 / .18), rgb(0 0 0 / .6));
+
+    --night:             #1b0c11;
+    --night-2:           #2a1219;
+    --night-line:        #4a2430;
+    --night-text:        #fdf0e4;
+    --night-muted:       #b99d98;
+    --night-accent:      #ffb23e;
+    --night-accent-text: #ffb23e;
+    --night-on-accent:   #240c12;
+    --night-ok:          #5fd38d;
+    --night-bad:         #ff7a7a;
+}

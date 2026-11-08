@@ -19,6 +19,9 @@ ROOT = Path(__file__).resolve().parent
 SITE_URL = "https://DOMAIN"  # the ONE place to set the domain (no trailing slash)
 LANGS = ["de", "en"]
 DEFAULT_LANG = "de"
+# Colour palette (all colour tokens live in this one file, loaded before css/style.css).
+# Default "pitch" = css/palette.css. Alternatives: css/themes/ember.css, volt.css, derby.css, gold.css
+PALETTE = "css/palette.css"
 
 DATA = Path(os.environ.get("CLV_DATA_DIR", ROOT / "data"))  # override only for tests
 OUT = Path(os.environ.get("CLV_OUT_DIR", ROOT))
@@ -403,10 +406,12 @@ def jsonld_scripts(lang, blocks=None):
 # ---------------------------------------------------------------- page fragments
 def head_common(lang, depth, extra=""):
     r = rel_root(lang, depth)
-    return f'''    <meta name="theme-color" content="#111214" media="(prefers-color-scheme: dark)">
-    <meta name="theme-color" content="#e4e9c4" media="(prefers-color-scheme: light)">
+    # theme-color: static fallback for the default palette; js/main.js replaces it with the active palette's background
+    return f'''    <meta name="theme-color" content="#0a1210" media="(prefers-color-scheme: dark)">
+    <meta name="theme-color" content="#f1f5e6" media="(prefers-color-scheme: light)">
     <link rel="icon" href="{r}assets/icons/favicon.svg" type="image/svg+xml">
     <script>try{{var t=localStorage.getItem("theme");if(t==="light"||t==="dark")document.documentElement.dataset.theme=t}}catch(e){{}}</script>
+    <link rel="stylesheet" href="{r}{PALETTE}">
     <link rel="stylesheet" href="{r}css/style.css">
 {extra}'''
 
@@ -522,7 +527,7 @@ def address_html():
 
 def ui_data(lang):
     t = I18N[lang]
-    keys = ["themeLight", "themeDark", "menuOpen", "menuClose", "open", "closed", "until", "lbClose", "lbPrev", "lbNext", "mapTitle"]
+    keys = ["themeLight", "themeDark", "menuOpen", "menuClose", "open", "closed", "until", "lbClose", "lbPrev", "lbNext", "mapTitle", "tickerPause", "tickerPlay"]
     lat, lng = get("geo.lat", report=False), get("geo.lng", report=False)
     try:
         lat, lng = float(lat), float(lng)
@@ -558,7 +563,16 @@ def render_home(lang, other_href=None):
         </section>
 ''' if contact else ""
     nav_contact = f'\n                    <li><a href="#contact">{esc(t["navContact"])}</a></li>' if contact else ""
-    status = '<p class="status" id="status" aria-live="polite"></p>\n                        ' if SITE["hours"]["days"] else ""
+    has_hours = bool(SITE["hours"]["days"])
+    status = '<p class="status" id="status" data-status aria-live="polite"></p>\n                        ' if has_hours else ""
+    hero_chip = '<p class="status hero-status" data-status></p>\n                ' if has_hours else ""
+    ticker_items = [p.strip() for p in t["tagline"].split("·") if p.strip()] + ["Bundesliga", "Eintracht Frankfurt", "Champions League"]
+    ticker_group = "".join(f"<li>{esc(x)}</li>" for x in ticker_items)
+    # Decorative: the same words are in the hero and the sport section, so the track is hidden from
+    # screen readers. Four identical groups let the CSS loop scroll by exactly one group (-25%).
+    # js/main.js adds the pause button outside the hidden track.
+    ticker = ('<div class="ticker"><div class="ticker-track" aria-hidden="true">'
+              f'<ul>{ticker_group}</ul>' + f'<ul class="ticker-dup">{ticker_group}</ul>' * 3 + '</div></div>')
     head = head_common(lang, 0, jsonld_scripts(lang))
     facts = venue_facts(lang)
     facts_html = ('<ul class="facts">' + "".join(f"<li>{esc(f)}</li>" for f in facts) + "</ul>") if facts else ""
@@ -607,7 +621,7 @@ def render_home(lang, other_href=None):
             <img class="hero-img" src="{r}assets/img/hero.svg" width="1200" height="1600" fetchpriority="high" alt="{img_alt(t["heroAlt"])}">
             <div class="hero-overlay"></div>
             <div class="container hero-content">
-                <p class="eyebrow">Frankfurt · Niederrad</p>
+                {hero_chip}<p class="eyebrow">Frankfurt · Niederrad</p>
                 <h1>C'est la vie<br><span>Sports Bar</span></h1>
                 <p class="tagline">{esc(t["tagline"])}</p>
                 <div class="hero-buttons">
@@ -616,6 +630,7 @@ def render_home(lang, other_href=None):
                 </div>
             </div>
         </section>
+        {ticker}
 
         <section class="section" id="about">
             <div class="container split">
@@ -633,12 +648,12 @@ def render_home(lang, other_href=None):
                 <h2>{esc(t["sportTitle"])}</h2>
                 <p class="lead">{esc(t["sportLead"])}</p>
                 {facts_html}
-                <div class="grid grid-3">
-                    <article class="card reveal"><h3>Bundesliga</h3><p>{esc(t["sport1"])}</p></article>
-                    <article class="card reveal"><h3>Eintracht Frankfurt</h3><p>{esc(t["sport2"])}</p></article>
-                    <article class="card reveal"><h3>Champions League</h3><p>{esc(t["sport3"])}</p></article>
-                    <article class="card reveal"><h3>{esc(t["sport4Title"])}</h3><p>{esc(t["sport4"])}</p></article>
-                    <article class="card reveal"><h3>{esc(t["sport5Title"])}</h3><p>{esc(sport5)}</p></article>
+                <div class="bento">
+                    <article class="card bento-card bento-a reveal"><span class="bento-n" aria-hidden="true">01</span><h3>Bundesliga</h3><p>{esc(t["sport1"])}</p></article>
+                    <article class="card bento-card bento-b reveal"><span class="bento-n" aria-hidden="true">02</span><h3>Eintracht Frankfurt</h3><p>{esc(t["sport2"])}</p></article>
+                    <article class="card bento-card bento-c reveal"><span class="bento-n" aria-hidden="true">03</span><h3>Champions League</h3><p>{esc(t["sport3"])}</p></article>
+                    <article class="card bento-card bento-d reveal"><span class="bento-n" aria-hidden="true">04</span><h3>{esc(t["sport4Title"])}</h3><p>{esc(t["sport4"])}</p></article>
+                    <article class="card bento-card bento-e reveal"><span class="bento-n" aria-hidden="true">05</span><h3>{esc(t["sport5Title"])}</h3><p>{esc(sport5)}</p></article>
                 </div>
             </div>
         </section>
@@ -761,6 +776,7 @@ def render_legal(lang, kind, other_href=None):
     <meta name="robots" content="noindex">
 {head_common(lang, 0)}</head>
 <body>
+    <a class="skip-link" href="#main">{esc(t["skip"])}</a>
     <header class="site-header">
         <div class="container header-inner">
             <a class="brand" href="{home}" aria-label="{attr(SITE["name"])}">{logo_svg()}<span class="brand-title">C'est la <span>vie</span></span></a>
@@ -770,7 +786,7 @@ def render_legal(lang, kind, other_href=None):
             </div>
         </div>
     </header>
-    <main class="container legal">
+    <main class="container legal" id="main">
         <p><a href="{home}">{esc(t["legalBack"])}</a></p>
         <h1>{esc(title)}</h1>
         {body}
@@ -885,6 +901,7 @@ def render_schedule(lang, other_href):
 {meta_block(lang, path, t["schedTitle"], t["schedDesc"])}
 {head_common(lang, path.count("/"), jsonld_scripts(lang, blocks))}</head>
 <body>
+    <a class="skip-link" href="#main">{esc(t["skip"])}</a>
     <header class="site-header">
         <div class="container header-inner">
             <a class="brand" href="{home}" aria-label="{attr(SITE["name"])}">{logo_svg()}<span class="brand-title">C'est la <span>vie</span></span></a>

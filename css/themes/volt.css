@@ -1,0 +1,43 @@
+/* ==========================================================================
+   THEME "volt": electric blue and white, ink-navy at night.
+   Mood: floodlights, clean and modern, Champions League broadcast.
+   Drop-in replacement for css/palette.css (same tokens). Use it by setting
+   PALETTE = "css/themes/volt.css" in build.py.
+
+   Contrast (WCAG 2.2 AA, computed): text, text-2, muted, accent-text on bg and
+   surface >= 4.5:1; on-accent on accent >= 4.5:1 (white on blue in light mode,
+   navy on bright blue in dark mode); status dots >= 3:1; night-* text pairs >= 4.5:1.
+   ========================================================================== */
+
+:root { color-scheme: light dark; }
+:root[data-theme="light"] { color-scheme: light; }
+:root[data-theme="dark"] { color-scheme: dark; }
+
+:root {
+    --bg:          light-dark(#f4f7ff, #070b1d);
+    --surface:     light-dark(#ffffff, #0f1730);
+    --line:        light-dark(#cdd8f2, #25335f);
+    --text:        light-dark(#08123a, #f4f7ff);
+    --text-2:      light-dark(#27345f, #c6d0ee);
+    --muted:       light-dark(#50608f, #93a1cf);
+
+    --accent:      light-dark(#2455f5, #4d8bff);
+    --accent-text: light-dark(#1b45d6, #7ea6ff);
+    --on-accent:   light-dark(#ffffff, #04081c);
+
+    --ok:          light-dark(#0e7a43, #4fd18b);
+    --bad:         light-dark(#c0212f, #ff7a85);
+
+    --shadow:      light-dark(rgb(20 40 120 / .16), rgb(0 0 0 / .6));
+
+    --night:             #070b1d;
+    --night-2:           #0f1730;
+    --night-line:        #25335f;
+    --night-text:        #f4f7ff;
+    --night-muted:       #93a1cf;
+    --night-accent:      #4d8bff;
+    --night-accent-text: #7ea6ff;
+    --night-on-accent:   #04081c;
+    --night-ok:          #4fd18b;
+    --night-bad:         #ff7a85;
+}

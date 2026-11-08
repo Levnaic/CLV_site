@@ -1,0 +1,44 @@
+/* ==========================================================================
+   THEME "gold": monochrome gold on black, warm ivory in light mode.
+   Mood: trophy cabinet, premium, quiet. Status colours stay muted green/red
+   so that open/closed remains distinguishable (text label always present).
+   Drop-in replacement for css/palette.css (same tokens). Use it by setting
+   PALETTE = "css/themes/gold.css" in build.py.
+
+   Contrast (WCAG 2.2 AA, computed): text, text-2, muted, accent-text on bg and
+   surface >= 4.5:1; on-accent on accent >= 4.5:1; status dots >= 3:1;
+   night-* text pairs >= 4.5:1.
+   ========================================================================== */
+
+:root { color-scheme: light dark; }
+:root[data-theme="light"] { color-scheme: light; }
+:root[data-theme="dark"] { color-scheme: dark; }
+
+:root {
+    --bg:          light-dark(#f6f1e4, #0a0a0a);
+    --surface:     light-dark(#fffcf4, #141414);
+    --line:        light-dark(#d9ceb0, #2e2a20);
+    --text:        light-dark(#141108, #f7f1e1);
+    --text-2:      light-dark(#3b3523, #d3cab4);
+    --muted:       light-dark(#62593f, #a0977f);
+
+    --accent:      light-dark(#d9b44a, #d9b44a);
+    --accent-text: light-dark(#7a5a00, #e2bd55);
+    --on-accent:   light-dark(#141108, #0a0a0a);
+
+    --ok:          light-dark(#1d7a3b, #7fcf8f);
+    --bad:         light-dark(#b3261e, #ff7a6e);
+
+    --shadow:      light-dark(rgb(60 45 10 / .16), rgb(0 0 0 / .65));
+
+    --night:             #0a0a0a;
+    --night-2:           #141414;
+    --night-line:        #2e2a20;
+    --night-text:        #f7f1e1;
+    --night-muted:       #a0977f;
+    --night-accent:      #d9b44a;
+    --night-accent-text: #e2bd55;
+    --night-on-accent:   #0a0a0a;
+    --night-ok:          #7fcf8f;
+    --night-bad:         #ff7a6e;
+}
