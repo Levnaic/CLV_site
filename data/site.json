@@ -1,0 +1,137 @@
+{
+  "_readme": "Single source of truth for all business facts. Values starting with 'TODO' are missing: build.py leaves them out of the HTML/schema and lists them in its TODO report. Replace the value with the real fact, then run: python3 build.py",
+
+  "name": "C'est la vie Sports Bar",
+  "area_label": "Frankfurt-Niederrad",
+  "slogan": {
+    "de": "Live Sport · Kühle Drinks · Gute Leute",
+    "en": "Live Sport · Cold Drinks · Good People"
+  },
+
+  "address": {
+    "street": "TODO: Straße und Hausnummer",
+    "postal_code": "60528",
+    "locality": "Frankfurt am Main",
+    "district": "Niederrad",
+    "region": "Hessen",
+    "country": "DE"
+  },
+  "geo": {
+    "lat": "TODO: Breitengrad, z. B. 50.0835",
+    "lng": "TODO: Längengrad, z. B. 8.6375"
+  },
+  "maps_url": "TODO: Google-Maps-Link zum Profil der Bar",
+
+  "contact": {
+    "phone": "TODO: Telefon im Format +49 69 …",
+    "whatsapp": "TODO: WhatsApp-Nummer, nur Ziffern mit Ländervorwahl, z. B. 4917…",
+    "email": "TODO: E-Mail-Adresse"
+  },
+
+  "social": {
+    "instagram": { "url": "TODO: Instagram-URL", "handle": "TODO: @handle" },
+    "facebook": { "url": "TODO: Facebook-URL", "handle": "TODO: Seitenname" },
+    "tiktok": { "url": "TODO: TikTok-URL", "handle": "TODO: @handle" },
+    "google_business_profile": "TODO: Google-Business-Profil-URL"
+  },
+
+  "hours": {
+    "confirmed": false,
+    "note": "Diese Zeiten stammen aus dem bisherigen Platzhalter in js/main.js. Bitte prüfen. Solange confirmed=false, kommen die Zeiten NICHT ins Schema (openingHoursSpecification).",
+    "days": {
+      "Monday": { "open": "16:00", "close": "01:00" },
+      "Tuesday": { "open": "16:00", "close": "01:00" },
+      "Wednesday": { "open": "16:00", "close": "01:00" },
+      "Thursday": { "open": "16:00", "close": "01:00" },
+      "Friday": { "open": "16:00", "close": "03:00" },
+      "Saturday": { "open": "16:00", "close": "03:00" },
+      "Sunday": { "open": "14:00", "close": "00:00" }
+    }
+  },
+
+  "venue": {
+    "screens": "TODO: Anzahl Bildschirme",
+    "seats": "TODO: Anzahl Sitzplätze",
+    "sound_on_for_eintracht": "TODO: true/false – Ton bei Eintracht-Spielen an?",
+    "shows_all_eintracht_matches": "TODO: true/false – alle Eintracht-Spiele (Heim und Auswärts)?",
+    "subscriptions": "TODO: Liste, z. B. [\"Sky\", \"DAZN\"]",
+    "accepts_reservations": "TODO: true/false",
+    "reservation_how": {
+      "de": "TODO: Wie reserviert man? (Telefon / WhatsApp / E-Mail)",
+      "en": "TODO: How to reserve"
+    },
+    "price_range": "TODO: €, €€ oder €€€"
+  },
+
+  "sports": {
+    "confirmed": false,
+    "note": "Aus dem bisherigen Seitentext übernommen, vom Inhaber noch nicht bestätigt.",
+    "items": ["Bundesliga", "Eintracht Frankfurt", "Champions League", "Formel 1", "Darts", "Länderspiele und große Turniere"]
+  },
+
+  "local": {
+    "stadium_name": "Deutsche Bank Park",
+    "walk_from_stadium": {
+      "de": "TODO: Weg vom Stadion zur Bar, z. B. „ca. 25 Minuten zu Fuß“",
+      "en": "TODO: Route from the stadium to the bar"
+    },
+    "nearby": ["DFB-Campus", "Bürostadt Niederrad"],
+    "nearby_note": "Die Orte liegen real in/bei Niederrad; Entfernungen zur Bar erst eintragen, wenn die Adresse feststeht.",
+    "public_transport": {
+      "de": "TODO: ÖPNV-Anbindung (Haltestelle, Linien)",
+      "en": "TODO: Public transport"
+    }
+  },
+
+  "events": {
+    "confirmed": false,
+    "note": "Kurztexte aus dem bisherigen Seitentext. Die Detailtexte ('more') waren Platzhalter und fehlen bewusst: bitte echte Infos eintragen.",
+    "items": [
+      {
+        "id": "matchday",
+        "tag": { "de": "Jeden Spieltag", "en": "Every matchday" },
+        "title": { "de": "Match Day", "en": "Match Day" },
+        "short": { "de": "Anstoß, Stimmung, Getränkeangebote. Kommt früh, die Plätze sind begehrt.", "en": "Kick-off, atmosphere, drink specials. Come early, seats go fast." },
+        "more": null
+      },
+      {
+        "id": "party",
+        "tag": { "de": "Regelmäßig", "en": "Regularly" },
+        "title": { "de": "Partyabende", "en": "Party nights" },
+        "short": { "de": "Musik, Drinks und gute Laune bis spät in die Nacht.", "en": "Music, drinks and good vibes late into the night." },
+        "more": null
+      },
+      {
+        "id": "private",
+        "tag": { "de": "Auf Anfrage", "en": "On request" },
+        "title": { "de": "Private Feiern", "en": "Private parties" },
+        "short": { "de": "Geburtstag, Vereinsabend oder Firmenfeier – sprecht uns einfach an.", "en": "Birthday, club night or company party – just talk to us." },
+        "more": null
+      },
+      {
+        "id": "quiz",
+        "tag": { "de": "Wöchentlich", "en": "Weekly" },
+        "title": { "de": "Quizabend", "en": "Quiz night" },
+        "short": { "de": "Teste dein Wissen im Team und gewinne Getränke.", "en": "Test your knowledge as a team and win drinks." },
+        "more": null
+      }
+    ]
+  },
+
+  "legal": {
+    "owner_name": "TODO: Name des Inhabers / der Betreibergesellschaft",
+    "trade_register": "TODO: Handelsregister (falls vorhanden)",
+    "vat_id": "TODO: USt-IdNr. (falls vorhanden)",
+    "hosting_provider": "TODO: Hosting-Anbieter (für Datenschutzerklärung)"
+  },
+
+  "images": {
+    "og_image": "TODO: echtes Foto 1200×630 als assets/img/og-image.jpg (bis dahin wird es aus hero.svg erzeugt)",
+    "photos_are_real": false
+  },
+
+  "site": {
+    "domain": "TODO: Domain wählen; in build.py SITE_URL anpassen",
+    "launch_note": "robots.txt erlaubt alles. Vor Livegang Platzhalter-Bilder durch echte Fotos ersetzen."
+  }
+}
