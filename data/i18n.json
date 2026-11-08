@@ -128,7 +128,36 @@
       "Fr",
       "Sa"
     ],
-    "faqNav": "Fragen"
+    "faqNav": "Fragen",
+    "navSchedule": "Spielplan",
+    "schedTitle": "Spielplan – Live-Sport in der C'est la vie Sports Bar Frankfurt-Niederrad",
+    "schedDesc": "Die nächsten Spiele, die die C'est la vie Sports Bar in Frankfurt-Niederrad live zeigt: Bundesliga, Eintracht Frankfurt und mehr.",
+    "schedH1": "Spielplan",
+    "schedIntro": "Diese Spiele zeigen wir live in der C'est la vie Sports Bar in Frankfurt-Niederrad.",
+    "schedEmpty": "Aktuell sind keine Spiele eingetragen.",
+    "exampleBadge": "Beispiel – kein echter Termin",
+    "exampleNote": "Mit „Beispiel“ markierte Einträge sind Platzhalter für den späteren Spielplan.",
+    "localTitle": "Anfahrt & Umgebung",
+    "localLead": "Die C'est la vie Sports Bar liegt in Frankfurt-Niederrad.",
+    "localStadium": "Zum {stadium}: {walk}",
+    "localNearby": "In der Nähe: {places}.",
+    "localPt": "Mit dem ÖPNV: {pt}",
+    "months": [
+      "Jan",
+      "Feb",
+      "Mär",
+      "Apr",
+      "Mai",
+      "Jun",
+      "Jul",
+      "Aug",
+      "Sep",
+      "Okt",
+      "Nov",
+      "Dez"
+    ],
+    "timeSuffix": " Uhr",
+    "toHome": "← Zur Startseite"
   },
   "en": {
     "title": "C'est la vie Sports Bar Frankfurt-Niederrad | Watch Bundesliga & Eintracht live",
@@ -259,6 +288,35 @@
       "Fri",
       "Sat"
     ],
-    "faqNav": "FAQ"
+    "faqNav": "FAQ",
+    "navSchedule": "Schedule",
+    "schedTitle": "Match schedule – live sport at C'est la vie Sports Bar Frankfurt-Niederrad",
+    "schedDesc": "The next matches shown live at C'est la vie Sports Bar in Frankfurt-Niederrad: Bundesliga, Eintracht Frankfurt and more.",
+    "schedH1": "Match schedule",
+    "schedIntro": "These are the matches we show live at C'est la vie Sports Bar in Frankfurt-Niederrad.",
+    "schedEmpty": "No matches are listed at the moment.",
+    "exampleBadge": "Example – not a real fixture",
+    "exampleNote": "Entries marked “Example” are placeholders for the future schedule.",
+    "localTitle": "Directions & area",
+    "localLead": "C'est la vie Sports Bar is in Frankfurt-Niederrad.",
+    "localStadium": "To {stadium}: {walk}",
+    "localNearby": "Nearby: {places}.",
+    "localPt": "By public transport: {pt}",
+    "months": [
+      "Jan",
+      "Feb",
+      "Mar",
+      "Apr",
+      "May",
+      "Jun",
+      "Jul",
+      "Aug",
+      "Sep",
+      "Oct",
+      "Nov",
+      "Dec"
+    ],
+    "timeSuffix": "",
+    "toHome": "← Back to home"
   }
 }

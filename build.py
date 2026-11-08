@@ -10,6 +10,8 @@ import html
 import json
 import os
 import sys
+from datetime import datetime, timedelta, timezone
+from zoneinfo import ZoneInfo
 from pathlib import Path
 from urllib.parse import quote
 
@@ -23,6 +25,9 @@ OUT = Path(os.environ.get("CLV_OUT_DIR", ROOT))
 SITE = json.loads((DATA / "site.json").read_text(encoding="utf-8"))
 DRINKS = json.loads((DATA / "drinks.json").read_text(encoding="utf-8"))
 I18N = json.loads((DATA / "i18n.json").read_text(encoding="utf-8"))
+SCHEDULE = json.loads((DATA / "schedule.json").read_text(encoding="utf-8"))
+NOW = datetime.now(timezone.utc)  # build time: past matches are hidden relative to this
+TZ = ZoneInfo("Europe/Berlin")
 
 TODOS = []  # collected while building
 
@@ -141,6 +146,7 @@ PAGES = {
     "home": {"de": "", "en": ""},
     "impressum": {"de": "impressum.html", "en": "impressum.html"},
     "datenschutz": {"de": "datenschutz.html", "en": "datenschutz.html"},
+    "schedule": {"de": "spielplan/", "en": "schedule/"},
 }
 
 
@@ -384,9 +390,9 @@ def check_schema(obj, where):
             raise SystemExit(f"ERROR: placeholder value in JSON-LD ({where}): {v!r}")
 
 
-def jsonld_scripts(lang):
+def jsonld_scripts(lang, blocks=None):
     out = []
-    for block in (bar_schema(lang), faq_schema(lang)):
+    for block in (blocks if blocks is not None else (bar_schema(lang), faq_schema(lang))):
         if block:
             check_schema(block, lang)
             txt = json.dumps(block, ensure_ascii=False, indent=4).replace("</", "<\\/")
@@ -559,6 +565,8 @@ def render_home(lang, other_href=None):
     n_screens = get("venue.screens", report=False)
     sport5 = t["sport5Screens"].format(n=n_screens) if n_screens else t["sport5"]
     faq = faq_section(lang)
+    sched_href = PAGES["schedule"][lang]
+    local = local_section(lang)
     return f'''<!DOCTYPE html>
 <html lang="{lang}">
 <head>
@@ -577,6 +585,7 @@ def render_home(lang, other_href=None):
                 <ul>
                     <li><a href="#about">{esc(t["navAbout"])}</a></li>
                     <li><a href="#sport">{esc(t["navSport"])}</a></li>
+                    <li><a href="{sched_href}">{esc(t["navSchedule"])}</a></li>
                     <li><a href="#drinks">{esc(t["navDrinks"])}</a></li>
                     <li><a href="#events">{esc(t["navEvents"])}</a></li>
                     <li><a href="#gallery">{esc(t["navGallery"])}</a></li>
@@ -602,7 +611,7 @@ def render_home(lang, other_href=None):
                 <h1>C'est la vie<br><span>Sports Bar</span></h1>
                 <p class="tagline">{esc(t["tagline"])}</p>
                 <div class="hero-buttons">
-                    <a class="btn btn-primary" href="#sport">{esc(t["btnLive"])}</a>
+                    <a class="btn btn-primary" href="{sched_href}">{esc(t["btnLive"])}</a>
                     <a class="btn btn-ghost" href="#visit">{esc(t["btnRoute"])}</a>
                 </div>
             </div>
@@ -680,7 +689,7 @@ def render_home(lang, other_href=None):
                 </div>
             </div>
         </section>
-{faq}{contact_section}    </main>
+{local}{faq}{contact_section}    </main>
 
     <footer class="site-footer">
         <div class="container footer-inner">
@@ -773,6 +782,140 @@ def render_legal(lang, kind, other_href=None):
 '''
 
 
+# ---------------------------------------------------------------- schedule + local angle
+def upcoming_matches():
+    """Matches that have not finished yet (start + 3 h > build time), sorted by start."""
+    out = []
+    for m in SCHEDULE.get("matches", []):
+        start = datetime.fromisoformat(m["start"])
+        if start + timedelta(hours=3) > NOW:
+            out.append((start, m))
+    return sorted(out, key=lambda x: x[0])
+
+
+def fmt_match_time(lang, start):
+    t = I18N[lang]
+    d = start.astimezone(TZ)
+    wd = t["dayShort"][(d.weekday() + 1) % 7]  # dayShort index 0 = Sunday
+    if lang == "de":
+        day = f"{wd}., {d.day:02d}.{d.month:02d}.{d.year}"
+    else:
+        day = f"{wd} {d.day} {t['months'][d.month - 1]} {d.year}"
+    return f"{day}, {d:%H:%M}{t['timeSuffix']}"
+
+
+def sports_event_schema(lang, start, m):
+    teams = f'{m["home"]} – {m["away"]}'
+    name = f'{teams} ({m["competition"]})' if m.get("competition") else teams
+    d = {
+        "@context": "https://schema.org",
+        "@type": "SportsEvent",
+        "@id": f'{page_url(lang, PAGES["schedule"][lang])}#{m["id"]}',
+        "name": name,
+        "startDate": start.isoformat(),
+        "eventStatus": "https://schema.org/EventScheduled",
+        "eventAttendanceMode": "https://schema.org/OfflineEventAttendanceMode",
+        "homeTeam": {"@type": "SportsTeam", "name": m["home"]},
+        "awayTeam": {"@type": "SportsTeam", "name": m["away"]},
+        "url": page_url(lang, PAGES["schedule"][lang]),
+        "location": {"@id": BAR_ID},
+    }
+    return d
+
+
+def local_paragraphs(lang):
+    """Local-angle sentences, only from confirmed facts in site.json."""
+    t = I18N[lang]
+    L = SITE["local"]
+    parts = [t["localLead"]]
+    walk = loc(get("local.walk_from_stadium"), lang)
+    if walk and not missing(walk):
+        parts.append(t["localStadium"].format(stadium=L["stadium_name"], walk=walk))
+    if L.get("nearby_confirmed") is True and L.get("nearby"):
+        parts.append(t["localNearby"].format(places=", ".join(L["nearby"])))
+    elif "local.nearby_confirmed" not in TODOS:
+        TODOS.append("local.nearby_confirmed (set true once the bar is confirmed to be near DFB-Campus / Bürostadt)")
+    pt = loc(get("local.public_transport"), lang)
+    if pt and not missing(pt):
+        parts.append(t["localPt"].format(pt=pt))
+    return parts
+
+
+def local_section(lang):
+    t = I18N[lang]
+    paras = "".join(f"<p>{esc(x)}</p>" for x in local_paragraphs(lang))
+    return f'''
+        <section class="section" id="local">
+            <div class="container">
+                <h2>{esc(t["localTitle"])}</h2>
+                <div class="local">{paras}</div>
+            </div>
+        </section>
+'''
+
+
+def render_schedule(lang, other_href):
+    t = I18N[lang]
+    path = PAGES["schedule"][lang]
+    r = "../" * (path.count("/") + (0 if lang == DEFAULT_LANG else 1))
+    matches = upcoming_matches()
+    items, blocks, any_example = [], [bar_schema(lang)], False
+    for start, m in matches:
+        ex = bool(m.get("example"))
+        any_example |= ex
+        badge = f'<span class="tag">{esc(t["exampleBadge"])}</span>' if ex else ""
+        comp = f'<span class="match-comp">{esc(m["competition"])}</span>' if m.get("competition") else ""
+        note = loc(m.get("note"), lang)
+        note_html = f'<p class="match-note">{esc(note)}</p>' if note else ""
+        items.append(
+            f'<li class="match" id="{attr(m["id"])}"><time datetime="{attr(start.isoformat())}">{esc(fmt_match_time(lang, start))}</time>'
+            f'<h3 class="match-title">{esc(m["home"])} – {esc(m["away"])}</h3>{comp}{badge}{note_html}</li>')
+        if not ex:
+            blocks.append(sports_event_schema(lang, start, m))
+    body = ('<ul class="match-list">' + "".join(items) + "</ul>") if items else f'<p>{esc(t["schedEmpty"])}</p>'
+    example_note = f'<p class="match-note">{esc(t["exampleNote"])}</p>' if any_example else ""
+    local = "".join(f"<p>{esc(x)}</p>" for x in local_paragraphs(lang))
+    home = r + lang_prefix(lang)
+    return f'''<!DOCTYPE html>
+<html lang="{lang}">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{esc(t["schedTitle"])}</title>
+{meta_block(lang, path, t["schedTitle"], t["schedDesc"])}
+{head_common(lang, path.count("/"), jsonld_scripts(lang, blocks))}</head>
+<body>
+    <header class="site-header">
+        <div class="container header-inner">
+            <a class="brand" href="{home}" aria-label="{attr(SITE["name"])}">{logo_svg()}<span class="brand-title">C'est la <span>vie</span></span></a>
+            <div class="header-actions">
+                <button class="theme-btn" id="themeBtn" type="button" aria-label="{attr(t["themeBtn"])}"></button>
+                {lang_switch(lang, other_href)}
+            </div>
+        </div>
+    </header>
+    <main class="container legal schedule" id="main">
+        <p><a href="{home}">{esc(t["toHome"])}</a></p>
+        <h1>{esc(t["schedH1"])}</h1>
+        <p>{esc(t["schedIntro"])}</p>
+        {body}
+        {example_note}
+        <h2>{esc(t["localTitle"])}</h2>
+        <div class="local">{local}</div>
+    </main>
+    <footer class="site-footer">
+        <div class="container footer-inner">
+            <p>© <span id="year">2026</span> {esc(SITE["name"])} · {esc(SITE["area_label"])}</p>
+            <p><a href="{r}{lang_prefix(lang)}impressum.html">{esc(t["imprint"])}</a> · <a href="{r}{lang_prefix(lang)}datenschutz.html">{esc(t["privacy"])}</a></p>
+        </div>
+    </footer>
+    <script type="application/json" id="ui-data">{ui_data(lang)}</script>
+    <script src="{r}js/main.js"></script>
+</body>
+</html>
+'''
+
+
 # ---------------------------------------------------------------- build
 def write(rel, content):
     p = OUT / rel
@@ -787,6 +930,7 @@ def main():
         write(pre + "index.html", render_home(lang, switch_href(lang, "")))
         write(pre + "impressum.html", render_legal(lang, "impressum", switch_href(lang, "impressum.html")))
         write(pre + "datenschutz.html", render_legal(lang, "datenschutz", switch_href(lang, "datenschutz.html")))
+        write(pre + PAGES["schedule"][lang] + "index.html", render_schedule(lang, switch_href(lang, PAGES["schedule"][lang])))
     if TODOS:
         print("\nTODO – missing data in data/site.json (left out of the output):")
         for k in sorted(set(TODOS)):

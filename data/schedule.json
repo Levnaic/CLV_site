@@ -1,0 +1,32 @@
+{
+  "_readme": "Spielplan. Ein Eintrag pro Spiel, das die Bar zeigt. 'start' mit Zeitzone, z. B. 2027-02-06T15:30:00+01:00. Vergangene Spiele blendet build.py automatisch aus (3 Stunden nach Anstoß). 'example': true markiert Beispiel-Einträge: sie werden als Beispiel gekennzeichnet und bekommen KEIN SportsEvent-Schema. Zum Start die Beispiele löschen und echte Spiele eintragen. Danach: python3 build.py",
+  "matches": [
+    {
+      "id": "beispiel-1",
+      "example": true,
+      "competition": "Beispiel",
+      "home": "Beispiel-Team A",
+      "away": "Beispiel-Team B",
+      "start": "2027-02-06T15:30:00+01:00",
+      "note": { "de": "", "en": "" }
+    },
+    {
+      "id": "beispiel-2",
+      "example": true,
+      "competition": "Beispiel",
+      "home": "Beispiel-Team C",
+      "away": "Beispiel-Team D",
+      "start": "2027-02-13T18:30:00+01:00",
+      "note": { "de": "", "en": "" }
+    },
+    {
+      "id": "beispiel-3",
+      "example": true,
+      "competition": "Beispiel",
+      "home": "Beispiel-Team E",
+      "away": "Beispiel-Team F",
+      "start": "2027-02-20T20:45:00+01:00",
+      "note": { "de": "", "en": "" }
+    }
+  ]
+}
