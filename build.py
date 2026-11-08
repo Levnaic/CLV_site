@@ -260,6 +260,118 @@ def faq_section(lang):
 '''
 
 
+# ---------------------------------------------------------------- structured data (JSON-LD)
+BAR_ID = SITE_URL + "/#bar"  # one stable entity id for all languages
+SCHEMA_DAYS = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"]
+AMENITY = {
+    "de": {"screens": "Bildschirme", "seats": "Sitzplätze", "sound": "Ton bei Spielen von Eintracht Frankfurt"},
+    "en": {"screens": "Screens", "seats": "Seats", "sound": "Sound on for Eintracht Frankfurt matches"},
+}
+BAD_VALUES = ("TODO", "Muster", "example.com", "000000", "Platzhalter")
+
+
+def bar_schema(lang):
+    d = {
+        "@context": "https://schema.org",
+        "@type": "BarOrPub",
+        "@id": BAR_ID,
+        "name": SITE["name"],
+        "url": page_url(lang),
+        "description": home_description(lang),
+        "image": f"{SITE_URL}/assets/img/og-image.jpg",
+    }
+    phone, mail = get("contact.phone", report=False), get("contact.email", report=False)
+    if phone:
+        d["telephone"] = phone
+    if mail:
+        d["email"] = mail
+    addr = {"@type": "PostalAddress"}
+    street = get("address.street", report=False)
+    if street:
+        addr["streetAddress"] = street
+    addr.update({
+        "postalCode": SITE["address"]["postal_code"],
+        "addressLocality": SITE["address"]["locality"],
+        "addressRegion": SITE["address"]["region"],
+        "addressCountry": SITE["address"]["country"],
+    })
+    d["address"] = addr
+    try:
+        d["geo"] = {"@type": "GeoCoordinates", "latitude": float(get("geo.lat", report=False)),
+                    "longitude": float(get("geo.lng", report=False))}
+    except (TypeError, ValueError):
+        pass
+    if SITE["hours"].get("confirmed") is True:
+        groups = {}
+        for name in SCHEMA_DAYS:
+            e = SITE["hours"]["days"].get(name)
+            if e:
+                groups.setdefault((e["open"], e["close"]), []).append(name)
+        d["openingHoursSpecification"] = [
+            {"@type": "OpeningHoursSpecification", "dayOfWeek": days, "opens": o, "closes": c}
+            for (o, c), days in groups.items()]
+    pr = get("venue.price_range", report=False)
+    if pr:
+        d["priceRange"] = pr
+    acc = get("venue.accepts_reservations", report=False)
+    if isinstance(acc, bool):
+        d["acceptsReservations"] = acc
+    am = AMENITY[lang]
+    feats = []
+    n = get("venue.screens", report=False)
+    if n:
+        feats.append({"@type": "LocationFeatureSpecification", "name": am["screens"], "value": n})
+    n = get("venue.seats", report=False)
+    if n:
+        feats.append({"@type": "LocationFeatureSpecification", "name": am["seats"], "value": n})
+    if get("venue.sound_on_for_eintracht", report=False) is True:
+        feats.append({"@type": "LocationFeatureSpecification", "name": am["sound"], "value": True})
+    if feats:
+        d["amenityFeature"] = feats
+    same = [get(f"social.{k}.url", report=False) for k in ("instagram", "facebook", "tiktok")]
+    same.append(get("social.google_business_profile", report=False))
+    same = [u for u in same if u]
+    if same:
+        d["sameAs"] = same
+    if get("maps_url", report=False):
+        d["hasMap"] = get("maps_url", report=False)
+    return d
+
+
+def faq_schema(lang):
+    items = faq_items(lang)
+    if not items:
+        return None
+    return {
+        "@context": "https://schema.org",
+        "@type": "FAQPage",
+        "@id": page_url(lang) + "#faq",
+        "url": page_url(lang),
+        "inLanguage": lang,
+        "about": {"@id": BAR_ID},
+        "mainEntity": [{"@type": "Question", "name": q, "acceptedAnswer": {"@type": "Answer", "text": a}}
+                       for q, a in items],
+    }
+
+
+def check_schema(obj, where):
+    for v in (obj.values() if isinstance(obj, dict) else obj):
+        if isinstance(v, (dict, list)):
+            check_schema(v, where)
+        elif isinstance(v, str) and any(b in v for b in BAD_VALUES):
+            raise SystemExit(f"ERROR: placeholder value in JSON-LD ({where}): {v!r}")
+
+
+def jsonld_scripts(lang):
+    out = []
+    for block in (bar_schema(lang), faq_schema(lang)):
+        if block:
+            check_schema(block, lang)
+            txt = json.dumps(block, ensure_ascii=False, indent=4).replace("</", "<\\/")
+            out.append('    <script type="application/ld+json">\n' + "\n".join("    " + l for l in txt.splitlines()) + "\n    </script>")
+    return "\n".join(out) + "\n"
+
+
 # ---------------------------------------------------------------- page fragments
 def head_common(lang, depth, extra=""):
     r = rel_root(lang, depth)
@@ -419,7 +531,7 @@ def render_home(lang, other_href=None):
 ''' if contact else ""
     nav_contact = f'\n                    <li><a href="#contact">{esc(t["navContact"])}</a></li>' if contact else ""
     status = '<p class="status" id="status" aria-live="polite"></p>\n                        ' if SITE["hours"]["days"] else ""
-    head = head_common(lang, 0, "")
+    head = head_common(lang, 0, jsonld_scripts(lang))
     facts = venue_facts(lang)
     facts_html = ('<ul class="facts">' + "".join(f"<li>{esc(f)}</li>" for f in facts) + "</ul>") if facts else ""
     n_screens = get("venue.screens", report=False)
