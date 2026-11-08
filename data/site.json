@@ -1,13 +1,13 @@
 {
   "_readme": "Single source of truth for all business facts. Values starting with 'TODO' are missing: build.py leaves them out of the HTML/schema and lists them in its TODO report. Replace the value with the real fact, then run: python3 build.py",
-  "name": "C'est la vie Sports Bar",
+  "name": "C'est la Vie Café & Sportsbar",
   "area_label": "Frankfurt-Niederrad",
   "slogan": {
     "de": "Live Sport · Kühle Drinks · Gute Leute",
     "en": "Live Sport · Cold Drinks · Good People"
   },
   "address": {
-    "street": "TODO: Straße und Hausnummer",
+    "street": "Schwarzwaldstraße 79",
     "postal_code": "60528",
     "locality": "Frankfurt am Main",
     "district": "Niederrad",
@@ -15,19 +15,19 @@
     "country": "DE"
   },
   "geo": {
-    "lat": "TODO: Breitengrad, z. B. 50.0835",
-    "lng": "TODO: Längengrad, z. B. 8.6375"
+    "lat": "50.085943",
+    "lng": "8.651535"
   },
-  "maps_url": "TODO: Google-Maps-Link zum Profil der Bar",
+  "maps_url": "https://maps.app.goo.gl/U6kGrxTTeQX3aGoNA",
   "contact": {
-    "phone": "TODO: Telefon im Format +49 69 …",
-    "whatsapp": "TODO: WhatsApp-Nummer, nur Ziffern mit Ländervorwahl, z. B. 4917…",
+    "phone": "+491744800000",
+    "whatsapp": "491744800000",
     "email": "TODO: E-Mail-Adresse"
   },
   "social": {
     "instagram": {
       "url": "TODO: Instagram-URL",
-      "handle": "TODO: @handle"
+      "handle": "01744800000"
     },
     "facebook": {
       "url": "TODO: Facebook-URL",
@@ -37,7 +37,7 @@
       "url": "TODO: TikTok-URL",
       "handle": "TODO: @handle"
     },
-    "google_business_profile": "TODO: Google-Business-Profil-URL"
+    "google_business_profile": "https://www.google.com/maps/place/C'est+la+Vie+Caf%C3%A9+%26+Sportsbar/@50.0840074,8.645963,16z/data=!4m6!3m5!1s0x47bd0b8c362376bf:0x5ab482bcaa42f907!8m2!3d50.0840074!4d8.6498803!16s%2Fg%2F11bw6292pc?entry=ttu&g_ep=EgoyMDI2MTEwMy4wIKXMDSoASAFQAw%3D%3D"
   },
   "hours": {
     "confirmed": false,
