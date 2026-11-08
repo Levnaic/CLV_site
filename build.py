@@ -150,6 +150,7 @@ PAGES = {
     "impressum": {"de": "impressum.html", "en": "impressum.html"},
     "datenschutz": {"de": "datenschutz.html", "en": "datenschutz.html"},
     "schedule": {"de": "spielplan/", "en": "schedule/"},
+    "eintracht": {"de": "eintracht/", "en": "eintracht/"},
 }
 
 
@@ -435,6 +436,71 @@ def lang_switch(lang, other_href):
             f'aria-label="{aria}">{label}</a>')
 
 
+def home_href(path):
+    """Relative link from a page (path relative to its language root) to that language's home page."""
+    return "../" * path.count("/") or "./"
+
+
+HOME_ICON = ('<svg class="nav-icon" viewBox="0 0 24 24" aria-hidden="true" focusable="false">'
+             '<path d="M3 11.5 12 4l9 7.5M5.5 9.5V20h5v-6h3v6h5V9.5"/></svg>')
+
+
+def menu_button(t):
+    return (f'<button class="menu-btn" id="menuBtn" type="button" aria-expanded="false" aria-controls="nav" aria-label="{attr(t["menuOpen"])}">\n'
+            '                    <span></span><span></span><span></span>\n'
+            '                </button>')
+
+
+def subpage_header(lang, path, current, other_href):
+    """Header for every page except home: logo -> home, a nav with a clear Home item, theme, language, menu."""
+    t = I18N[lang]
+    home = home_href(path)
+    links = [
+        ("home", home, HOME_ICON + esc(t["navHome"])),
+        ("schedule", home + PAGES["schedule"][lang], esc(t["navSchedule"])),
+        ("eintracht", home + PAGES["eintracht"][lang], esc(t["navEintracht"])),
+        (None, home + "#events", esc(t["navEvents"])),
+        (None, home + "#visit", esc(t["navVisit"])),
+    ]
+    cur = ' aria-current="page"'
+    items = "\n                    ".join(
+        f'<li><a href="{attr(href)}"{cur if key == current else ""}>{label}</a></li>'
+        for key, href, label in links)
+    return f'''    <header class="site-header">
+        <div class="container header-inner">
+            <a class="brand" href="{home}" aria-label="{attr(t["brandHome"].format(name=SITE["name"]))}">{logo_svg()}<span class="brand-title">C'est la <span>vie</span></span></a>
+            <nav id="nav" class="nav" aria-label="{attr(t["navLabel"])}">
+                <ul>
+                    {items}
+                </ul>
+            </nav>
+            <div class="header-actions">
+                <button class="theme-btn" id="themeBtn" type="button" aria-label="{attr(t["themeBtn"])}"></button>
+                {lang_switch(lang, other_href)}
+                {menu_button(t)}
+            </div>
+        </div>
+    </header>'''
+
+
+def back_link(lang, path, end=False):
+    """'Back to home' link, shown at the top and the bottom of every sub page."""
+    t = I18N[lang]
+    cls = "back-row back-row-end" if end else "back-row"
+    return (f'<p class="{cls}"><a class="back-link" href="{home_href(path)}">'
+            f'<span class="back-arrow" aria-hidden="true">←</span>{esc(t["backHome"])}</a></p>')
+
+
+def site_footer(lang, home=""):
+    t = I18N[lang]
+    return f'''    <footer class="site-footer">
+        <div class="container footer-inner">
+            <p>© <span id="year">2026</span> {esc(SITE["name"])} · {esc(SITE["area_label"])}</p>
+            <p><a href="{home}impressum.html">{esc(t["imprint"])}</a> · <a href="{home}datenschutz.html">{esc(t["privacy"])}</a></p>
+        </div>
+    </footer>'''
+
+
 def drinks_html(lang):
     cats = DRINKS.get("categories", [])
     cur = DRINKS.get("currency", "€")
@@ -600,6 +666,7 @@ def render_home(lang, other_href=None):
                     <li><a href="#about">{esc(t["navAbout"])}</a></li>
                     <li><a href="#sport">{esc(t["navSport"])}</a></li>
                     <li><a href="{sched_href}">{esc(t["navSchedule"])}</a></li>
+                    <li><a href="{PAGES["eintracht"][lang]}">{esc(t["navEintracht"])}</a></li>
                     <li><a href="#drinks">{esc(t["navDrinks"])}</a></li>
                     <li><a href="#events">{esc(t["navEvents"])}</a></li>
                     <li><a href="#gallery">{esc(t["navGallery"])}</a></li>
@@ -609,9 +676,7 @@ def render_home(lang, other_href=None):
             <div class="header-actions">
                 <button class="theme-btn" id="themeBtn" type="button" aria-label="{attr(t["themeBtn"])}"></button>
                 {lang_switch(lang, other_href)}
-                <button class="menu-btn" id="menuBtn" type="button" aria-expanded="false" aria-controls="nav" aria-label="{attr(t["menuOpen"])}">
-                    <span></span><span></span><span></span>
-                </button>
+                {menu_button(t)}
             </div>
         </div>
     </header>
@@ -706,12 +771,7 @@ def render_home(lang, other_href=None):
         </section>
 {local}{faq}{contact_section}    </main>
 
-    <footer class="site-footer">
-        <div class="container footer-inner">
-            <p>© <span id="year">2026</span> {esc(SITE["name"])} · {esc(SITE["area_label"])}</p>
-            <p><a href="impressum.html">{esc(t["imprint"])}</a> · <a href="datenschutz.html">{esc(t["privacy"])}</a></p>
-        </div>
-    </footer>
+{site_footer(lang)}
 
     <div class="{mobile_cls}" aria-label="{attr(t["quick"])}">
         {call}
@@ -765,7 +825,7 @@ def render_legal(lang, kind, other_href=None):
     imp, priv = legal_lines(lang)
     title = t["legalTitle"] if kind == "impressum" else t["pTitle"]
     body = imp if kind == "impressum" else priv
-    home = "./"
+    path = kind + ".html"
     return f'''<!DOCTYPE html>
 <html lang="{lang}">
 <head>
@@ -777,20 +837,14 @@ def render_legal(lang, kind, other_href=None):
 {head_common(lang, 0)}</head>
 <body>
     <a class="skip-link" href="#main">{esc(t["skip"])}</a>
-    <header class="site-header">
-        <div class="container header-inner">
-            <a class="brand" href="{home}" aria-label="{attr(SITE["name"])}">{logo_svg()}<span class="brand-title">C'est la <span>vie</span></span></a>
-            <div class="header-actions">
-                <button class="theme-btn" id="themeBtn" type="button" aria-label="{attr(t["themeBtn"])}"></button>
-                {lang_switch(lang, other_href)}
-            </div>
-        </div>
-    </header>
+{subpage_header(lang, path, kind, other_href)}
     <main class="container legal" id="main">
-        <p><a href="{home}">{esc(t["legalBack"])}</a></p>
+        {back_link(lang, path)}
         <h1>{esc(title)}</h1>
         {body}
+        {back_link(lang, path, end=True)}
     </main>
+{site_footer(lang, home_href(path))}
     <script type="application/json" id="ui-data">{ui_data(lang)}</script>
     <script src="{r}js/main.js"></script>
 </body>
@@ -891,7 +945,6 @@ def render_schedule(lang, other_href):
     body = ('<ul class="match-list">' + "".join(items) + "</ul>") if items else f'<p>{esc(t["schedEmpty"])}</p>'
     example_note = f'<p class="match-note">{esc(t["exampleNote"])}</p>' if any_example else ""
     local = "".join(f"<p>{esc(x)}</p>" for x in local_paragraphs(lang))
-    home = r + lang_prefix(lang)
     return f'''<!DOCTYPE html>
 <html lang="{lang}">
 <head>
@@ -902,30 +955,232 @@ def render_schedule(lang, other_href):
 {head_common(lang, path.count("/"), jsonld_scripts(lang, blocks))}</head>
 <body>
     <a class="skip-link" href="#main">{esc(t["skip"])}</a>
-    <header class="site-header">
-        <div class="container header-inner">
-            <a class="brand" href="{home}" aria-label="{attr(SITE["name"])}">{logo_svg()}<span class="brand-title">C'est la <span>vie</span></span></a>
-            <div class="header-actions">
-                <button class="theme-btn" id="themeBtn" type="button" aria-label="{attr(t["themeBtn"])}"></button>
-                {lang_switch(lang, other_href)}
-            </div>
-        </div>
-    </header>
+{subpage_header(lang, path, "schedule", other_href)}
     <main class="container legal schedule" id="main">
-        <p><a href="{home}">{esc(t["toHome"])}</a></p>
+        {back_link(lang, path)}
         <h1>{esc(t["schedH1"])}</h1>
         <p>{esc(t["schedIntro"])}</p>
         {body}
         {example_note}
         <h2>{esc(t["localTitle"])}</h2>
         <div class="local">{local}</div>
+        {back_link(lang, path, end=True)}
     </main>
-    <footer class="site-footer">
-        <div class="container footer-inner">
-            <p>© <span id="year">2026</span> {esc(SITE["name"])} · {esc(SITE["area_label"])}</p>
-            <p><a href="{r}{lang_prefix(lang)}impressum.html">{esc(t["imprint"])}</a> · <a href="{r}{lang_prefix(lang)}datenschutz.html">{esc(t["privacy"])}</a></p>
-        </div>
-    </footer>
+{site_footer(lang, home_href(path))}
+    <script type="application/json" id="ui-data">{ui_data(lang)}</script>
+    <script src="{r}js/main.js"></script>
+</body>
+</html>
+'''
+
+
+# ---------------------------------------------------------------- Eintracht Frankfurt page
+EINTRACHT = "Eintracht Frankfurt"  # team name exactly as written in data/schedule.json
+
+# TODO(owner): PLACEHOLDER data. There is no data source yet for Eintracht results or the league table,
+# and data/schedule.json has no Eintracht match yet. Until real data is entered here, the page shows each
+# entry below in a visible "to be filled in" state. Never put invented results or standings here.
+#
+# Upcoming fixtures: add them to data/schedule.json with "Eintracht Frankfurt" as "home" or "away".
+#   They then appear on /spielplan/ AND here, and the "fixtures" list below is ignored.
+#   (Entries in "fixtures" below use: {"start": "2027-02-06T15:30:00+01:00", "opponent": "…",
+#    "competition": "Bundesliga", "home": true}; finished matches are hidden 3 h after kick-off.)
+# Past results, newest first:
+#   {"date": "2026-11-01", "opponent": "…", "competition": "Bundesliga", "home": true,
+#    "goals_for": 2, "goals_against": 1}
+# Table standing (one entry):
+#   {"competition": "Bundesliga", "season": "2026/27", "position": 4, "played": 10,
+#    "points": 19, "goal_diff": 6, "as_of": "2026-11-08"}
+# Replace a {"placeholder": True} entry with a real one; an empty list hides the rows of that section.
+EINTRACHT_DATA = {
+    "fixtures": [{"placeholder": True}, {"placeholder": True}, {"placeholder": True}],
+    "results": [{"placeholder": True}, {"placeholder": True}, {"placeholder": True}],
+    "standing": {"placeholder": True},
+}
+
+
+def fmt_date(lang, d):
+    """Date without time, e.g. 'Sa., 01.11.2026' / 'Sat 1 Nov 2026'."""
+    t = I18N[lang]
+    wd = t["dayShort"][(d.weekday() + 1) % 7]
+    if lang == "de":
+        return f"{wd}., {d.day:02d}.{d.month:02d}.{d.year}"
+    return f"{wd} {d.day} {t['months'][d.month - 1]} {d.year}"
+
+
+def tbd_html(lang):
+    """A visible dash for a value that is not filled in yet; screen readers hear 'to be filled in'."""
+    return f'<span aria-hidden="true">–</span><span class="sr-only">{esc(I18N[lang]["efTbd"])}</span>'
+
+
+def pending_note(lang, text_key):
+    t = I18N[lang]
+    return f'<p class="pending-note"><span class="tag tag-pending">{esc(t["efPending"])}</span>{esc(t[text_key])}</p>'
+
+
+def teams(e, opponent):
+    """(home team, away team) for an Eintracht match."""
+    return (EINTRACHT, opponent) if e.get("home", True) else (opponent, EINTRACHT)
+
+
+def eintracht_fixtures():
+    """[(start | None, entry)]: upcoming Eintracht matches from schedule.json, else the EINTRACHT_DATA list."""
+    out = []
+    for start, m in upcoming_matches():
+        if EINTRACHT in (m.get("home"), m.get("away")):
+            home = m["home"] == EINTRACHT
+            out.append((start, {"opponent": m["away"] if home else m["home"], "home": home,
+                                "competition": m.get("competition"), "example": bool(m.get("example")), "id": m["id"]}))
+    if out:
+        return out
+    for e in EINTRACHT_DATA["fixtures"]:
+        if e.get("placeholder"):
+            out.append((None, e))
+            continue
+        start = datetime.fromisoformat(e["start"])
+        if start + timedelta(hours=3) > NOW:
+            out.append((start, e))
+    return out
+
+
+def venue_tag(lang, e):
+    t = I18N[lang]
+    return f'<span class="match-venue">{esc(t["efHome"] if e.get("home", True) else t["efAway"])}</span>'
+
+
+def fixture_item(lang, start, e):
+    t = I18N[lang]
+    if e.get("placeholder"):
+        return (f'<li class="match is-pending"><p class="match-when">{esc(t["efDateTbd"])}</p>'
+                f'<h3 class="match-title">{esc(EINTRACHT)} – {esc(t["efOpponentTbd"])}</h3>'
+                f'<span class="match-comp">{esc(t["efCompTbd"])}</span></li>')
+    home, away = teams(e, e["opponent"])
+    comp = f'<span class="match-comp">{esc(e["competition"])}</span>' if e.get("competition") else ""
+    badge = f'<span class="tag">{esc(t["exampleBadge"])}</span>' if e.get("example") else ""
+    return (f'<li class="match"><time datetime="{attr(start.isoformat())}">{esc(fmt_match_time(lang, start))}</time>'
+            f'<h3 class="match-title">{esc(home)} – {esc(away)}</h3>{comp}{venue_tag(lang, e)}{badge}</li>')
+
+
+def result_item(lang, e):
+    t = I18N[lang]
+    if e.get("placeholder"):
+        return (f'<li class="match result is-pending"><p class="match-when">{esc(t["efDateTbd"])}</p>'
+                f'<h3 class="match-title"><span>{esc(EINTRACHT)}</span> <span class="score">{tbd_html(lang)}</span> '
+                f'<span>{esc(t["efOpponentTbd"])}</span></h3>'
+                f'<span class="match-comp">{esc(t["efCompTbd"])}</span></li>')
+    home, away = teams(e, e["opponent"])
+    gf, ga = int(e["goals_for"]), int(e["goals_against"])
+    hg, ag = (gf, ga) if e.get("home", True) else (ga, gf)
+    outcome = t["efWin"] if gf > ga else t["efDraw"] if gf == ga else t["efLoss"]
+    d = datetime.fromisoformat(e["date"]).date()
+    comp = f'<span class="match-comp">{esc(e["competition"])}</span>' if e.get("competition") else ""
+    return (f'<li class="match result"><time datetime="{d.isoformat()}">{esc(fmt_date(lang, d))}</time>'
+            f'<h3 class="match-title"><span>{esc(home)}</span> <span class="score">{hg}:{ag}</span> <span>{esc(away)}</span></h3>'
+            f'{comp}{venue_tag(lang, e)}<span class="tag">{esc(outcome)}</span></li>')
+
+
+def standing_html(lang):
+    t = I18N[lang]
+    s = EINTRACHT_DATA.get("standing")
+    if not s:
+        return f'<p>{esc(t["efTableEmpty"])}</p>'
+    pend = bool(s.get("placeholder"))
+
+    def val(k, fmt=str):
+        return tbd_html(lang) if pend or s.get(k) is None else esc(fmt(s[k]))
+
+    league = " ".join(str(s[k]) for k in ("competition", "season") if s.get(k))
+    label = esc(t["efPosition"]) + (f' · {esc(league)}' if league else "")
+    pos = tbd_html(lang) if pend or s.get("position") is None else f'{int(s["position"])}.'
+    as_of = ""
+    if not pend and s.get("as_of"):
+        d = datetime.fromisoformat(s["as_of"]).date()
+        as_of = f'<p class="match-note">{esc(t["efAsOf"].format(date=fmt_date(lang, d)))}</p>'
+    stats = "".join(f'<div><dt>{esc(t[label_key])}</dt><dd>{val(k, fmt)}</dd></div>' for label_key, k, fmt in (
+        ("efPlayed", "played", str), ("efPoints", "points", str), ("efGoalDiff", "goal_diff", lambda n: f"{int(n):+d}")))
+    return (f'<div class="standing{" is-pending" if pend else ""}">'
+            f'<p class="standing-pos"><span class="standing-n">{pos}</span><span class="standing-label">{label}</span></p>'
+            f'<dl class="standing-stats">{stats}</dl>{as_of}</div>')
+
+
+def reserve_buttons(lang):
+    """'Reserve a table' reuses the existing contact links (phone, else WhatsApp). Hidden if the bar takes no reservations."""
+    t = I18N[lang]
+    if get("venue.accepts_reservations", report=False) is False:
+        return ""
+    phone, wa = get("contact.phone", report=False), get("contact.whatsapp", report=False)
+    out = []
+    if phone:
+        out.append(f'<a class="btn btn-primary" href="tel:+{digits(phone)}">{esc(t["efReserve"])}</a>')
+    if wa:
+        cls = "btn btn-ghost" if out else "btn btn-primary"
+        label = t["efReserveWa"] if out else t["efReserve"]
+        out.append(f'<a class="{cls}" href="https://wa.me/{digits(wa)}" target="_blank" rel="noopener">{esc(label)}</a>')
+    return f'<div class="cta-row">{"".join(out)}</div>' if out else ""
+
+
+def render_eintracht(lang, other_href):
+    t = I18N[lang]
+    path = PAGES["eintracht"][lang]
+    r = "../" * (path.count("/") + (0 if lang == DEFAULT_LANG else 1))
+    fixtures = eintracht_fixtures()
+    results = EINTRACHT_DATA.get("results", [])
+    for key, pend in (("fixtures", any(e.get("placeholder") for _, e in fixtures)),
+                      ("results", any(e.get("placeholder") for e in results)),
+                      ("standing", bool((EINTRACHT_DATA.get("standing") or {}).get("placeholder")))):
+        msg = f"EINTRACHT_DATA['{key}'] in build.py (placeholder shown on /{path})"
+        if pend and msg not in TODOS:
+            TODOS.append(msg)
+    fx = ("".join(fixture_item(lang, s, e) for s, e in fixtures))
+    fx_html = (f'<ol class="match-list">{fx}</ol>' if fx else f'<p>{esc(t["efFixturesEmpty"])}</p>')
+    fx_note = pending_note(lang, "efPendingFixtures") if any(e.get("placeholder") for _, e in fixtures) else ""
+    rs = "".join(result_item(lang, e) for e in results)
+    rs_html = (f'<ol class="match-list">{rs}</ol>' if rs else f'<p>{esc(t["efResultsEmpty"])}</p>')
+    rs_note = pending_note(lang, "efPendingResults") if any(e.get("placeholder") for e in results) else ""
+    tb_note = pending_note(lang, "efPendingTable") if (EINTRACHT_DATA.get("standing") or {}).get("placeholder") else ""
+    cta = reserve_buttons(lang)
+    cta_band = f'''
+        <section class="cta-band" aria-labelledby="ef-reserve">
+            <h2 id="ef-reserve">{esc(t["efCtaTitle"])}</h2>
+            <p>{esc(t["efCtaText"])}</p>
+            {cta}
+        </section>''' if cta else ""
+    sched = home_href(path) + PAGES["schedule"][lang]
+    return f'''<!DOCTYPE html>
+<html lang="{lang}">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{esc(t["efTitle"])}</title>
+{meta_block(lang, path, t["efTitle"], t["efDesc"])}
+{head_common(lang, path.count("/"), jsonld_scripts(lang, [bar_schema(lang)]))}</head>
+<body>
+    <a class="skip-link" href="#main">{esc(t["skip"])}</a>
+{subpage_header(lang, path, "eintracht", other_href)}
+    <main class="container legal schedule eintracht" id="main">
+        {back_link(lang, path)}
+        <h1>{esc(t["efH1"])}</h1>
+        <p class="lead">{esc(t["efIntro"])}</p>
+        {cta}
+        <section aria-labelledby="ef-fixtures">
+            <h2 id="ef-fixtures">{esc(t["efFixtures"])}</h2>
+            {fx_note}
+            {fx_html}
+            <p class="match-note"><a href="{sched}">{esc(t["efAllMatches"])}</a></p>
+        </section>
+        <section aria-labelledby="ef-results">
+            <h2 id="ef-results">{esc(t["efResults"])}</h2>
+            {rs_note}
+            {rs_html}
+        </section>
+        <section aria-labelledby="ef-table">
+            <h2 id="ef-table">{esc(t["efTable"])}</h2>
+            {tb_note}
+            {standing_html(lang)}
+        </section>{cta_band}
+        {back_link(lang, path, end=True)}
+    </main>
+{site_footer(lang, home_href(path))}
     <script type="application/json" id="ui-data">{ui_data(lang)}</script>
     <script src="{r}js/main.js"></script>
 </body>
@@ -934,7 +1189,7 @@ def render_schedule(lang, other_href):
 
 
 # ---------------------------------------------------------------- robots.txt + sitemap.xml
-INDEXABLE = ["home", "schedule"]  # legal pages are noindex and stay out of the sitemap
+INDEXABLE = ["home", "schedule", "eintracht"]  # legal pages are noindex and stay out of the sitemap
 
 
 def robots_txt():
@@ -979,10 +1234,11 @@ def main():
         write(pre + "impressum.html", render_legal(lang, "impressum", switch_href(lang, "impressum.html")))
         write(pre + "datenschutz.html", render_legal(lang, "datenschutz", switch_href(lang, "datenschutz.html")))
         write(pre + PAGES["schedule"][lang] + "index.html", render_schedule(lang, switch_href(lang, PAGES["schedule"][lang])))
+        write(pre + PAGES["eintracht"][lang] + "index.html", render_eintracht(lang, switch_href(lang, PAGES["eintracht"][lang])))
     write("robots.txt", robots_txt())
     write("sitemap.xml", sitemap_xml())
     if TODOS:
-        print("\nTODO – missing data in data/site.json (left out of the output):")
+        print("\nTODO – missing data (left out of the output, or shown as a 'to be filled in' placeholder):")
         for k in sorted(set(TODOS)):
             print("  -", k)
     return 0

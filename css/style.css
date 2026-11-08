@@ -132,7 +132,20 @@ p { margin: 0 0 1em; }
 .nav ul { list-style: none; margin: 0; padding: 0; }
 .nav a { display: block; padding: .9rem 0 .9rem 0; font-family: var(--font-head); font-size: 2.1rem; font-weight: 700; color: var(--text); text-transform: uppercase; letter-spacing: .02em; text-decoration: none; border-bottom: 1px solid var(--line); transition: color .2s, padding .2s; }
 .nav a:hover { color: var(--accent-text); }
-.nav a[aria-current="location"] { color: var(--accent-text); padding-left: 1rem; box-shadow: inset 5px 0 0 var(--accent-text); }
+.nav a:is([aria-current="location"], [aria-current="page"]) { color: var(--accent-text); padding-left: 1rem; box-shadow: inset 5px 0 0 var(--accent-text); }
+/* Generic house icon on the Home item of sub-page navs */
+.nav-icon { width: .9em; height: .9em; margin-right: .4em; vertical-align: -.06em; fill: none; stroke: currentColor; stroke-width: 2.4; stroke-linecap: round; stroke-linejoin: round; }
+
+/* "Back to home" link at the top and bottom of every sub page */
+.back-row { margin: 0 0 1.5rem; }
+.back-row-end { margin: 3rem 0 0; padding-top: 1.5rem; border-top: 1px solid var(--line); }
+.legal a.back-link, .back-link { display: inline-flex; align-items: center; gap: .55rem; min-height: 44px; padding: .45rem 1.1rem .45rem .85rem; border: 2px solid var(--line); border-radius: 999px; color: var(--text); font-size: .85rem; font-weight: 800; letter-spacing: .08em; text-transform: uppercase; text-decoration: none; transition: border-color .2s, color .2s, background .2s; }
+.legal a.back-link:hover, .back-link:hover { border-color: var(--accent-text); color: var(--accent-text); }
+.back-link:active { background: var(--surface); }
+.back-arrow { font-size: 1.15em; line-height: 1; transition: transform .2s var(--ease); }
+.back-link:hover .back-arrow { transform: translateX(-3px); }
+
+.sr-only { position: absolute; width: 1px; height: 1px; overflow: hidden; clip-path: inset(50%); white-space: nowrap; }
 
 /* ---------- Hero (always dark) ---------- */
 .hero { position: relative; display: flex; align-items: flex-end; overflow: hidden; background: var(--bg); color: var(--text-2); min-height: min(calc(100svh - var(--header-h) - var(--ticker-h)), 62rem); }
@@ -354,6 +367,41 @@ address strong { color: var(--text); font-size: 1.1rem; }
 .match .tag { margin: 0; }
 .match-note { color: var(--muted); font-size: .95rem; }
 
+/* ---------- Eintracht page ---------- */
+.eintracht .lead { margin-bottom: 1.5rem; }
+.eintracht section { margin-top: 3rem; }
+.eintracht .match-list { margin-block: 1.25rem 1rem; }
+.cta-row { display: flex; flex-wrap: wrap; gap: .75rem; }
+.legal .cta-row a.btn-primary { color: var(--on-accent); }
+.legal .cta-row a.btn-primary:hover { color: var(--bg); }
+.legal .cta-row a.btn-ghost { color: var(--text); }
+.legal .cta-row a.btn-ghost:hover { color: var(--on-accent); }
+.match-venue { display: inline-block; margin-right: .75rem; color: var(--text-2); font-weight: 600; }
+.match-when { margin: 0; color: var(--muted); font-weight: 800; font-size: .85rem; text-transform: uppercase; letter-spacing: .08em; }
+.result .match-title { display: flex; flex-wrap: wrap; align-items: baseline; gap: .15rem .6rem; }
+.score { display: inline-block; min-width: 3.2ch; padding: 0 .4rem; border-radius: var(--radius); background: var(--accent); color: var(--on-accent); text-align: center; font-variant-numeric: tabular-nums; }
+
+/* Not filled in yet: dashed outline and muted text, labelled with a "to be filled in" chip (never colour alone) */
+.pending-note { display: flex; flex-wrap: wrap; align-items: center; gap: .5rem .75rem; margin: 0 0 1rem; color: var(--muted); }
+.tag-pending { margin: 0; border-style: dashed; border-color: var(--muted); color: var(--text-2); }
+.match.is-pending, .standing.is-pending { border-style: dashed; border-color: var(--muted); border-left-style: solid; background: transparent; }
+.is-pending .match-title, .is-pending .standing-n { color: var(--muted); }
+.is-pending .score { background: var(--line); color: var(--text); }
+
+.standing { display: grid; gap: 1.25rem; margin-top: 1.25rem; padding: 1.25rem 1.5rem; background: var(--surface); border: 1px solid var(--line); border-left: 6px solid var(--accent-text); border-radius: var(--radius); }
+.standing-pos { display: flex; align-items: baseline; flex-wrap: wrap; gap: .25rem 1rem; margin: 0; }
+.standing-n { font: 700 clamp(3.5rem, 12vw, 5.5rem)/.9 var(--font-head); color: var(--text); font-variant-numeric: tabular-nums; }
+.standing-label { color: var(--accent-text); font-weight: 800; font-size: .85rem; text-transform: uppercase; letter-spacing: .08em; }
+.standing-stats { display: grid; grid-template-columns: repeat(auto-fit, minmax(8.5rem, 1fr)); gap: 1rem; margin: 0; }
+.standing-stats div { border-top: 1px solid var(--line); padding-top: .6rem; }
+.standing-stats dt { color: var(--muted); font-size: .8rem; font-weight: 700; text-transform: uppercase; letter-spacing: .08em; }
+.standing-stats dd { margin: 0; font: 700 1.9rem/1.1 var(--font-head); color: var(--text); font-variant-numeric: tabular-nums; }
+.standing .match-note { margin: 0; }
+
+.cta-band { padding: 1.75rem 1.5rem; background: var(--surface); border: 1px solid var(--line); border-top: 6px solid var(--accent); border-radius: var(--radius-lg); }
+.legal .cta-band h2 { margin-top: 0; color: var(--text); }
+.cta-band p { max-width: 52ch; }
+
 /* ---------- Motion ---------- */
 @keyframes fade-up { from { opacity: 0; transform: translateY(16px); } to { opacity: 1; transform: none; } }
 @keyframes fade-in { from { opacity: 0; } to { opacity: 1; } }
@@ -391,17 +439,7 @@ address strong { color: var(--text); font-size: 1.1rem; }
 }
 @media (min-width: 900px) {
     :root { --header-h: 72px; --gutter: 2rem; }
-    .menu-btn, .mobile-bar { display: none; }
-    .nav { position: static; transform: none; visibility: visible; padding: 0; overflow: visible; background: none; order: 2; }
-    .nav ul { display: flex; gap: 1.5rem; }
-    .nav a { position: relative; padding: .5rem 0; white-space: nowrap; font-family: var(--font-body); font-size: .85rem; font-weight: 700; letter-spacing: .12em; color: var(--text-2); border: 0; box-shadow: none; }
-    .nav a::after { content: ""; position: absolute; left: 0; right: 0; bottom: 0; height: 3px; background: var(--accent-text); transform: scaleX(0); transform-origin: left; transition: transform .25s; }
-    .nav a:hover { color: var(--accent-text); }
-    .nav a:hover::after, .nav a[aria-current="location"]::after { transform: scaleX(1); }
-    .nav a[aria-current="location"] { padding-left: 0; box-shadow: none; color: var(--text); }
-    .header-inner { gap: 2rem; }
-    .brand { margin-right: auto; }
-    .header-actions { order: 3; }
+    .mobile-bar { display: none; }
     .hero { align-items: center; }
     .hero-content { padding-block: 4rem; }
     .hero-overlay { background: linear-gradient(to right, var(--bg) 12%, color-mix(in srgb, var(--bg) 58%, transparent)); }
@@ -414,14 +452,22 @@ address strong { color: var(--text); font-size: 1.1rem; }
 @media (min-width: 1200px) {
     .card:not(.event) { padding: 2rem; }
 }
-@media (min-width: 900px) and (max-width: 1199px) {
-    .header-inner { gap: 1.25rem; }
-    .nav ul { gap: 1rem; }
-    .nav a { letter-spacing: .08em; }
-}
-@media (min-width: 900px) and (max-width: 1023px) {
-    .brand-title { font-size: 1.05rem; }
-    .brand-title span { display: block; }
+/* Desktop nav. Below 1200px the home nav (9 items) does not fit next to the logo and the
+   header buttons, so the menu button + overlay is used up to here (keep in sync with js/main.js).
+   A header with a long nav (home page) gets a wider row than the page content so every item fits. */
+@media (min-width: 1200px) {
+    .site-header .container:has(.nav li:nth-child(8)) { max-width: 1320px; }
+    .menu-btn { display: none; }
+    .nav { position: static; transform: none; visibility: visible; padding: 0; overflow: visible; background: none; order: 2; }
+    .nav ul { display: flex; gap: clamp(.9rem, 2.4vw - 1.2rem, 1.5rem); }
+    .nav a { position: relative; padding: .5rem 0; white-space: nowrap; font-family: var(--font-body); font-size: .85rem; font-weight: 700; letter-spacing: .07em; color: var(--text-2); border: 0; box-shadow: none; }
+    .nav a::after { content: ""; position: absolute; left: 0; right: 0; bottom: 0; height: 3px; background: var(--accent-text); transform: scaleX(0); transform-origin: left; transition: transform .25s; }
+    .nav a:hover { color: var(--accent-text); }
+    .nav a:hover::after, .nav a:is([aria-current="location"], [aria-current="page"])::after { transform: scaleX(1); }
+    .nav a:is([aria-current="location"], [aria-current="page"]) { padding-left: 0; box-shadow: none; color: var(--text); }
+    .header-inner { gap: 1.5rem; }
+    .brand { margin-right: auto; }
+    .header-actions { order: 3; }
 }
 @media (max-width: 359px) {
     .drink-tab { font-size: .8rem; letter-spacing: .04em; padding-inline: .4rem; }

@@ -25,4 +25,16 @@
     <xhtml:link rel="alternate" hreflang="en" href="https://DOMAIN/en/schedule/"/>
     <xhtml:link rel="alternate" hreflang="x-default" href="https://DOMAIN/spielplan/"/>
   </url>
+  <url>
+    <loc>https://DOMAIN/eintracht/</loc>
+    <xhtml:link rel="alternate" hreflang="de" href="https://DOMAIN/eintracht/"/>
+    <xhtml:link rel="alternate" hreflang="en" href="https://DOMAIN/en/eintracht/"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://DOMAIN/eintracht/"/>
+  </url>
+  <url>
+    <loc>https://DOMAIN/en/eintracht/</loc>
+    <xhtml:link rel="alternate" hreflang="de" href="https://DOMAIN/eintracht/"/>
+    <xhtml:link rel="alternate" hreflang="en" href="https://DOMAIN/en/eintracht/"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://DOMAIN/eintracht/"/>
+  </url>
 </urlset>

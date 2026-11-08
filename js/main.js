@@ -61,7 +61,8 @@
     if (menuBtn) menuBtn.addEventListener('click', () => setMenu(!menuOpen));
     if (nav) nav.addEventListener('click', e => { if (e.target.closest('a')) setMenu(false); });
     document.addEventListener('keydown', e => { if (e.key === 'Escape' && menuOpen && menuBtn) { setMenu(false); menuBtn.focus(); } });
-    window.matchMedia('(min-width: 900px)').addEventListener('change', e => { if (e.matches) setMenu(false); });
+    // Same breakpoint as the desktop nav in css/style.css
+    window.matchMedia('(min-width: 1200px)').addEventListener('change', e => { if (e.matches) setMenu(false); });
 
     // ---------- Header shadow + nav scroll-spy ----------
     // The link whose section crosses the 40% line of the viewport gets aria-current="location".
