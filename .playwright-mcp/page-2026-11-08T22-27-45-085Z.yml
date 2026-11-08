@@ -1,0 +1,234 @@
+- generic [ref=f7e1]:
+  - link "Skip to content" [ref=f7e2] [cursor=pointer]:
+    - /url: "#main"
+  - banner [ref=f7e3]:
+    - generic [ref=f7e4]:
+      - link "C'est la Vie Café & Sportsbar – back to home" [ref=f7e5] [cursor=pointer]:
+        - /url: ../
+        - generic [ref=f7e10]: C'est la vie
+      - generic [ref=f7e11]:
+        - button "Switch to dark mode" [active] [ref=f7e221] [cursor=pointer]: ☾
+        - link "Auf Deutsch wechseln" [ref=f7e13] [cursor=pointer]:
+          - /url: ../../eintracht/
+          - generic [ref=f7e14]: en
+          - text: /
+          - generic [ref=f7e15]: de
+        - button "Open menu" [ref=f7e222] [cursor=pointer]
+  - main [ref=f7e20]:
+    - region [ref=f7e21]:
+      - generic [ref=f7e22]:
+        - paragraph [ref=f7e23]:
+          - link "Back to home" [ref=f7e24] [cursor=pointer]:
+            - /url: ../
+            - generic [aria-hidden] [ref=f7e25]: ←
+            - text: Back to home
+        - paragraph [ref=f7e26]: Matchday in Niederrad
+        - heading "Eintracht Frankfurt" [level=1] [ref=f7e27]:
+          - generic [ref=f7e28]: Eintracht
+          - generic [ref=f7e29]: Frankfurt
+        - paragraph [ref=f7e30]: "Everything about the SGE at a glance: upcoming fixtures, recent results and the current league position."
+        - generic [ref=f7e31]:
+          - link "Reserve a table" [ref=f7e32] [cursor=pointer]:
+            - /url: tel:+491744800000
+          - link "Ask on WhatsApp" [ref=f7e33] [cursor=pointer]:
+            - /url: https://wa.me/491744800000
+        - navigation "On this page" [ref=f7e34]:
+          - list [ref=f7e35]:
+            - listitem [ref=f7e36]:
+              - link "Upcoming fixtures" [ref=f7e37] [cursor=pointer]:
+                - /url: "#ef-fixtures"
+                - generic [aria-hidden] [ref=f7e38]: "01"
+                - text: Upcoming fixtures
+            - listitem [ref=f7e39]:
+              - link "Recent results" [ref=f7e40] [cursor=pointer]:
+                - /url: "#ef-results"
+                - generic [aria-hidden] [ref=f7e41]: "02"
+                - text: Recent results
+            - listitem [ref=f7e42]:
+              - link "League table" [ref=f7e43] [cursor=pointer]:
+                - /url: "#ef-table"
+                - generic [aria-hidden] [ref=f7e44]: "03"
+                - text: League table
+    - generic [ref=f7e45]:
+      - generic [aria-hidden] [ref=f7e46]:
+        - list [ref=f7e47]:
+          - listitem [ref=f7e48]: Eintracht Frankfurt
+          - listitem [ref=f7e49]: Matchday in Niederrad
+          - listitem [ref=f7e50]: Upcoming fixtures
+          - listitem [ref=f7e51]: Recent results
+          - listitem [ref=f7e52]: League table
+        - list [ref=f7e53]:
+          - listitem [ref=f7e54]: Eintracht Frankfurt
+          - listitem [ref=f7e55]: Matchday in Niederrad
+          - listitem [ref=f7e56]: Upcoming fixtures
+          - listitem [ref=f7e57]: Recent results
+          - listitem [ref=f7e58]: League table
+        - list [ref=f7e59]:
+          - listitem [ref=f7e60]: Eintracht Frankfurt
+          - listitem [ref=f7e61]: Matchday in Niederrad
+          - listitem [ref=f7e62]: Upcoming fixtures
+          - listitem [ref=f7e63]: Recent results
+          - listitem [ref=f7e64]: League table
+        - list [ref=f7e65]:
+          - listitem [ref=f7e66]: Eintracht Frankfurt
+          - listitem [ref=f7e67]: Matchday in Niederrad
+          - listitem [ref=f7e68]: Upcoming fixtures
+          - listitem [ref=f7e69]: Recent results
+          - listitem [ref=f7e70]: League table
+      - button "Pause ticker" [ref=f7e71] [cursor=pointer]
+    - generic [ref=f7e72]:
+      - generic [ref=f7e73]:
+        - generic [ref=f7e74]:
+          - region [ref=f7e75]:
+            - heading "Upcoming fixtures" [level=2] [ref=f7e76]:
+              - generic [aria-hidden] [ref=f7e77]: "01"
+              - text: Upcoming fixtures
+            - paragraph [ref=f7e78]:
+              - generic [ref=f7e79]: To be filled in
+              - text: We will list the next Eintracht matches here soon.
+            - list [ref=f7e80]:
+              - listitem [ref=f7e81]:
+                - paragraph [ref=f7e82]:
+                  - generic [aria-hidden] [ref=f7e83]: –
+                  - generic [ref=f7e84]: Date to follow
+                  - generic [aria-hidden] [ref=f7e85]: "--:--"
+                - generic [ref=f7e86]:
+                  - paragraph [ref=f7e87]: Next match
+                  - heading "Eintracht Frankfurt – Opponent to follow" [level=3] [ref=f7e88]:
+                    - generic [ref=f7e89]: Eintracht Frankfurt
+                    - generic [ref=f7e90]: –
+                    - generic [ref=f7e91]: Opponent to follow
+                  - paragraph [ref=f7e92]:
+                    - generic [ref=f7e93]: Competition to follow
+              - listitem [ref=f7e94]:
+                - paragraph [ref=f7e95]:
+                  - generic [aria-hidden] [ref=f7e96]: –
+                  - generic [ref=f7e97]: Date to follow
+                  - generic [aria-hidden] [ref=f7e98]: "--:--"
+                - generic [ref=f7e99]:
+                  - heading "Eintracht Frankfurt – Opponent to follow" [level=3] [ref=f7e100]:
+                    - generic [ref=f7e101]: Eintracht Frankfurt
+                    - generic [ref=f7e102]: –
+                    - generic [ref=f7e103]: Opponent to follow
+                  - paragraph [ref=f7e104]:
+                    - generic [ref=f7e105]: Competition to follow
+              - listitem [ref=f7e106]:
+                - paragraph [ref=f7e107]:
+                  - generic [aria-hidden] [ref=f7e108]: –
+                  - generic [ref=f7e109]: Date to follow
+                  - generic [aria-hidden] [ref=f7e110]: "--:--"
+                - generic [ref=f7e111]:
+                  - heading "Eintracht Frankfurt – Opponent to follow" [level=3] [ref=f7e112]:
+                    - generic [ref=f7e113]: Eintracht Frankfurt
+                    - generic [ref=f7e114]: –
+                    - generic [ref=f7e115]: Opponent to follow
+                  - paragraph [ref=f7e116]:
+                    - generic [ref=f7e117]: Competition to follow
+            - paragraph [ref=f7e118]:
+              - link "All matches we show, in the schedule" [ref=f7e119] [cursor=pointer]:
+                - /url: ../schedule/
+                - text: All matches we show, in the schedule
+                - generic [aria-hidden] [ref=f7e120]: →
+          - region [ref=f7e121]:
+            - heading "Recent results" [level=2] [ref=f7e122]:
+              - generic [aria-hidden] [ref=f7e123]: "02"
+              - text: Recent results
+            - paragraph [ref=f7e124]:
+              - generic [ref=f7e125]: To be filled in
+              - text: We will list the latest results here soon.
+            - list [ref=f7e126]:
+              - listitem [ref=f7e127]:
+                - paragraph [ref=f7e128]:
+                  - generic [aria-hidden] [ref=f7e129]: –
+                  - generic [ref=f7e130]: Date to follow
+                - generic [ref=f7e131]:
+                  - paragraph [ref=f7e132]: Last match
+                  - heading "Eintracht Frankfurt not yet known Opponent to follow" [level=3] [ref=f7e133]:
+                    - generic [ref=f7e134]: Eintracht Frankfurt
+                    - generic [ref=f7e135]:
+                      - text: –
+                      - generic [ref=f7e136]: not yet known
+                    - generic [ref=f7e137]: Opponent to follow
+                  - paragraph [ref=f7e138]:
+                    - generic [ref=f7e139]: Competition to follow
+              - listitem [ref=f7e140]:
+                - paragraph [ref=f7e141]:
+                  - generic [aria-hidden] [ref=f7e142]: –
+                  - generic [ref=f7e143]: Date to follow
+                - generic [ref=f7e144]:
+                  - heading "Eintracht Frankfurt not yet known Opponent to follow" [level=3] [ref=f7e145]:
+                    - generic [ref=f7e146]: Eintracht Frankfurt
+                    - generic [ref=f7e147]:
+                      - text: –
+                      - generic [ref=f7e148]: not yet known
+                    - generic [ref=f7e149]: Opponent to follow
+                  - paragraph [ref=f7e150]:
+                    - generic [ref=f7e151]: Competition to follow
+              - listitem [ref=f7e152]:
+                - paragraph [ref=f7e153]:
+                  - generic [aria-hidden] [ref=f7e154]: –
+                  - generic [ref=f7e155]: Date to follow
+                - generic [ref=f7e156]:
+                  - heading "Eintracht Frankfurt not yet known Opponent to follow" [level=3] [ref=f7e157]:
+                    - generic [ref=f7e158]: Eintracht Frankfurt
+                    - generic [ref=f7e159]:
+                      - text: –
+                      - generic [ref=f7e160]: not yet known
+                    - generic [ref=f7e161]: Opponent to follow
+                  - paragraph [ref=f7e162]:
+                    - generic [ref=f7e163]: Competition to follow
+        - generic [ref=f7e164]:
+          - region [ref=f7e165]:
+            - heading "League table" [level=2] [ref=f7e166]:
+              - generic [aria-hidden] [ref=f7e167]: "03"
+              - text: League table
+            - paragraph [ref=f7e168]:
+              - generic [ref=f7e169]: To be filled in
+              - text: We will show the current league position here soon.
+            - generic [ref=f7e170]:
+              - paragraph [ref=f7e171]:
+                - generic [ref=f7e172]:
+                  - text: –
+                  - generic [ref=f7e173]: not yet known
+                - generic [ref=f7e174]: League position
+              - generic [ref=f7e175]:
+                - generic [ref=f7e176]:
+                  - term [ref=f7e177]: Played
+                  - definition [ref=f7e178]:
+                    - text: –
+                    - generic [ref=f7e179]: not yet known
+                - generic [ref=f7e180]:
+                  - term [ref=f7e181]: Points
+                  - definition [ref=f7e182]:
+                    - text: –
+                    - generic [ref=f7e183]: not yet known
+                - generic [ref=f7e184]:
+                  - term [ref=f7e185]: Goal difference
+                  - definition [ref=f7e186]:
+                    - text: –
+                    - generic [ref=f7e187]: not yet known
+          - region [ref=f7e188]:
+            - paragraph [aria-hidden] [ref=f7e189]:
+              - generic [ref=f7e190]: Eintracht · Live
+            - generic [ref=f7e191]:
+              - heading "A seat for the next match" [level=2] [ref=f7e192]
+              - paragraph [ref=f7e193]: Seats go fast on Eintracht match days. Get in touch early.
+              - generic [ref=f7e194]:
+                - link "Reserve a table" [ref=f7e195] [cursor=pointer]:
+                  - /url: tel:+491744800000
+                - link "Ask on WhatsApp" [ref=f7e196] [cursor=pointer]:
+                  - /url: https://wa.me/491744800000
+      - paragraph [ref=f7e197]:
+        - link "Back to home" [ref=f7e198] [cursor=pointer]:
+          - /url: ../
+          - generic [aria-hidden] [ref=f7e199]: ←
+          - text: Back to home
+  - contentinfo [ref=f7e200]:
+    - generic [ref=f7e201]:
+      - paragraph [ref=f7e202]: © 2026 C'est la Vie Café & Sportsbar · Frankfurt-Niederrad
+      - paragraph [ref=f7e203]:
+        - link "Legal notice" [ref=f7e204] [cursor=pointer]:
+          - /url: ../impressum.html
+        - text: ·
+        - link "Privacy policy" [ref=f7e205] [cursor=pointer]:
+          - /url: ../datenschutz.html

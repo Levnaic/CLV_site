@@ -1,0 +1,229 @@
+- generic [active] [ref=f14e1]:
+  - link "Zum Inhalt springen" [ref=f14e2] [cursor=pointer]:
+    - /url: "#main"
+  - banner [ref=f14e3]:
+    - generic [ref=f14e4]:
+      - link "C'est la Vie Café & Sportsbar – zur Startseite" [ref=f14e5] [cursor=pointer]:
+        - /url: ../
+        - generic [ref=f14e10]: C'est la vie
+      - navigation "Hauptmenü" [ref=f14e11]:
+        - list [ref=f14e12]:
+          - listitem [ref=f14e13]:
+            - link "Startseite" [ref=f14e14] [cursor=pointer]:
+              - /url: ../
+          - listitem [ref=f14e17]:
+            - link "Spielplan" [ref=f14e18] [cursor=pointer]:
+              - /url: ../spielplan/
+          - listitem [ref=f14e19]:
+            - link "Eintracht" [ref=f14e20] [cursor=pointer]:
+              - /url: ../eintracht/
+          - listitem [ref=f14e21]:
+            - link "Events" [ref=f14e22] [cursor=pointer]:
+              - /url: ../#events
+          - listitem [ref=f14e23]:
+            - link "Anfahrt" [ref=f14e24] [cursor=pointer]:
+              - /url: ../#visit
+      - generic [ref=f14e25]:
+        - button "Dunkles Design aktivieren" [ref=f14e26] [cursor=pointer]: ☾
+        - link "Switch to English" [ref=f14e27] [cursor=pointer]:
+          - /url: ../en/eintracht/
+          - generic [ref=f14e28]: en
+          - text: /
+          - generic [ref=f14e29]: de
+  - main [ref=f14e30]:
+    - region [ref=f14e31]:
+      - generic [ref=f14e32]:
+        - paragraph [ref=f14e33]:
+          - link "Zur Startseite" [ref=f14e34] [cursor=pointer]:
+            - /url: ../
+            - generic [aria-hidden] [ref=f14e35]: ←
+            - text: Zur Startseite
+        - paragraph [ref=f14e36]: Spieltag in Niederrad
+        - heading "Eintracht Frankfurt" [level=1] [ref=f14e37]:
+          - generic [ref=f14e38]: Eintracht
+          - generic [ref=f14e39]: Frankfurt
+        - paragraph [ref=f14e40]: "Alles zur SGE auf einen Blick: die nächsten Spiele, die letzten Ergebnisse und der aktuelle Tabellenplatz."
+        - generic [ref=f14e41]:
+          - link "Tisch reservieren" [ref=f14e42] [cursor=pointer]:
+            - /url: tel:+491744800000
+          - link "Per WhatsApp anfragen" [ref=f14e43] [cursor=pointer]:
+            - /url: https://wa.me/491744800000
+        - navigation "Auf dieser Seite" [ref=f14e44]:
+          - list [ref=f14e45]:
+            - listitem [ref=f14e46]:
+              - link "Nächste Spiele" [ref=f14e47] [cursor=pointer]:
+                - /url: "#ef-fixtures"
+                - generic [aria-hidden] [ref=f14e48]: "01"
+                - text: Nächste Spiele
+            - listitem [ref=f14e49]:
+              - link "Letzte Ergebnisse" [ref=f14e50] [cursor=pointer]:
+                - /url: "#ef-results"
+                - generic [aria-hidden] [ref=f14e51]: "02"
+                - text: Letzte Ergebnisse
+            - listitem [ref=f14e52]:
+              - link "Tabelle" [ref=f14e53] [cursor=pointer]:
+                - /url: "#ef-table"
+                - generic [aria-hidden] [ref=f14e54]: "03"
+                - text: Tabelle
+    - list [ref=f14e57]:
+      - listitem [ref=f14e58]: Eintracht Frankfurt
+      - listitem [ref=f14e59]: Spieltag in Niederrad
+      - listitem [ref=f14e60]: Nächste Spiele
+      - listitem [ref=f14e61]: Letzte Ergebnisse
+      - listitem [ref=f14e62]: Tabelle
+    - generic [ref=f14e63]:
+      - generic [ref=f14e64]:
+        - generic [ref=f14e65]:
+          - region [ref=f14e66]:
+            - heading "Nächste Spiele" [level=2] [ref=f14e67]:
+              - generic [aria-hidden] [ref=f14e68]: "01"
+              - text: Nächste Spiele
+            - paragraph [ref=f14e69]:
+              - generic [ref=f14e70]: Wird noch ergänzt
+              - text: Die nächsten Eintracht-Spiele tragen wir hier bald ein.
+            - list [ref=f14e71]:
+              - listitem [ref=f14e72]:
+                - paragraph [ref=f14e73]:
+                  - generic [aria-hidden] [ref=f14e74]: –
+                  - generic [ref=f14e75]: Termin folgt
+                  - generic [aria-hidden] [ref=f14e76]: "--:--"
+                - generic [ref=f14e77]:
+                  - paragraph [ref=f14e78]: Nächstes Spiel
+                  - heading "Eintracht Frankfurt – Gegner folgt" [level=3] [ref=f14e79]:
+                    - generic [ref=f14e80]: Eintracht Frankfurt
+                    - generic [ref=f14e81]: –
+                    - generic [ref=f14e82]: Gegner folgt
+                  - paragraph [ref=f14e83]:
+                    - generic [ref=f14e84]: Wettbewerb folgt
+              - listitem [ref=f14e85]:
+                - paragraph [ref=f14e86]:
+                  - generic [aria-hidden] [ref=f14e87]: –
+                  - generic [ref=f14e88]: Termin folgt
+                  - generic [aria-hidden] [ref=f14e89]: "--:--"
+                - generic [ref=f14e90]:
+                  - heading "Eintracht Frankfurt – Gegner folgt" [level=3] [ref=f14e91]:
+                    - generic [ref=f14e92]: Eintracht Frankfurt
+                    - generic [ref=f14e93]: –
+                    - generic [ref=f14e94]: Gegner folgt
+                  - paragraph [ref=f14e95]:
+                    - generic [ref=f14e96]: Wettbewerb folgt
+              - listitem [ref=f14e97]:
+                - paragraph [ref=f14e98]:
+                  - generic [aria-hidden] [ref=f14e99]: –
+                  - generic [ref=f14e100]: Termin folgt
+                  - generic [aria-hidden] [ref=f14e101]: "--:--"
+                - generic [ref=f14e102]:
+                  - heading "Eintracht Frankfurt – Gegner folgt" [level=3] [ref=f14e103]:
+                    - generic [ref=f14e104]: Eintracht Frankfurt
+                    - generic [ref=f14e105]: –
+                    - generic [ref=f14e106]: Gegner folgt
+                  - paragraph [ref=f14e107]:
+                    - generic [ref=f14e108]: Wettbewerb folgt
+            - paragraph [ref=f14e109]:
+              - link "Alle Spiele, die wir zeigen, im Spielplan" [ref=f14e110] [cursor=pointer]:
+                - /url: ../spielplan/
+                - text: Alle Spiele, die wir zeigen, im Spielplan
+                - generic [aria-hidden] [ref=f14e111]: →
+          - region [ref=f14e112]:
+            - heading "Letzte Ergebnisse" [level=2] [ref=f14e113]:
+              - generic [aria-hidden] [ref=f14e114]: "02"
+              - text: Letzte Ergebnisse
+            - paragraph [ref=f14e115]:
+              - generic [ref=f14e116]: Wird noch ergänzt
+              - text: Die letzten Ergebnisse tragen wir hier bald ein.
+            - list [ref=f14e117]:
+              - listitem [ref=f14e118]:
+                - paragraph [ref=f14e119]:
+                  - generic [aria-hidden] [ref=f14e120]: –
+                  - generic [ref=f14e121]: Termin folgt
+                - generic [ref=f14e122]:
+                  - paragraph [ref=f14e123]: Letztes Spiel
+                  - heading "Eintracht Frankfurt noch offen Gegner folgt" [level=3] [ref=f14e124]:
+                    - generic [ref=f14e125]: Eintracht Frankfurt
+                    - generic [ref=f14e126]:
+                      - text: –
+                      - generic [ref=f14e127]: noch offen
+                    - generic [ref=f14e128]: Gegner folgt
+                  - paragraph [ref=f14e129]:
+                    - generic [ref=f14e130]: Wettbewerb folgt
+              - listitem [ref=f14e131]:
+                - paragraph [ref=f14e132]:
+                  - generic [aria-hidden] [ref=f14e133]: –
+                  - generic [ref=f14e134]: Termin folgt
+                - generic [ref=f14e135]:
+                  - heading "Eintracht Frankfurt noch offen Gegner folgt" [level=3] [ref=f14e136]:
+                    - generic [ref=f14e137]: Eintracht Frankfurt
+                    - generic [ref=f14e138]:
+                      - text: –
+                      - generic [ref=f14e139]: noch offen
+                    - generic [ref=f14e140]: Gegner folgt
+                  - paragraph [ref=f14e141]:
+                    - generic [ref=f14e142]: Wettbewerb folgt
+              - listitem [ref=f14e143]:
+                - paragraph [ref=f14e144]:
+                  - generic [aria-hidden] [ref=f14e145]: –
+                  - generic [ref=f14e146]: Termin folgt
+                - generic [ref=f14e147]:
+                  - heading "Eintracht Frankfurt noch offen Gegner folgt" [level=3] [ref=f14e148]:
+                    - generic [ref=f14e149]: Eintracht Frankfurt
+                    - generic [ref=f14e150]:
+                      - text: –
+                      - generic [ref=f14e151]: noch offen
+                    - generic [ref=f14e152]: Gegner folgt
+                  - paragraph [ref=f14e153]:
+                    - generic [ref=f14e154]: Wettbewerb folgt
+        - generic [ref=f14e155]:
+          - region [ref=f14e156]:
+            - heading "Tabelle" [level=2] [ref=f14e157]:
+              - generic [aria-hidden] [ref=f14e158]: "03"
+              - text: Tabelle
+            - paragraph [ref=f14e159]:
+              - generic [ref=f14e160]: Wird noch ergänzt
+              - text: Den aktuellen Tabellenplatz tragen wir hier bald ein.
+            - generic [ref=f14e161]:
+              - paragraph [ref=f14e162]:
+                - generic [ref=f14e163]:
+                  - text: –
+                  - generic [ref=f14e164]: noch offen
+                - generic [ref=f14e165]: Tabellenplatz
+              - generic [ref=f14e166]:
+                - generic [ref=f14e167]:
+                  - term [ref=f14e168]: Spiele
+                  - definition [ref=f14e169]:
+                    - text: –
+                    - generic [ref=f14e170]: noch offen
+                - generic [ref=f14e171]:
+                  - term [ref=f14e172]: Punkte
+                  - definition [ref=f14e173]:
+                    - text: –
+                    - generic [ref=f14e174]: noch offen
+                - generic [ref=f14e175]:
+                  - term [ref=f14e176]: Tordifferenz
+                  - definition [ref=f14e177]:
+                    - text: –
+                    - generic [ref=f14e178]: noch offen
+          - region [ref=f14e179]:
+            - paragraph [aria-hidden] [ref=f14e180]:
+              - generic [ref=f14e181]: Eintracht · Live
+            - generic [ref=f14e182]:
+              - heading "Platz fürs nächste Spiel" [level=2] [ref=f14e183]
+              - paragraph [ref=f14e184]: Bei der Eintracht sind die Plätze begehrt. Meldet euch rechtzeitig.
+              - generic [ref=f14e185]:
+                - link "Tisch reservieren" [ref=f14e186] [cursor=pointer]:
+                  - /url: tel:+491744800000
+                - link "Per WhatsApp anfragen" [ref=f14e187] [cursor=pointer]:
+                  - /url: https://wa.me/491744800000
+      - paragraph [ref=f14e188]:
+        - link "Zur Startseite" [ref=f14e189] [cursor=pointer]:
+          - /url: ../
+          - generic [aria-hidden] [ref=f14e190]: ←
+          - text: Zur Startseite
+  - contentinfo [ref=f14e191]:
+    - generic [ref=f14e192]:
+      - paragraph [ref=f14e193]: © 2026 C'est la Vie Café & Sportsbar · Frankfurt-Niederrad
+      - paragraph [ref=f14e194]:
+        - link "Impressum" [ref=f14e195] [cursor=pointer]:
+          - /url: ../impressum.html
+        - text: ·
+        - link "Datenschutz" [ref=f14e196] [cursor=pointer]:
+          - /url: ../datenschutz.html

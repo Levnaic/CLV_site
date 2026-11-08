@@ -1,0 +1,232 @@
+- generic [active] [ref=f1e1]:
+  - link "Zum Inhalt springen" [ref=f1e2] [cursor=pointer]:
+    - /url: "#main"
+  - banner [ref=f1e3]:
+    - generic [ref=f1e4]:
+      - link "C'est la Vie Café & Sportsbar" [ref=f1e5] [cursor=pointer]:
+        - /url: "#top"
+        - generic [ref=f1e10]:
+          - text: C'est la
+          - generic [ref=f1e11]: vie
+      - navigation "Hauptmenü" [ref=f1e12]:
+        - list [ref=f1e13]:
+          - listitem [ref=f1e14]:
+            - link "Über uns" [ref=f1e15] [cursor=pointer]:
+              - /url: "#about"
+          - listitem [ref=f1e16]:
+            - link "Live Sport" [ref=f1e17] [cursor=pointer]:
+              - /url: "#sport"
+          - listitem [ref=f1e18]:
+            - link "Spielplan" [ref=f1e19] [cursor=pointer]:
+              - /url: spielplan/
+          - listitem [ref=f1e20]:
+            - link "Getränke" [ref=f1e21] [cursor=pointer]:
+              - /url: "#drinks"
+          - listitem [ref=f1e22]:
+            - link "Events" [ref=f1e23] [cursor=pointer]:
+              - /url: "#events"
+          - listitem [ref=f1e24]:
+            - link "Galerie" [ref=f1e25] [cursor=pointer]:
+              - /url: "#gallery"
+          - listitem [ref=f1e26]:
+            - link "Anfahrt" [ref=f1e27] [cursor=pointer]:
+              - /url: "#visit"
+          - listitem [ref=f1e28]:
+            - link "Kontakt" [ref=f1e29] [cursor=pointer]:
+              - /url: "#contact"
+      - generic [ref=f1e30]:
+        - button "Dunkles Design aktivieren" [ref=f1e31] [cursor=pointer]: ☾
+        - link "Switch to English" [ref=f1e32] [cursor=pointer]:
+          - /url: en/
+          - generic [ref=f1e33]: en
+          - text: /
+          - generic [ref=f1e34]: de
+  - main [ref=f1e35]:
+    - generic [ref=f1e38]:
+      - paragraph [ref=f1e39]: Jetzt geöffnet · bis 00:00
+      - paragraph [ref=f1e40]: Frankfurt · Niederrad
+      - heading "C'est la vie Sports Bar" [level=1] [ref=f1e41]: C'est la vieSports Bar
+      - paragraph [ref=f1e42]: Live Sport · Kühle Drinks · Gute Leute
+      - generic [ref=f1e43]:
+        - link "Heute live" [ref=f1e44] [cursor=pointer]:
+          - /url: spielplan/
+        - link "Anfahrt" [ref=f1e45] [cursor=pointer]:
+          - /url: "#visit"
+    - generic [ref=f1e46]:
+      - generic [aria-hidden] [ref=f1e47]:
+        - list [ref=f1e48]:
+          - listitem [ref=f1e49]: Live Sport
+          - listitem [ref=f1e50]: Kühle Drinks
+          - listitem [ref=f1e51]: Gute Leute
+          - listitem [ref=f1e52]: Bundesliga
+          - listitem [ref=f1e53]: Eintracht Frankfurt
+          - listitem [ref=f1e54]: Champions League
+        - list [ref=f1e55]:
+          - listitem [ref=f1e56]: Live Sport
+          - listitem [ref=f1e57]: Kühle Drinks
+          - listitem [ref=f1e58]: Gute Leute
+          - listitem [ref=f1e59]: Bundesliga
+          - listitem [ref=f1e60]: Eintracht Frankfurt
+          - listitem [ref=f1e61]: Champions League
+        - list [ref=f1e62]:
+          - listitem [ref=f1e63]: Live Sport
+          - listitem [ref=f1e64]: Kühle Drinks
+          - listitem [ref=f1e65]: Gute Leute
+          - listitem [ref=f1e66]: Bundesliga
+          - listitem [ref=f1e67]: Eintracht Frankfurt
+          - listitem [ref=f1e68]: Champions League
+        - list [ref=f1e69]:
+          - listitem [ref=f1e70]: Live Sport
+          - listitem [ref=f1e71]: Kühle Drinks
+          - listitem [ref=f1e72]: Gute Leute
+          - listitem [ref=f1e73]: Bundesliga
+          - listitem [ref=f1e74]: Eintracht Frankfurt
+          - listitem [ref=f1e75]: Champions League
+      - button "Laufband anhalten" [ref=f1e76] [cursor=pointer]
+    - generic [ref=f1e79]:
+      - heading "Über uns" [level=2] [ref=f1e80]
+      - paragraph [ref=f1e81]: Im Herzen von Frankfurt-Niederrad treffen sich bei uns Fans, Nachbarn und Freunde. Ob Bundesliga, Champions League oder ein entspannter Abend nach der Arbeit – bei uns ist immer was los.
+      - paragraph [ref=f1e82]: Große Screens, ordentlicher Sound und ein Team, das weiß, wie man ein gutes Getränk einschenkt. Willkommen in der C'est la vie Sports Bar.
+    - generic [ref=f1e84]:
+      - heading "Live Sport" [level=2] [ref=f1e85]
+      - paragraph [ref=f1e86]: Kein Spiel verpassen – wir zeigen den Sport, den ihr sehen wollt.
+      - generic [ref=f1e87]:
+        - article [ref=f1e88]:
+          - generic [aria-hidden]: "01"
+          - heading "Bundesliga" [level=3] [ref=f1e89]
+          - paragraph [ref=f1e90]: Jeder Spieltag live, mit Konferenz am Samstag.
+        - article [ref=f1e91]:
+          - generic [aria-hidden]: "02"
+          - heading "Eintracht Frankfurt" [level=3] [ref=f1e92]
+          - paragraph [ref=f1e93]: Heimspiel oder Auswärts – bei uns gibt's die SGE in voller Länge.
+        - article [ref=f1e94]:
+          - generic [aria-hidden]: "03"
+          - heading "Champions League" [level=3] [ref=f1e95]
+          - paragraph [ref=f1e96]: Europas beste Teams an den Abenden unter der Woche.
+        - article [ref=f1e97]:
+          - generic [aria-hidden]: "04"
+          - heading "Weitere Highlights" [level=3] [ref=f1e98]
+          - paragraph [ref=f1e99]: Formel 1, Darts, Länderspiele und große Turniere.
+        - article [ref=f1e100]:
+          - generic [aria-hidden]: "05"
+          - heading "Screens & Sound" [level=3] [ref=f1e101]
+          - paragraph [ref=f1e102]: Mehrere große Bildschirme und Ton, bei dem man jedes Tor hört.
+    - generic [ref=f1e104]:
+      - heading "Getränke" [level=2] [ref=f1e105]
+      - paragraph [ref=f1e106]: Wähle eine Kategorie und sieh alle Getränke mit Preisen. Änderungen vorbehalten.
+      - generic [ref=f1e107]:
+        - tablist [ref=f1e108]:
+          - tab "Frisch gezapft" [selected] [ref=f1e109] [cursor=pointer]
+          - tab "Cocktails" [ref=f1e110] [cursor=pointer]
+          - tab "Spirituosen" [ref=f1e111] [cursor=pointer]
+          - tab "Alkoholfrei" [ref=f1e112] [cursor=pointer]
+        - tabpanel "Frisch gezapft" [ref=f1e113]:
+          - heading "Frisch gezapft" [level=3] [ref=f1e114]
+          - generic [ref=f1e116]:
+            - generic [ref=f1e117]: Pils0,3 l
+            - generic [ref=f1e119]: 3,40 €
+          - generic [ref=f1e121]:
+            - generic [ref=f1e122]: Pils0,5 l
+            - generic [ref=f1e124]: 4,60 €
+          - generic [ref=f1e126]:
+            - generic [ref=f1e127]: Weizen0,5 l
+            - generic [ref=f1e129]: 4,80 €
+          - generic [ref=f1e131]:
+            - generic [ref=f1e132]: Radler0,5 l
+            - generic [ref=f1e134]: 4,60 €
+    - generic [ref=f1e136]:
+      - heading "Events" [level=2] [ref=f1e137]
+      - generic [ref=f1e138]:
+        - article [ref=f1e139]:
+          - generic [ref=f1e140]:
+            - generic [ref=f1e141]: Jeden Spieltag
+            - heading "Match Day" [level=3] [ref=f1e142]
+            - paragraph [ref=f1e143]: Anstoß, Stimmung, Getränkeangebote. Kommt früh, die Plätze sind begehrt.
+        - article [ref=f1e144]:
+          - generic [ref=f1e145]:
+            - generic [ref=f1e146]: Regelmäßig
+            - heading "Partyabende" [level=3] [ref=f1e147]
+            - paragraph [ref=f1e148]: Musik, Drinks und gute Laune bis spät in die Nacht.
+        - article [ref=f1e149]:
+          - generic [ref=f1e150]:
+            - generic [ref=f1e151]: Auf Anfrage
+            - heading "Private Feiern" [level=3] [ref=f1e152]
+            - paragraph [ref=f1e153]: Geburtstag, Vereinsabend oder Firmenfeier – sprecht uns einfach an.
+        - article [ref=f1e154]:
+          - generic [ref=f1e155]:
+            - generic [ref=f1e156]: Wöchentlich
+            - heading "Quizabend" [level=3] [ref=f1e157]
+            - paragraph [ref=f1e158]: Teste dein Wissen im Team und gewinne Getränke.
+    - generic [ref=f1e160]:
+      - heading "Galerie" [level=2] [ref=f1e161]
+      - generic [ref=f1e162]:
+        - button "Bild vergrößern" [ref=f1e163]
+        - button "Bild vergrößern" [ref=f1e164]
+        - button "Bild vergrößern" [ref=f1e165]
+        - button "Bild vergrößern" [ref=f1e166]
+        - button "Bild vergrößern" [ref=f1e167]
+        - button "Bild vergrößern" [ref=f1e168]
+    - generic [ref=f1e170]:
+      - heading "Öffnungszeiten & Anfahrt" [level=2] [ref=f1e171]
+      - generic [ref=f1e172]:
+        - generic [ref=f1e173]:
+          - paragraph [ref=f1e174]: Jetzt geöffnet · bis 00:00
+          - table [ref=f1e175]:
+            - rowgroup [ref=f1e176]:
+              - row [ref=f1e177]:
+                - rowheader "Montag" [ref=f1e178]
+                - cell "16:00 – 01:00" [ref=f1e179]
+              - row [ref=f1e180]:
+                - rowheader "Dienstag" [ref=f1e181]
+                - cell "16:00 – 01:00" [ref=f1e182]
+              - row [ref=f1e183]:
+                - rowheader "Mittwoch" [ref=f1e184]
+                - cell "16:00 – 01:00" [ref=f1e185]
+              - row [ref=f1e186]:
+                - rowheader "Donnerstag" [ref=f1e187]
+                - cell "16:00 – 01:00" [ref=f1e188]
+              - row [ref=f1e189]:
+                - rowheader "Freitag" [ref=f1e190]
+                - cell "16:00 – 03:00" [ref=f1e191]
+              - row [ref=f1e192]:
+                - rowheader "Samstag" [ref=f1e193]
+                - cell "16:00 – 03:00" [ref=f1e194]
+              - row [ref=f1e195]:
+                - rowheader "Sonntag" [ref=f1e196]
+                - cell "14:00 – 00:00" [ref=f1e197]
+          - generic [ref=f1e198]:
+            - strong [ref=f1e199]: C'est la Vie Café & Sportsbar
+            - text: Schwarzwaldstraße 79 60528 Frankfurt am Main
+          - link "Route planen" [ref=f1e200] [cursor=pointer]:
+            - /url: https://maps.app.goo.gl/U6kGrxTTeQX3aGoNA
+        - generic [ref=f1e201]:
+          - paragraph [ref=f1e202]: Zum Laden der Karte wird eine Verbindung zu OpenStreetMap aufgebaut. Dabei werden Daten (z. B. deine IP-Adresse) übertragen.
+          - button "Karte laden" [ref=f1e203] [cursor=pointer]
+    - generic [ref=f1e205]:
+      - heading "Anfahrt & Umgebung" [level=2] [ref=f1e206]
+      - paragraph [ref=f1e208]: Die C'est la vie Sports Bar liegt in Frankfurt-Niederrad.
+    - generic [ref=f1e210]:
+      - heading "Häufige Fragen" [level=2] [ref=f1e211]
+      - generic [ref=f1e213]:
+        - heading "Wo ist die C'est la vie Sports Bar?" [level=3] [ref=f1e214]
+        - paragraph [ref=f1e215]: "Die C'est la vie Sports Bar in Frankfurt-Niederrad: Schwarzwaldstraße 79, 60528 Frankfurt am Main."
+    - generic [ref=f1e217]:
+      - heading "Kontakt" [level=2] [ref=f1e218]
+      - generic [ref=f1e219]:
+        - link [ref=f1e220] [cursor=pointer]:
+          - /url: tel:+491744800000
+          - heading "Telefon" [level=3] [ref=f1e221]
+          - paragraph [ref=f1e222]: "+491744800000"
+        - link [ref=f1e223] [cursor=pointer]:
+          - /url: https://wa.me/491744800000
+          - heading "WhatsApp" [level=3] [ref=f1e224]
+          - paragraph [ref=f1e225]: Schreib uns eine Nachricht
+  - contentinfo [ref=f1e226]:
+    - generic [ref=f1e227]:
+      - paragraph [ref=f1e228]: © 2026 C'est la Vie Café & Sportsbar · Frankfurt-Niederrad
+      - paragraph [ref=f1e229]:
+        - link "Impressum" [ref=f1e230] [cursor=pointer]:
+          - /url: impressum.html
+        - text: ·
+        - link "Datenschutz" [ref=f1e231] [cursor=pointer]:
+          - /url: datenschutz.html

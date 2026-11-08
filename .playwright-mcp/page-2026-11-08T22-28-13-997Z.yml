@@ -1,0 +1,92 @@
+- generic [active] [ref=f9e1]:
+  - link "Zum Inhalt springen" [ref=f9e2] [cursor=pointer]:
+    - /url: "#main"
+  - banner [ref=f9e3]:
+    - generic [ref=f9e4]:
+      - link "C'est la Vie Café & Sportsbar – zur Startseite" [ref=f9e5] [cursor=pointer]:
+        - /url: ../
+        - generic [ref=f9e10]: C'est la vie
+      - generic [ref=f9e11]:
+        - button "Helles Design aktivieren" [ref=f9e12] [cursor=pointer]: ☀
+        - link "Switch to English" [ref=f9e13] [cursor=pointer]:
+          - /url: ../en/schedule/
+          - generic [ref=f9e14]: en
+          - text: /
+          - generic [ref=f9e15]: de
+        - button "Menü öffnen" [ref=f9e16] [cursor=pointer]
+  - main [ref=f9e20]:
+    - region [ref=f9e21]:
+      - generic [ref=f9e22]:
+        - paragraph [ref=f9e23]:
+          - link "Zur Startseite" [ref=f9e24] [cursor=pointer]:
+            - /url: ../
+            - generic [aria-hidden] [ref=f9e25]: ←
+            - text: Zur Startseite
+        - paragraph [ref=f9e26]: Live in Niederrad
+        - heading "Spielplan" [level=1] [ref=f9e27]
+        - paragraph [ref=f9e28]: Diese Spiele zeigen wir live in der C'est la vie Sports Bar in Frankfurt-Niederrad.
+    - generic [ref=f9e29]:
+      - list [ref=f9e30]:
+        - listitem [ref=f9e31]:
+          - time [ref=f9e32]:
+            - generic [ref=f9e33]: Sa.
+            - generic [ref=f9e34]:
+              - text: 06.02.
+              - generic [ref=f9e35]: "2027"
+            - generic [ref=f9e36]: 15:30 Uhr
+          - generic [ref=f9e37]:
+            - heading "Beispiel-Team A – Beispiel-Team B" [level=3] [ref=f9e38]:
+              - generic [ref=f9e39]: Beispiel-Team A
+              - generic [ref=f9e40]: –
+              - generic [ref=f9e41]: Beispiel-Team B
+            - paragraph [ref=f9e42]:
+              - generic [ref=f9e43]: Beispiel
+              - generic [ref=f9e44]: Beispiel – kein echter Termin
+        - listitem [ref=f9e45]:
+          - time [ref=f9e46]:
+            - generic [ref=f9e47]: Sa.
+            - generic [ref=f9e48]:
+              - text: 13.02.
+              - generic [ref=f9e49]: "2027"
+            - generic [ref=f9e50]: 18:30 Uhr
+          - generic [ref=f9e51]:
+            - heading "Beispiel-Team C – Beispiel-Team D" [level=3] [ref=f9e52]:
+              - generic [ref=f9e53]: Beispiel-Team C
+              - generic [ref=f9e54]: –
+              - generic [ref=f9e55]: Beispiel-Team D
+            - paragraph [ref=f9e56]:
+              - generic [ref=f9e57]: Beispiel
+              - generic [ref=f9e58]: Beispiel – kein echter Termin
+        - listitem [ref=f9e59]:
+          - time [ref=f9e60]:
+            - generic [ref=f9e61]: Sa.
+            - generic [ref=f9e62]:
+              - text: 20.02.
+              - generic [ref=f9e63]: "2027"
+            - generic [ref=f9e64]: 20:45 Uhr
+          - generic [ref=f9e65]:
+            - heading "Beispiel-Team E – Beispiel-Team F" [level=3] [ref=f9e66]:
+              - generic [ref=f9e67]: Beispiel-Team E
+              - generic [ref=f9e68]: –
+              - generic [ref=f9e69]: Beispiel-Team F
+            - paragraph [ref=f9e70]:
+              - generic [ref=f9e71]: Beispiel
+              - generic [ref=f9e72]: Beispiel – kein echter Termin
+      - paragraph [ref=f9e73]: Mit „Beispiel“ markierte Einträge zeigen nur das Format des späteren Spielplans.
+      - region [ref=f9e74]:
+        - heading "Anfahrt & Umgebung" [level=2] [ref=f9e75]
+        - paragraph [ref=f9e77]: Die C'est la vie Sports Bar liegt in Frankfurt-Niederrad.
+      - paragraph [ref=f9e78]:
+        - link "Zur Startseite" [ref=f9e79] [cursor=pointer]:
+          - /url: ../
+          - generic [aria-hidden] [ref=f9e80]: ←
+          - text: Zur Startseite
+  - contentinfo [ref=f9e81]:
+    - generic [ref=f9e82]:
+      - paragraph [ref=f9e83]: © 2026 C'est la Vie Café & Sportsbar · Frankfurt-Niederrad
+      - paragraph [ref=f9e84]:
+        - link "Impressum" [ref=f9e85] [cursor=pointer]:
+          - /url: ../impressum.html
+        - text: ·
+        - link "Datenschutz" [ref=f9e86] [cursor=pointer]:
+          - /url: ../datenschutz.html
