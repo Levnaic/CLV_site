@@ -10,18 +10,30 @@
     <link rel="alternate" hreflang="en" href="https://DOMAIN/en/datenschutz.html">
     <link rel="alternate" hreflang="x-default" href="https://DOMAIN/datenschutz.html">
     <meta name="robots" content="noindex">
-    <meta name="theme-color" content="#0a1210" media="(prefers-color-scheme: dark)">
-    <meta name="theme-color" content="#f1f5e6" media="(prefers-color-scheme: light)">
+    <meta name="theme-color" content="#1b120b" media="(prefers-color-scheme: dark)">
+    <meta name="theme-color" content="#f3e9d4" media="(prefers-color-scheme: light)">
     <link rel="icon" href="../assets/icons/favicon.svg" type="image/svg+xml">
     <script>try{var t=localStorage.getItem("theme");if(t==="light"||t==="dark")document.documentElement.dataset.theme=t}catch(e){}</script>
-    <link rel="stylesheet" href="../css/palette.css">
+    <link rel="preload" href="../assets/fonts/fraunces-latin-full-normal.woff2" as="font" type="font/woff2" crossorigin>
+    <link rel="preload" href="../assets/fonts/source-serif-4-latin-standard-normal.woff2" as="font" type="font/woff2" crossorigin>
+    <link rel="stylesheet" href="../css/fonts.css">
+    <link rel="stylesheet" href="../css/themes/pub.css">
     <link rel="stylesheet" href="../css/style.css">
 </head>
 <body>
     <a class="skip-link" href="#main">Skip to content</a>
     <header class="site-header">
         <div class="container header-inner">
-            <a class="brand" href="./" aria-label="C&#x27;est la Vie Café &amp; Sportsbar – back to home"><svg class="logo-mark" viewBox="0 0 48 48" aria-hidden="true" focusable="false"><path class="lm-c" pathLength="1" d="M38.14 9.86A20 20 0 1 0 38.14 38.14"/><path class="lm-l" pathLength="1" d="M15 13V33H27"/><path class="lm-v" pathLength="1" d="M20 13L27 33L40 6"/></svg><span class="brand-title">C'est la <span>vie</span></span></a>
+            <div class="header-start">
+                <button class="theme-btn" id="themeBtn" type="button" aria-label="Switch theme"></button>
+            </div>
+            <a class="brand" href="./" aria-label="C&#x27;est la Vie Café &amp; Sportsbar – back to home"><svg class="logo-mark" viewBox="0 0 48 48" aria-hidden="true" focusable="false"><path class="lm-c" pathLength="1" d="M38.14 9.86A20 20 0 1 0 38.14 38.14"/><path class="lm-l" pathLength="1" d="M15 13V33H27"/><path class="lm-v" pathLength="1" d="M20 13L27 33L40 6"/></svg><span class="brand-text"><span class="brand-title">C'est la <span>vie</span></span><span class="brand-sub">Sports Bar</span></span></a>
+            <div class="header-actions">
+                <a class="lang-btn" href="../datenschutz.html" hreflang="de" lang="de" aria-label="Auf Deutsch wechseln"><span class="is-active" data-l="en">en</span> / <span class="" data-l="de">de</span></a>
+                <button class="menu-btn" id="menuBtn" type="button" aria-expanded="false" aria-controls="nav" aria-label="Open menu">
+                    <span></span><span></span><span></span>
+                </button>
+            </div>
             <nav id="nav" class="nav" aria-label="Main menu">
                 <ul>
                     <li><a href="./"><svg class="nav-icon" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M3 11.5 12 4l9 7.5M5.5 9.5V20h5v-6h3v6h5V9.5"/></svg>Home</a></li>
@@ -31,13 +43,6 @@
                     <li><a href="./#visit">Find us</a></li>
                 </ul>
             </nav>
-            <div class="header-actions">
-                <button class="theme-btn" id="themeBtn" type="button" aria-label="Switch theme"></button>
-                <a class="lang-btn" href="../datenschutz.html" hreflang="de" lang="de" aria-label="Auf Deutsch wechseln"><span class="is-active" data-l="en">en</span> / <span class="" data-l="de">de</span></a>
-                <button class="menu-btn" id="menuBtn" type="button" aria-expanded="false" aria-controls="nav" aria-label="Open menu">
-                    <span></span><span></span><span></span>
-                </button>
-            </div>
         </div>
     </header>
     <main class="container legal" id="main">
@@ -57,6 +62,8 @@
     </main>
     <footer class="site-footer">
         <div class="container footer-inner">
+            <p class="footer-motto">Live Sport · Cold Drinks · Good People</p>
+            <div class="ornament" aria-hidden="true"></div>
             <p>© <span id="year">2026</span> C'est la Vie Café &amp; Sportsbar · Frankfurt-Niederrad</p>
             <p><a href="./impressum.html">Legal notice</a> · <a href="./datenschutz.html">Privacy policy</a></p>
         </div>

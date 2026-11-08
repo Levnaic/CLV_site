@@ -25,11 +25,14 @@
     <meta name="twitter:description" content="Sports bar in Frankfurt-Niederrad: Bundesliga, Eintracht and Champions League live. Drinks menu, opening hours, directions.">
     <meta name="twitter:image" content="https://DOMAIN/assets/img/og-image.jpg">
     <meta name="twitter:image:alt" content="C&#x27;est la vie Sports Bar – Frankfurt-Niederrad">
-    <meta name="theme-color" content="#0a1210" media="(prefers-color-scheme: dark)">
-    <meta name="theme-color" content="#f1f5e6" media="(prefers-color-scheme: light)">
+    <meta name="theme-color" content="#1b120b" media="(prefers-color-scheme: dark)">
+    <meta name="theme-color" content="#f3e9d4" media="(prefers-color-scheme: light)">
     <link rel="icon" href="../assets/icons/favicon.svg" type="image/svg+xml">
     <script>try{var t=localStorage.getItem("theme");if(t==="light"||t==="dark")document.documentElement.dataset.theme=t}catch(e){}</script>
-    <link rel="stylesheet" href="../css/palette.css">
+    <link rel="preload" href="../assets/fonts/fraunces-latin-full-normal.woff2" as="font" type="font/woff2" crossorigin>
+    <link rel="preload" href="../assets/fonts/source-serif-4-latin-standard-normal.woff2" as="font" type="font/woff2" crossorigin>
+    <link rel="stylesheet" href="../css/fonts.css">
+    <link rel="stylesheet" href="../css/themes/pub.css">
     <link rel="stylesheet" href="../css/style.css">
     <script type="application/ld+json">
     {
@@ -88,7 +91,16 @@
 
     <header class="site-header">
         <div class="container header-inner">
-            <a class="brand" href="#top" aria-label="C&#x27;est la Vie Café &amp; Sportsbar"><svg class="logo-mark" viewBox="0 0 48 48" aria-hidden="true" focusable="false"><path class="lm-c" pathLength="1" d="M38.14 9.86A20 20 0 1 0 38.14 38.14"/><path class="lm-l" pathLength="1" d="M15 13V33H27"/><path class="lm-v" pathLength="1" d="M20 13L27 33L40 6"/></svg><span class="brand-title">C'est la <span>vie</span></span></a>
+            <div class="header-start">
+                <button class="theme-btn" id="themeBtn" type="button" aria-label="Switch theme"></button>
+            </div>
+            <a class="brand" href="#top" aria-label="C&#x27;est la Vie Café &amp; Sportsbar"><svg class="logo-mark" viewBox="0 0 48 48" aria-hidden="true" focusable="false"><path class="lm-c" pathLength="1" d="M38.14 9.86A20 20 0 1 0 38.14 38.14"/><path class="lm-l" pathLength="1" d="M15 13V33H27"/><path class="lm-v" pathLength="1" d="M20 13L27 33L40 6"/></svg><span class="brand-text"><span class="brand-title">C'est la <span>vie</span></span><span class="brand-sub">Sports Bar</span></span></a>
+            <div class="header-actions">
+                <a class="lang-btn" href="../" hreflang="de" lang="de" aria-label="Auf Deutsch wechseln"><span class="is-active" data-l="en">en</span> / <span class="" data-l="de">de</span></a>
+                <button class="menu-btn" id="menuBtn" type="button" aria-expanded="false" aria-controls="nav" aria-label="Open menu">
+                    <span></span><span></span><span></span>
+                </button>
+            </div>
             <nav id="nav" class="nav" aria-label="Main menu">
                 <ul>
                     <li><a href="#about">About</a></li>
@@ -102,13 +114,6 @@
                     <li><a href="#contact">Contact</a></li>
                 </ul>
             </nav>
-            <div class="header-actions">
-                <button class="theme-btn" id="themeBtn" type="button" aria-label="Switch theme"></button>
-                <a class="lang-btn" href="../" hreflang="de" lang="de" aria-label="Auf Deutsch wechseln"><span class="is-active" data-l="en">en</span> / <span class="" data-l="de">de</span></a>
-                <button class="menu-btn" id="menuBtn" type="button" aria-expanded="false" aria-controls="nav" aria-label="Open menu">
-                    <span></span><span></span><span></span>
-                </button>
-            </div>
         </div>
     </header>
 
@@ -117,26 +122,35 @@
             <img class="hero-img" src="../assets/img/hero.svg" width="1200" height="1600" fetchpriority="high" alt="">
             <div class="hero-overlay"></div>
             <div class="container hero-content">
-                <p class="status hero-status" data-status></p>
+                <div class="sign-hang">
+                    <span class="sign-chains" aria-hidden="true"></span>
+                    <div class="signboard">
+                        <p class="status hero-status" data-status></p>
                 <p class="eyebrow">Frankfurt · Niederrad</p>
-                <h1>C'est la vie<br><span>Sports Bar</span></h1>
-                <p class="tagline">Live Sport · Cold Drinks · Good People</p>
-                <div class="hero-buttons">
-                    <a class="btn btn-primary" href="schedule/">Live today</a>
-                    <a class="btn btn-ghost" href="#visit">Find us</a>
+                        <h1>C'est la vie<br><span>Sports Bar</span></h1>
+                        <p class="tagline">Live Sport · Cold Drinks · Good People</p>
+                        <div class="hero-buttons">
+                            <a class="btn btn-primary" href="schedule/">Live today</a>
+                            <a class="btn btn-ghost" href="#visit">Find us</a>
+                        </div>
+                    </div>
                 </div>
             </div>
         </section>
         <div class="ticker"><div class="ticker-track" aria-hidden="true"><ul><li>Live Sport</li><li>Cold Drinks</li><li>Good People</li><li>Bundesliga</li><li>Eintracht Frankfurt</li><li>Champions League</li></ul><ul class="ticker-dup"><li>Live Sport</li><li>Cold Drinks</li><li>Good People</li><li>Bundesliga</li><li>Eintracht Frankfurt</li><li>Champions League</li></ul><ul class="ticker-dup"><li>Live Sport</li><li>Cold Drinks</li><li>Good People</li><li>Bundesliga</li><li>Eintracht Frankfurt</li><li>Champions League</li></ul><ul class="ticker-dup"><li>Live Sport</li><li>Cold Drinks</li><li>Good People</li><li>Bundesliga</li><li>Eintracht Frankfurt</li><li>Champions League</li></ul></div></div>
 
         <section class="section" id="about">
-            <div class="container split">
-                <div class="reveal">
-                    <h2>About us</h2>
-                    <p>In the heart of Frankfurt-Niederrad, fans, neighbours and friends meet at our place. Bundesliga, Champions League or a relaxed evening after work – there is always something going on.</p>
-                    <p>Big screens, proper sound and a team that knows how to pour a good drink. Welcome to C'est la vie Sports Bar.</p>
+            <div class="container">
+                <h2>About us</h2>
+                <div class="split about">
+                    <div class="mirror reveal">
+                        <img class="media" src="../assets/img/about.svg" width="1200" height="900" loading="lazy" decoding="async" alt="">
+                    </div>
+                    <div class="card about-text reveal">
+                        <p>In the heart of Frankfurt-Niederrad, fans, neighbours and friends meet at our place. Bundesliga, Champions League or a relaxed evening after work – there is always something going on.</p>
+                        <p>Big screens, proper sound and a team that knows how to pour a good drink. Welcome to C'est la vie Sports Bar.</p>
+                    </div>
                 </div>
-                <img class="reveal media" src="../assets/img/about.svg" width="1200" height="900" loading="lazy" decoding="async" alt="">
             </div>
         </section>
 
@@ -199,7 +213,8 @@
             <div class="container">
                 <h2>Opening hours &amp; directions</h2>
                 <div class="split">
-                    <div>
+                    <div class="card plaque">
+                        <h3 class="plaque-title">Opening hours</h3>
                         <p class="status" id="status" data-status aria-live="polite"></p>
                         <table class="hours"><tbody id="hours">
                             <tr data-d="1"><th scope="row">Monday</th><td>16:00 – 01:00</td></tr>
@@ -254,6 +269,8 @@
 
     <footer class="site-footer">
         <div class="container footer-inner">
+            <p class="footer-motto">Live Sport · Cold Drinks · Good People</p>
+            <div class="ornament" aria-hidden="true"></div>
             <p>© <span id="year">2026</span> C'est la Vie Café &amp; Sportsbar · Frankfurt-Niederrad</p>
             <p><a href="impressum.html">Legal notice</a> · <a href="datenschutz.html">Privacy policy</a></p>
         </div>
