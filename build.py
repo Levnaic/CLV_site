@@ -20,8 +20,25 @@ SITE_URL = "https://DOMAIN"  # the ONE place to set the domain (no trailing slas
 LANGS = ["de", "en"]
 DEFAULT_LANG = "de"
 # Colour palette (all colour tokens live in this one file, loaded before css/style.css).
-# Default "pitch" = css/palette.css. Alternatives: css/themes/ember.css, volt.css, derby.css, gold.css
-PALETTE = "css/palette.css"
+# This branch (design 2, classic pub) uses css/themes/pub.css.
+# Others: css/palette.css (pitch), css/themes/ember.css, volt.css, derby.css, gold.css
+PALETTE = "css/themes/pub.css"
+
+# Self-hosted fonts (latin subset, from npm @fontsource-variable/fraunces and
+# @fontsource-variable/source-serif-4). css/fonts.css is linked only when ALL files exist in
+# assets/fonts/; otherwise the pages use the locally installed fallbacks from css/style.css.
+FONT_DIR = ROOT / "assets" / "fonts"
+FONT_FILES = [
+    "fraunces-latin-full-normal.woff2",
+    "fraunces-latin-full-italic.woff2",
+    "source-serif-4-latin-standard-normal.woff2",
+    "source-serif-4-latin-standard-italic.woff2",
+]
+FONT_PRELOAD = ["fraunces-latin-full-normal.woff2", "source-serif-4-latin-standard-normal.woff2"]
+
+
+def fonts_present():
+    return all((FONT_DIR / f).is_file() for f in FONT_FILES)
 
 DATA = Path(os.environ.get("CLV_DATA_DIR", ROOT / "data"))  # override only for tests
 OUT = Path(os.environ.get("CLV_OUT_DIR", ROOT))
@@ -407,12 +424,17 @@ def jsonld_scripts(lang, blocks=None):
 # ---------------------------------------------------------------- page fragments
 def head_common(lang, depth, extra=""):
     r = rel_root(lang, depth)
-    # theme-color: static fallback for the default palette; js/main.js replaces it with the active palette's background
-    return f'''    <meta name="theme-color" content="#0a1210" media="(prefers-color-scheme: dark)">
-    <meta name="theme-color" content="#f1f5e6" media="(prefers-color-scheme: light)">
+    fonts = ""
+    if fonts_present():
+        fonts = "".join(f'    <link rel="preload" href="{r}assets/fonts/{f}" as="font" type="font/woff2" crossorigin>\n'
+                        for f in FONT_PRELOAD)
+        fonts += f'    <link rel="stylesheet" href="{r}css/fonts.css">\n'
+    # theme-color: static fallback for the pub palette; js/main.js replaces it with the active palette's background
+    return f'''    <meta name="theme-color" content="#1b120b" media="(prefers-color-scheme: dark)">
+    <meta name="theme-color" content="#f3e9d4" media="(prefers-color-scheme: light)">
     <link rel="icon" href="{r}assets/icons/favicon.svg" type="image/svg+xml">
     <script>try{{var t=localStorage.getItem("theme");if(t==="light"||t==="dark")document.documentElement.dataset.theme=t}}catch(e){{}}</script>
-    <link rel="stylesheet" href="{r}{PALETTE}">
+{fonts}    <link rel="stylesheet" href="{r}{PALETTE}">
     <link rel="stylesheet" href="{r}css/style.css">
 {extra}'''
 
@@ -451,6 +473,29 @@ def menu_button(t):
             '                </button>')
 
 
+def site_header(lang, brand_href, brand_label, items, other_href):
+    """Classic centred pub header. DOM order = visual/focus order: theme (left), brand (centre),
+    language + menu (right), then the nav (overlay on mobile, centred second row on desktop)."""
+    t = I18N[lang]
+    return f'''    <header class="site-header">
+        <div class="container header-inner">
+            <div class="header-start">
+                <button class="theme-btn" id="themeBtn" type="button" aria-label="{attr(t["themeBtn"])}"></button>
+            </div>
+            <a class="brand" href="{brand_href}" aria-label="{attr(brand_label)}">{logo_svg()}<span class="brand-text"><span class="brand-title">C'est la <span>vie</span></span><span class="brand-sub">Sports Bar</span></span></a>
+            <div class="header-actions">
+                {lang_switch(lang, other_href)}
+                {menu_button(t)}
+            </div>
+            <nav id="nav" class="nav" aria-label="{attr(t["navLabel"])}">
+                <ul>
+                    {items}
+                </ul>
+            </nav>
+        </div>
+    </header>'''
+
+
 def subpage_header(lang, path, current, other_href):
     """Header for every page except home: logo -> home, a nav with a clear Home item, theme, language, menu."""
     t = I18N[lang]
@@ -466,21 +511,10 @@ def subpage_header(lang, path, current, other_href):
     items = "\n                    ".join(
         f'<li><a href="{attr(href)}"{cur if key == current else ""}>{label}</a></li>'
         for key, href, label in links)
-    return f'''    <header class="site-header">
-        <div class="container header-inner">
-            <a class="brand" href="{home}" aria-label="{attr(t["brandHome"].format(name=SITE["name"]))}">{logo_svg()}<span class="brand-title">C'est la <span>vie</span></span></a>
-            <nav id="nav" class="nav" aria-label="{attr(t["navLabel"])}">
-                <ul>
-                    {items}
-                </ul>
-            </nav>
-            <div class="header-actions">
-                <button class="theme-btn" id="themeBtn" type="button" aria-label="{attr(t["themeBtn"])}"></button>
-                {lang_switch(lang, other_href)}
-                {menu_button(t)}
-            </div>
-        </div>
-    </header>'''
+    return site_header(lang, home, t["brandHome"].format(name=SITE["name"]), items, other_href)
+
+
+ORNAMENT = '<div class="ornament" aria-hidden="true"></div>'
 
 
 def back_link(lang, path, end=False):
@@ -495,6 +529,8 @@ def site_footer(lang, home=""):
     t = I18N[lang]
     return f'''    <footer class="site-footer">
         <div class="container footer-inner">
+            <p class="footer-motto">{esc(t["tagline"])}</p>
+            {ORNAMENT}
             <p>© <span id="year">2026</span> {esc(SITE["name"])} · {esc(SITE["area_label"])}</p>
             <p><a href="{home}impressum.html">{esc(t["imprint"])}</a> · <a href="{home}datenschutz.html">{esc(t["privacy"])}</a></p>
         </div>
@@ -629,6 +665,14 @@ def render_home(lang, other_href=None):
         </section>
 ''' if contact else ""
     nav_contact = f'\n                    <li><a href="#contact">{esc(t["navContact"])}</a></li>' if contact else ""
+    home_nav = (f'<li><a href="#about">{esc(t["navAbout"])}</a></li>\n'
+                f'                    <li><a href="#sport">{esc(t["navSport"])}</a></li>\n'
+                f'                    <li><a href="{PAGES["schedule"][lang]}">{esc(t["navSchedule"])}</a></li>\n'
+                f'                    <li><a href="{PAGES["eintracht"][lang]}">{esc(t["navEintracht"])}</a></li>\n'
+                f'                    <li><a href="#drinks">{esc(t["navDrinks"])}</a></li>\n'
+                f'                    <li><a href="#events">{esc(t["navEvents"])}</a></li>\n'
+                f'                    <li><a href="#gallery">{esc(t["navGallery"])}</a></li>\n'
+                f'                    <li><a href="#visit">{esc(t["navVisit"])}</a></li>{nav_contact}')
     has_hours = bool(SITE["hours"]["days"])
     status = '<p class="status" id="status" data-status aria-live="polite"></p>\n                        ' if has_hours else ""
     hero_chip = '<p class="status hero-status" data-status></p>\n                ' if has_hours else ""
@@ -658,53 +702,41 @@ def render_home(lang, other_href=None):
 <body>
     <a class="skip-link" href="#main">{esc(t["skip"])}</a>
 
-    <header class="site-header">
-        <div class="container header-inner">
-            <a class="brand" href="#top" aria-label="{attr(SITE["name"])}">{logo_svg()}<span class="brand-title">C'est la <span>vie</span></span></a>
-            <nav id="nav" class="nav" aria-label="{attr(t["navLabel"])}">
-                <ul>
-                    <li><a href="#about">{esc(t["navAbout"])}</a></li>
-                    <li><a href="#sport">{esc(t["navSport"])}</a></li>
-                    <li><a href="{sched_href}">{esc(t["navSchedule"])}</a></li>
-                    <li><a href="{PAGES["eintracht"][lang]}">{esc(t["navEintracht"])}</a></li>
-                    <li><a href="#drinks">{esc(t["navDrinks"])}</a></li>
-                    <li><a href="#events">{esc(t["navEvents"])}</a></li>
-                    <li><a href="#gallery">{esc(t["navGallery"])}</a></li>
-                    <li><a href="#visit">{esc(t["navVisit"])}</a></li>{nav_contact}
-                </ul>
-            </nav>
-            <div class="header-actions">
-                <button class="theme-btn" id="themeBtn" type="button" aria-label="{attr(t["themeBtn"])}"></button>
-                {lang_switch(lang, other_href)}
-                {menu_button(t)}
-            </div>
-        </div>
-    </header>
+{site_header(lang, "#top", SITE["name"], home_nav, other_href)}
 
     <main id="main">
         <section class="hero" id="top">
             <img class="hero-img" src="{r}assets/img/hero.svg" width="1200" height="1600" fetchpriority="high" alt="{img_alt(t["heroAlt"])}">
             <div class="hero-overlay"></div>
             <div class="container hero-content">
-                {hero_chip}<p class="eyebrow">Frankfurt · Niederrad</p>
-                <h1>C'est la vie<br><span>Sports Bar</span></h1>
-                <p class="tagline">{esc(t["tagline"])}</p>
-                <div class="hero-buttons">
-                    <a class="btn btn-primary" href="{sched_href}">{esc(t["btnLive"])}</a>
-                    <a class="btn btn-ghost" href="#visit">{esc(t["btnRoute"])}</a>
+                <div class="sign-hang">
+                    <span class="sign-chains" aria-hidden="true"></span>
+                    <div class="signboard">
+                        {hero_chip}<p class="eyebrow">Frankfurt · Niederrad</p>
+                        <h1>C'est la vie<br><span>Sports Bar</span></h1>
+                        <p class="tagline">{esc(t["tagline"])}</p>
+                        <div class="hero-buttons">
+                            <a class="btn btn-primary" href="{sched_href}">{esc(t["btnLive"])}</a>
+                            <a class="btn btn-ghost" href="#visit">{esc(t["btnRoute"])}</a>
+                        </div>
+                    </div>
                 </div>
             </div>
         </section>
         {ticker}
 
         <section class="section" id="about">
-            <div class="container split">
-                <div class="reveal">
-                    <h2>{esc(t["aboutTitle"])}</h2>
-                    <p>{esc(t["aboutP1"])}</p>
-                    <p>{esc(t["aboutP2"])}</p>
+            <div class="container">
+                <h2>{esc(t["aboutTitle"])}</h2>
+                <div class="split about">
+                    <div class="mirror reveal">
+                        <img class="media" src="{r}assets/img/about.svg" width="1200" height="900" loading="lazy" decoding="async" alt="{img_alt(t["aboutAlt"])}">
+                    </div>
+                    <div class="card about-text reveal">
+                        <p>{esc(t["aboutP1"])}</p>
+                        <p>{esc(t["aboutP2"])}</p>
+                    </div>
                 </div>
-                <img class="reveal media" src="{r}assets/img/about.svg" width="1200" height="900" loading="lazy" decoding="async" alt="{img_alt(t["aboutAlt"])}">
             </div>
         </section>
 
@@ -755,7 +787,8 @@ def render_home(lang, other_href=None):
             <div class="container">
                 <h2>{esc(t["visitTitle"])}</h2>
                 <div class="split">
-                    <div>
+                    <div class="card plaque">
+                        <h3 class="plaque-title">{esc(t["hoursTitle"])}</h3>
                         {status}<table class="hours"><tbody id="hours">
                             {hours_html(lang)}
                         </tbody></table>
@@ -1237,6 +1270,10 @@ def main():
         write(pre + PAGES["eintracht"][lang] + "index.html", render_eintracht(lang, switch_href(lang, PAGES["eintracht"][lang])))
     write("robots.txt", robots_txt())
     write("sitemap.xml", sitemap_xml())
+    if not fonts_present():
+        missing_fonts = [f for f in FONT_FILES if not (FONT_DIR / f).is_file()]
+        print("\nNOTE: self-hosted fonts missing in assets/fonts/ (" + ", ".join(missing_fonts)
+              + "): css/fonts.css is not linked, pages use local fallback fonts.")
     if TODOS:
         print("\nTODO – missing data (left out of the output, or shown as a 'to be filled in' placeholder):")
         for k in sorted(set(TODOS)):

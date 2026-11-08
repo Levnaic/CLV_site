@@ -1,0 +1,96 @@
+/* ==========================================================================
+   THEME "pub": classic pub. Warm wood, bottle green, cream paper, brass.
+   Light = a sunlit taproom (cream paper, walnut ink, bottle-green buttons).
+   Dark  = a candle-lit evening pub (dark walnut, warm cream text, brass light).
+   Use it by setting PALETTE = "css/themes/pub.css" in build.py (the default on this branch).
+
+   Defines the SAME base tokens as css/palette.css, plus a few pub-only tokens
+   (paper, brass, wood, signboard, chalkboard, beer mat). css/style.css falls back to
+   base tokens wherever a pub-only token is missing, so other themes still render.
+
+   Contrast (WCAG 2.2 AA, computed from these values):
+     text, text-2, muted, accent-text on bg, bg-alt and surface   >= 4.5:1
+     on-accent on accent                                          >= 4.5:1
+     gold, sign-text, sign-muted on sign and sign-2               >= 4.5:1
+     chalk, chalk-muted, chalk-accent on board                    >= 4.5:1
+     mat-ink on mat                                               >= 4.5:1
+     night-* text pairs on night and night-2                      >= 4.5:1
+   brass, frame, wood: decorative lines only (never the only carrier of meaning).
+   ========================================================================== */
+
+:root { color-scheme: light dark; }
+:root[data-theme="light"] { color-scheme: light; }
+:root[data-theme="dark"] { color-scheme: dark; }
+
+:root {
+    /* Page colours (light | dark) */
+    --bg:          light-dark(#f3e9d4, #1b120b);   /* cream paper | dark walnut */
+    --bg-alt:      light-dark(#eadbbd, #22170e);   /* kraft paper | deeper walnut (alternate sections) */
+    --surface:     light-dark(#fbf5e7, #2a1c11);   /* raised cards, panels */
+    --line:        light-dark(#d4bf98, #4d3723);   /* borders, dividers */
+    --text:        light-dark(#2b1b10, #f6e8cb);   /* headings, strong text */
+    --text-2:      light-dark(#47321f, #e6d2b0);   /* body copy */
+    --muted:       light-dark(#6b5341, #bca081);   /* captions, secondary */
+
+    /* Accent: bottle green fills by day, brass fills by candlelight */
+    --accent:      light-dark(#1f4d38, #d6a84e);
+    --accent-text: light-dark(#73500f, #e5bb66);   /* readable brass for labels, links, prices */
+    --on-accent:   light-dark(#fbf3df, #1b120b);
+
+    /* Status */
+    --ok:          light-dark(#2c7a3f, #6fcf87);
+    --bad:         light-dark(#a8322a, #ff8a7a);
+
+    --shadow:      light-dark(rgb(60 35 15 / .2), rgb(0 0 0 / .6));
+
+    /* Pub-only: ornaments and materials */
+    --brass:       light-dark(#b08431, #b98d3c);   /* ornament lines, double rules */
+    --brass-hi:    light-dark(#e9c878, #ffe2a0);   /* shine highlight */
+    --frame:       light-dark(#c4a265, #6e5130);   /* inner frame lines on cards */
+    --glow:        light-dark(rgb(255 196 120 / .22), rgb(255 170 70 / .16));
+    --wood:        #6e4423;
+    --wood-2:      #3f2512;
+
+    /* Beer mats (round badges) */
+    --mat:         light-dark(#fbf3df, #24402f);
+    --mat-ink:     light-dark(#1f4d38, #ecc874);
+
+    /* Painted signboard: bottle green with gold leaf (same in light and dark) */
+    --sign:        #1d4231;
+    --sign-2:      #163627;
+    --sign-line:   #3d6450;
+    --sign-text:   #f4ead2;
+    --sign-muted:  #c9cdb4;
+    --gold:        #e9c46f;
+
+    /* Chalkboard (drinks, fixtures): same in light and dark */
+    --board:        #1e2925;
+    --board-2:      #26332d;
+    --chalk:        #f0eee4;
+    --chalk-muted:  #b7c0b6;
+    --chalk-accent: #f2d17c;
+    --chalk-line:   rgb(240 238 228 / .38);
+
+    /* Always-dark zones (hero, lightbox, footer, mirror card): dark walnut */
+    --night:             #1a110a;
+    --night-2:           #261a10;
+    --night-line:        #57402a;
+    --night-text:        #f6e8cb;
+    --night-muted:       #c6ab88;
+    --night-accent:      #d6a84e;
+    --night-accent-text: #e8c06e;
+    --night-on-accent:   #1a110a;
+    --night-ok:          #6fcf87;
+    --night-bad:         #ff8a7a;
+
+    /* Paper grain (SVG noise, no raster file). Light: brown specks. Dark: warm light specks. */
+    --grain-ink: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='240' height='240'%3E%3Cfilter id='g'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='3' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 .24 0 0 0 0 .14 0 0 0 0 .06 0 0 0 .2 0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23g)'/%3E%3C/svg%3E");
+    --grain-light: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='240' height='240'%3E%3Cfilter id='g'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='3' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 1 0 0 0 0 .92 0 0 0 0 .78 0 0 0 .1 0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23g)'/%3E%3C/svg%3E");
+    --grain: var(--grain-ink);
+}
+
+/* light-dark() only works for colours, so the grain image switches with the scheme here */
+@media (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]) { --grain: var(--grain-light); }
+}
+:root[data-theme="dark"] { --grain: var(--grain-light); }

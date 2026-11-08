@@ -1,8 +1,9 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 800" width="800" height="800" role="img" aria-label="GALLERY 1 (placeholder)">
-<defs><linearGradient id="g" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#16261f"/><stop offset="1" stop-color="#0a1210"/></linearGradient></defs>
-<rect width="800" height="800" fill="url(#g)"/>
-<g fill="none" stroke="#eef4e6" stroke-opacity=".18" stroke-width="5"><path d="M0 400H800"/><circle cx="400" cy="400" r="190"/></g>
-<circle cx="400" cy="400" r="12" fill="#c8f031"/>
-<text x="50%" y="88%" fill="#9db0a4" font-family="Arial,sans-serif" font-size="44" font-weight="700" text-anchor="middle">GALLERY 1</text>
-<text x="50%" y="88%" dy="46" fill="#c8f031" font-family="Arial,sans-serif" font-size="26" text-anchor="middle">800×800</text>
+<defs><linearGradient id="g" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#3a2414"/><stop offset="1" stop-color="#170e08"/></linearGradient>
+<radialGradient id="l" cx="50%" cy="30%" r="50%"><stop offset="0" stop-color="#ffb860" stop-opacity=".28"/><stop offset="1" stop-color="#ffb860" stop-opacity="0"/></radialGradient></defs>
+<rect width="800" height="800" fill="url(#g)"/><rect width="800" height="800" fill="url(#l)"/>
+<g fill="none" stroke="#c99a48" stroke-opacity=".55" stroke-width="6"><path d="M300 220H500L480 560H320Z"/><path d="M500 300h40a40 40 0 0 1 0 120h-30"/></g>
+<path d="M306 300H494L482 552H318Z" fill="#d6a84e" fill-opacity=".35"/>
+<text x="50%" y="84%" fill="#c6ab88" font-family="Georgia,serif" font-size="44" font-weight="700" text-anchor="middle">GALLERY 1</text>
+<text x="50%" y="84%" dy="46" fill="#e8c06e" font-family="Georgia,serif" font-size="26" text-anchor="middle">800×800</text>
 </svg>

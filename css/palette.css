@@ -8,6 +8,8 @@
      css/themes/volt.css      volt   electric blue and white, cool and crisp
      css/themes/derby.css     derby  classic football red and white
      css/themes/gold.css      gold   monochrome gold on black
+     css/themes/pub.css       pub    classic pub: wood, bottle green, cream paper, brass
+                                     (adds pub-only tokens; style.css falls back without them)
    (or copy a theme file over this one). Each file defines the SAME tokens.
 
    How light and dark work: light-dark(<light>, <dark>) picks by the used colour
