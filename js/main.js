@@ -72,7 +72,14 @@
     menuBtn?.addEventListener('click', () => setMenu(!menuOpen));
     nav?.addEventListener('click', e => { if (menuOpen && e.target.closest('a')) setMenu(false); });
     document.addEventListener('keydown', e => {
-        if (e.key === 'Escape' && menuOpen) { setMenu(false); menuBtn.focus(); }
+        if (!menuOpen) return;
+        if (e.key === 'Escape') { setMenu(false); menuBtn.focus(); return; }
+        if (e.key !== 'Tab') return;
+        // Tab / Shift+Tab wrap around inside the header (logo, menu links, theme, language, menu button)
+        const items = $$('a[href], button', header).filter(el => el.getClientRects().length);
+        const first = items[0], last = items[items.length - 1];
+        if (e.shiftKey && document.activeElement === first) { e.preventDefault(); last.focus(); }
+        else if (!e.shiftKey && document.activeElement === last) { e.preventDefault(); first.focus(); }
     });
     // The desktop breakpoint lives only in css/style.css (it hides .menu-btn): close the overlay
     // as soon as the button is gone, e.g. after rotating a tablet or widening the window.
