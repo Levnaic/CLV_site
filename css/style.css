@@ -579,6 +579,9 @@ address strong { color: var(--text); font: 800 1.35rem/1.2 var(--font-head); tex
 .more-link { margin: 0; }
 .more-link a { display: inline-flex; align-items: center; min-height: 44px; color: var(--accent-text); font: 800 1.1rem var(--font-head); letter-spacing: .06em; text-transform: uppercase; text-decoration: underline; text-decoration-thickness: 2px; text-underline-offset: .3em; }
 .more-link a:hover { color: var(--text); text-decoration-color: var(--accent); }
+/* Text links with a trailing arrow: inline-block (not flex), so the arrow keeps its space and wraps
+   with the last word; the padding keeps the 44px touch height */
+.more-link a, .near-link a { display: inline-block; min-height: 44px; padding-block: .62rem; line-height: 1.25; }
 
 /* ---------- Fixtures and results: ticket card + scoreboard date block ---------- */
 .match-list { list-style: none; margin: 1.5rem 0; padding: 0; display: grid; gap: 1.25rem; }

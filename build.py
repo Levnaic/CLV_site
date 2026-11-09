@@ -401,7 +401,7 @@ def faq_section(lang):
         return ""
 
     def more(m):
-        return (f'<p class="more-link faq-more"><a href="{attr(m[0])}">{esc(m[1])}<span aria-hidden="true"> →</span></a></p>'
+        return (f'<p class="more-link faq-more"><a href="{attr(m[0])}">{esc(m[1])}<span aria-hidden="true">&nbsp;→</span></a></p>'
                 if m else "")
     body = "\n                    ".join(
         f'<div class="faq-item reveal"><h3>{esc(q)}</h3><p>{esc(a)}</p>{more(m)}</div>' for q, a, m in items)
@@ -793,7 +793,7 @@ def perks_html(lang):
             f'<li class="card perk perk-beer reveal">{BEER_ICON}<h3>{esc(t["beerTitle"])}</h3>'
             f'<p>{esc(t["beerText"])}</p>{chip_groups}'
             f'<p class="more-link"><a href="#drinks-menu" data-drink-tab="{attr(groups[0][0])}">{esc(t["beerLink"])}'
-            f'<span aria-hidden="true"> →</span></a></p></li>')
+            f'<span aria-hidden="true">&nbsp;→</span></a></p></li>')
     if show_music():
         how = music_how(lang)
         how_html = f'<p>{esc(t["musicHow"].format(how=how))}</p>' if how else ""
@@ -1197,7 +1197,7 @@ def near_item(lang, p, home="", link_eintracht=True, hl=4):
     link = ""
     if key == "Stadium" and link_eintracht:
         link = (f'<p class="near-link"><a href="{attr(home + PAGES["eintracht"][lang])}">{esc(t["nearLinkEintracht"])}'
-                f'<span aria-hidden="true"> →</span></a></p>')
+                f'<span aria-hidden="true">&nbsp;→</span></a></p>')
     return (f'<li class="near"><div class="near-body"><h{hl} class="near-name">{esc(p["name"])}</h{hl}>'
             + (f'<p class="near-kind">{esc(kind)}</p>' if kind else "")
             + (f'<p class="near-text">{esc(text)}</p>' if text else "") + link
@@ -1231,7 +1231,7 @@ def link_list(lang, home, keys):
         "local": (home + "#local", "localLinkArea"),
     }
     lis = "".join(f'<li class="more-link"><a href="{attr(target[k][0])}">{esc(t[target[k][1]])}'
-                  f'<span aria-hidden="true"> →</span></a></li>' for k in keys)
+                  f'<span aria-hidden="true">&nbsp;→</span></a></li>' for k in keys)
     return f'<ul class="link-list">{lis}</ul>'
 
 
@@ -1555,7 +1555,7 @@ def render_eintracht(lang, other_href):
                     <h2 class="sec-head" id="ef-fixtures"><span class="sec-n" aria-hidden="true">01</span>{esc(t["efFixtures"])}</h2>
                     {fx_note}
                     {fx_html}
-                    <p class="more-link"><a href="{sched}">{esc(t["efAllMatches"])}<span aria-hidden="true"> →</span></a></p>
+                    <p class="more-link"><a href="{sched}">{esc(t["efAllMatches"])}<span aria-hidden="true">&nbsp;→</span></a></p>
                 </section>
                 <section class="page-sec ef-results" aria-labelledby="ef-results">
                     <h2 class="sec-head" id="ef-results"><span class="sec-n" aria-hidden="true">02</span>{esc(t["efResults"])}</h2>
