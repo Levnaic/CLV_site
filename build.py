@@ -191,7 +191,10 @@ def switch_href(lang, path):
 def home_description(lang):
     t = I18N[lang]
     n = get("venue.screens", report=False)
-    return t["description"].replace("{screens}", t["descScreens"].format(n=n) if n else "")
+    stadium = nearby_place(SITE["local"]["stadium_name"])
+    near = t["descNear"].format(dist=fmt_dist(lang, stadium["distance_km"]), stadium=stadium["name"]) if stadium else ""
+    return (t["description"].replace("{screens}", t["descScreens"].format(n=n) if n else "")
+            .replace("{near}", near))
 
 
 def meta_block(lang, path, title, desc, social=True):
@@ -248,6 +251,90 @@ def venue_facts(lang):
     return out
 
 
+def join_list(lang, items):
+    """'A, B und C' / 'A, B and C'."""
+    items = list(items)
+    if len(items) < 2:
+        return "".join(items)
+    return ", ".join(items[:-1]) + (" und " if lang == "de" else " and ") + items[-1]
+
+
+def cap(s):
+    return s[:1].upper() + s[1:]
+
+
+def fmt_km(lang, km):
+    """2.0 -> '2', 2.5 -> '2,5' (de) / '2.5' (en)."""
+    s = f"{float(km):g}"
+    return s.replace(".", ",") if lang == "de" else s
+
+
+def fmt_dist(lang, km):
+    """Rounded straight-line distance as words: 'ca. 2,5 km' / 'about 2.5 km'."""
+    return f'{I18N[lang]["nearAbout"]} {fmt_km(lang, km)} km'
+
+
+# Beer detection in data/drinks.json (names are matched in German, lower case). drinks.json has no
+# "is beer" flag, so this list decides; anything else (e.g. Apfelwein on tap) is never called a beer.
+BEER_WORDS = ("pils", "weizen", "weißbier", "radler", "bier", "helles", "export", "lager", "kölsch", "bock")
+
+
+def beer_groups(lang):
+    """[(category id, category label, [(menu name, name inside a sentence)])] from data/drinks.json,
+    in menu order, one entry per beer (sizes merged). Only drinks that are really on the menu."""
+    out = []
+    for c in DRINKS.get("categories", []):
+        names = []
+        for it in c.get("items", []):
+            if not any(w in loc(it["name"], "de").lower() for w in BEER_WORDS):
+                continue
+            n = loc(it["name"], lang)
+            # English translations are common nouns ("wheat beer"); German nouns and names ("Pils") keep their capital
+            inline = n[:1].lower() + n[1:] if lang != "de" and isinstance(it["name"], dict) else n
+            if n not in [x for x, _ in names]:
+                names.append((n, inline))
+        if names:
+            out.append((c["id"], loc(c["name"], lang), names))
+    return out
+
+
+def show_beers():
+    return get("venue.beer_variety") is True and sum(len(g[2]) for g in beer_groups(DEFAULT_LANG)) >= 2
+
+
+def music_how(lang):
+    """How guests choose the music, once the owner has said so (site.json venue.music_choice_how)."""
+    how = loc(get("venue.music_choice_how", report=False), lang)
+    if how and not missing(how):
+        return how
+    msg = ("venue.music_choice_how (ask the owner HOW guests choose the music: jukebox, request at the bar, "
+           "app/playlist …; until then the site only says that guests choose the music)")
+    if msg not in TODOS:
+        TODOS.append(msg)
+    return ""
+
+
+def show_music():
+    return get("venue.music_choice") is True
+
+
+# Per-place copy in data/i18n.json ("near<suffix>" blurb). Places without an entry show name, kind and distance only.
+NEAR_COPY = {"Deutsche Bank Park": "Stadium", "Festhalle Frankfurt": "Festhalle", "Frankfurt Hauptbahnhof": "Hbf"}
+
+
+def nearby_places():
+    """Confirmed nearby places from site.json local.nearby_places, nearest first (straight-line km, rounded)."""
+    L = SITE["local"]
+    if L.get("nearby_confirmed") is not True:
+        return []
+    out = [p for p in L.get("nearby_places") or [] if p.get("name") and isinstance(p.get("distance_km"), (int, float))]
+    return sorted(out, key=lambda p: p["distance_km"])
+
+
+def nearby_place(name):
+    return next((p for p in nearby_places() if p["name"] == name), None)
+
+
 def hours_summary(lang):
     days = SITE["hours"]["days"]
     names = I18N[lang]["days"]
@@ -256,36 +343,55 @@ def hours_summary(lang):
 
 
 def faq_items(lang):
-    """[(question, answer)] built only from confirmed site.json data; entries without data are left out."""
+    """[(question, answer, more)] built only from confirmed site.json / drinks.json data; entries without
+    data are left out. more = None or (href on the home page, label): a visible follow-up link only
+    (the FAQPage schema carries question and answer text, exactly as shown)."""
     t = I18N[lang]
     items = []
     if get("venue.shows_all_eintracht_matches") is True:
         a = t["faqA1"] + (t["faqA1sound"] if get("venue.sound_on_for_eintracht") is True else "")
-        items.append((t["faqQ1"], a))
+        items.append((t["faqQ1"], a, None))
     acc = get("venue.accepts_reservations")
     how = loc(get("venue.reservation_how"), lang)
     if acc is True and how and not missing(how):
-        items.append((t["faqQ2"], t["faqA2yes"].format(how=how)))
+        items.append((t["faqQ2"], t["faqA2yes"].format(how=how), None))
     elif acc is False:
-        items.append((t["faqQ2"], t["faqA2no"]))
+        items.append((t["faqQ2"], t["faqA2no"], None))
+    stadium = SITE["local"]["stadium_name"]
     walk = loc(get("local.walk_from_stadium"), lang)
     if walk and not missing(walk):
-        a = t["faqA3"].format(stadium=SITE["local"]["stadium_name"], walk=walk)
+        a = t["faqA3"].format(stadium=stadium, walk=walk)
         pt = loc(get("local.public_transport"), lang)
         if pt and not missing(pt):
             a += t["faqA3pt"].format(pt=pt)
-        items.append((t["faqQ3"], a))
+        items.append((t["faqQ3"].format(stadium=stadium), a, (PAGES["eintracht"][lang], t["faqMoreEintracht"])))
+    # Places near the bar (rounded straight-line distances, always worded as "about")
+    for name, key in (("Festhalle Frankfurt", "Festhalle"), ("Frankfurt Hauptbahnhof", "Hbf")):
+        p = nearby_place(name)
+        if p:
+            items.append((t[f"faqQnear{key}"], cap(t[f"faqAnear{key}"].format(dist=fmt_dist(lang, p["distance_km"]))),
+                          ("#local", t["faqMoreLocal"])))
     if get("address.street"):
-        items.append((t["faqQ4"], t["faqA4"].format(addr=full_address_line())))
+        items.append((t["faqQ4"], t["faqA4"].format(addr=full_address_line()), None))
     if SITE["hours"].get("confirmed") is True:
-        items.append((t["faqQ5"], hours_summary(lang) + "."))
+        items.append((t["faqQ5"], hours_summary(lang) + ".", None))
     parts = []
     if get("venue.seats"):
         parts.append(t["faqA6seats"].format(n=get("venue.seats")))
     if get("venue.screens"):
         parts.append(t["faqA6screens"].format(n=get("venue.screens")))
     if parts:
-        items.append((t["faqQ6"], ", ".join(parts) + "."))
+        items.append((t["faqQ6"], ", ".join(parts) + ".", None))
+    if show_beers():
+        groups = beer_groups(lang)
+        a = t["faqAbeerFirst"].format(cat=groups[0][1], list=join_list(lang, [i for _, i in groups[0][2]]))
+        rest = [i for g in groups[1:] for _, i in g[2]]
+        if rest:
+            a += t["faqAbeerAlso"].format(list=join_list(lang, rest))
+        items.append((t["faqQbeer"], a + t["faqAbeerEnd"], ("#drinks", t["faqMoreDrinks"])))
+    if show_music():
+        how = music_how(lang)
+        items.append((t["faqQmusic"], t["faqAmusic"] + (t["faqAmusicHow"].format(how=how) if how else ""), None))
     return items
 
 
@@ -293,8 +399,12 @@ def faq_section(lang):
     items = faq_items(lang)
     if not items:
         return ""
+
+    def more(m):
+        return (f'<p class="more-link faq-more"><a href="{attr(m[0])}">{esc(m[1])}<span aria-hidden="true"> →</span></a></p>'
+                if m else "")
     body = "\n                    ".join(
-        f'<div class="faq-item reveal"><h3>{esc(q)}</h3><p>{esc(a)}</p></div>' for q, a in items)
+        f'<div class="faq-item reveal"><h3>{esc(q)}</h3><p>{esc(a)}</p>{more(m)}</div>' for q, a, m in items)
     return f'''
         <section class="section" id="faq">
             <div class="container">
@@ -311,8 +421,10 @@ def faq_section(lang):
 BAR_ID = SITE_URL + "/#bar"  # one stable entity id for all languages
 SCHEMA_DAYS = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"]
 AMENITY = {
-    "de": {"screens": "Bildschirme", "seats": "Sitzplätze", "sound": "Ton bei Spielen von Eintracht Frankfurt"},
-    "en": {"screens": "Screens", "seats": "Seats", "sound": "Sound on for Eintracht Frankfurt matches"},
+    "de": {"screens": "Bildschirme", "seats": "Sitzplätze", "sound": "Ton bei Spielen von Eintracht Frankfurt",
+           "music": "Gäste bestimmen die Musik"},
+    "en": {"screens": "Screens", "seats": "Seats", "sound": "Sound on for Eintracht Frankfurt matches",
+           "music": "Guests choose the music"},
 }
 BAD_VALUES = ("TODO", "Muster", "example.com", "000000", "Platzhalter")
 
@@ -373,8 +485,12 @@ def bar_schema(lang):
         feats.append({"@type": "LocationFeatureSpecification", "name": am["seats"], "value": n})
     if get("venue.sound_on_for_eintracht", report=False) is True:
         feats.append({"@type": "LocationFeatureSpecification", "name": am["sound"], "value": True})
+    if get("venue.music_choice", report=False) is True:  # visible: drinks section tile + FAQ
+        feats.append({"@type": "LocationFeatureSpecification", "name": am["music"], "value": True})
     if feats:
         d["amenityFeature"] = feats
+    if DRINKS.get("categories"):  # the drinks menu with prices is visible on the home page (#drinks)
+        d["hasMenu"] = page_url(lang) + "#drinks"
     same = [get(f"social.{k}.url", report=False) for k in ("instagram", "facebook", "tiktok")]
     same.append(get("social.google_business_profile", report=False))
     same = [u for u in same if u]
@@ -397,7 +513,7 @@ def faq_schema(lang):
         "inLanguage": lang,
         "about": {"@id": BAR_ID},
         "mainEntity": [{"@type": "Question", "name": q, "acceptedAnswer": {"@type": "Answer", "text": a}}
-                       for q, a in items],
+                       for q, a, _ in items],
     }
 
 
@@ -652,6 +768,44 @@ def drinks_html(lang):
             + "\n                    ".join(panels))
 
 
+# Decorative tile icons (currentColor, aria-hidden; the heading next to them carries the meaning)
+BEER_ICON = ('<svg class="perk-icon" viewBox="0 0 48 48" aria-hidden="true" focusable="false">'
+             '<path d="M9 13h22v29H9z"/><path d="M31 18h5.5v15H31"/><path d="M15 20v15M21 20v15M27 20v15"/>'
+             '<path class="nif" d="M7 6h26l-2 7H9z"/></svg>')
+MUSIC_ICON = ('<svg class="perk-icon" viewBox="0 0 48 48" aria-hidden="true" focusable="false">'
+              '<path d="M17 36V9l22-5v27"/><path class="nif" d="M5 37a6 5 0 1 0 12 0a6 5 0 1 0-12 0zM27 32a6 5 0 1 0 12 0a6 5 0 1 0-12 0z"/>'
+              '<path class="nif" d="M17 9l22-5v6l-22 5z"/></svg>')
+
+
+def perks_html(lang):
+    """Feature strip at the top of the drinks section: beer types (only real ones from drinks.json,
+    linked to the menu below) and 'you pick the music' (no mechanism named until the owner says how)."""
+    t = I18N[lang]
+    tiles = []
+    if show_beers():
+        groups = beer_groups(lang)
+        chip_groups = "".join(
+            f'<div class="chip-group{" chip-group-main" if i == 0 else ""}">'
+            f'<p class="chip-label" id="beer-{cid}">{esc(label)}</p>'
+            f'<ul class="chips" aria-labelledby="beer-{cid}">' + "".join(f"<li>{esc(n)}</li>" for n, _ in names) + "</ul></div>"
+            for i, (cid, label, names) in enumerate(groups))
+        tiles.append(
+            f'<li class="card perk perk-beer reveal">{BEER_ICON}<h3>{esc(t["beerTitle"])}</h3>'
+            f'<p>{esc(t["beerText"])}</p>{chip_groups}'
+            f'<p class="more-link"><a href="#drinks-menu" data-drink-tab="{attr(groups[0][0])}">{esc(t["beerLink"])}'
+            f'<span aria-hidden="true"> →</span></a></p></li>')
+    if show_music():
+        how = music_how(lang)
+        how_html = f'<p>{esc(t["musicHow"].format(how=how))}</p>' if how else ""
+        eq = '<span class="eq" aria-hidden="true">' + "<span></span>" * 5 + "</span>"
+        tiles.append(
+            f'<li class="card perk perk-music reveal">{MUSIC_ICON}<h3>{esc(t["musicTitle"])}</h3>'
+            f'<p class="perk-claim">{esc(t["musicText"])}</p>{how_html}{eq}</li>')
+    if not tiles:
+        return ""
+    return f'<ul class="perks" aria-label="{attr(t["perksLabel"])}">' + "".join(tiles) + "</ul>"
+
+
 def hours_html(lang):
     days = SITE["hours"]["days"]
     names = I18N[lang]["days"]  # index 0 = Sunday
@@ -834,6 +988,7 @@ def render_home(lang, other_href=None):
         <section class="section" id="drinks">
             <div class="container">
                 <h2>{esc(t["drinksTitle"])}</h2>
+                {perks_html(lang)}
                 <p class="lead">{esc(t["drinksLead"])}</p>
                 <div class="drinks" id="drinks-menu">
                     {drinks_html(lang)}
@@ -1002,15 +1157,16 @@ def sports_event_schema(lang, start, m):
 
 
 def local_paragraphs(lang):
-    """Local-angle sentences, only from confirmed facts in site.json."""
+    """Local-angle sentences, only from confirmed facts in site.json. The stadium walk is shown in the
+    nearby list when the stadium is in it, so it is only repeated here as a fallback."""
     t = I18N[lang]
     L = SITE["local"]
     parts = [t["localLead"]]
     walk = loc(get("local.walk_from_stadium"), lang)
-    if walk and not missing(walk):
+    if walk and not missing(walk) and not nearby_place(L["stadium_name"]):
         parts.append(t["localStadium"].format(stadium=L["stadium_name"], walk=walk))
     if L.get("nearby_confirmed") is True and L.get("nearby"):
-        parts.append(t["localNearby"].format(places=", ".join(L["nearby"])))
+        parts.append(t["localNearby"].format(places=join_list(lang, L["nearby"])))
     elif "local.nearby_confirmed" not in TODOS:
         TODOS.append("local.nearby_confirmed (set true once the bar is confirmed to be near DFB-Campus / Bürostadt)")
     pt = loc(get("local.public_transport"), lang)
@@ -1019,14 +1175,81 @@ def local_paragraphs(lang):
     return parts
 
 
+# Pin icon for the "Nearby" heading (decorative, currentColor)
+PIN_ICON = ('<svg class="near-pin" viewBox="0 0 24 24" aria-hidden="true" focusable="false">'
+            '<path d="M12 22s7-7.2 7-12.5A7 7 0 0 0 5 9.5C5 14.8 12 22 12 22z"/><path class="nif" d="M9.5 7.5h5l-1 4h-5z"/></svg>')
+
+
+def near_item(lang, p, home="", link_eintracht=True, hl=4):
+    """One nearby place as a ticket: name, kind, a sentence for people, and a scoreboard distance chip.
+    hl: heading level of the place name (4 under the 'Nearby' h3, 3 directly under a page h2)."""
+    t = I18N[lang]
+    km = p["distance_km"]
+    key = NEAR_COPY.get(p["name"])
+    text = ""
+    if key == "Stadium":
+        walk = loc(get("local.walk_from_stadium", report=False), lang)
+        if walk and not missing(walk):
+            text = t["nearStadium"].format(walk=walk)
+    elif key:
+        text = t[f"near{key}"]
+    kind = loc(p.get("kind"), lang)
+    link = ""
+    if key == "Stadium" and link_eintracht:
+        link = (f'<p class="near-link"><a href="{attr(home + PAGES["eintracht"][lang])}">{esc(t["nearLinkEintracht"])}'
+                f'<span aria-hidden="true"> →</span></a></p>')
+    return (f'<li class="near"><div class="near-body"><h{hl} class="near-name">{esc(p["name"])}</h{hl}>'
+            + (f'<p class="near-kind">{esc(kind)}</p>' if kind else "")
+            + (f'<p class="near-text">{esc(text)}</p>' if text else "") + link
+            + f'</div><p class="near-dist"><span class="near-ca">{esc(t["nearAbout"])}</span> '
+            f'<span class="near-km">{fmt_km(lang, km)}<span class="near-unit"> km</span></span> '
+            f'<span class="near-line">{esc(t["nearLine"])}</span></p></li>')
+
+
+def nearby_html(lang, home="", uid="near"):
+    """'Nearby' block: heading, intro, ticket list (nearest first), distance note. '' without confirmed places."""
+    t = I18N[lang]
+    places = nearby_places()
+    if not places:
+        return ""
+    items = "".join(near_item(lang, p, home) for p in places)
+    return (f'<div class="nearby" role="group" aria-labelledby="{uid}-h">'
+            f'<h3 class="nearby-title" id="{uid}-h">{PIN_ICON}{esc(t["nearTitle"])}</h3>'
+            f'<p class="near-intro">{esc(t["nearIntro"])}</p>'
+            f'<ul class="near-list">{items}</ul>'
+            f'<p class="near-note">{esc(t["nearNote"])}</p></div>')
+
+
+def link_list(lang, home, keys):
+    """Internal follow-up links (other pages, home sections), drawn as underlined plate links."""
+    t = I18N[lang]
+    target = {
+        "schedule": (home + PAGES["schedule"][lang], "localLinkSchedule"),
+        "eintracht": (home + PAGES["eintracht"][lang], "localLinkEintracht"),
+        "drinks": (home + "#drinks", "localLinkDrinks"),
+        "visit": (home + "#visit", "localLinkVisit"),
+        "local": (home + "#local", "localLinkArea"),
+    }
+    lis = "".join(f'<li class="more-link"><a href="{attr(target[k][0])}">{esc(t[target[k][1]])}'
+                  f'<span aria-hidden="true"> →</span></a></li>' for k in keys)
+    return f'<ul class="link-list">{lis}</ul>'
+
+
+def local_block(lang, home="", links=("visit", "schedule", "eintracht")):
+    """Body of 'Directions & area' (home page and schedule page): text column + nearby list."""
+    paras = "".join(f"<p>{esc(x)}</p>" for x in local_paragraphs(lang))
+    near = nearby_html(lang, home)
+    return (f'<div class="local-grid"><div class="local">{paras}{link_list(lang, home, links)}</div>'
+            f'{near}</div>')
+
+
 def local_section(lang):
     t = I18N[lang]
-    paras = "".join(f"<p>{esc(x)}</p>" for x in local_paragraphs(lang))
     return f'''
         <section class="section" id="local">
             <div class="container">
                 <h2>{esc(t["localTitle"])}</h2>
-                <div class="local">{paras}</div>
+                {local_block(lang)}
             </div>
         </section>
 '''
@@ -1079,7 +1302,7 @@ def render_schedule(lang, other_href):
             blocks.append(sports_event_schema(lang, start, m))
     body = ('<ul class="match-list">' + "".join(items) + "</ul>") if items else f'<p>{esc(t["schedEmpty"])}</p>'
     example_note = f'<p class="match-note">{esc(t["exampleNote"])}</p>' if any_example else ""
-    local = "".join(f"<p>{esc(x)}</p>" for x in local_paragraphs(lang))
+    local = local_block(lang, home_href(path), links=("eintracht", "drinks", "visit"))
     return f'''<!DOCTYPE html>
 <html lang="{lang}">
 <head>
@@ -1098,7 +1321,7 @@ def render_schedule(lang, other_href):
             {example_note}
             <section class="page-sec" aria-labelledby="sched-local">
                 <h2 class="sec-head" id="sched-local">{esc(t["localTitle"])}</h2>
-                <div class="local">{local}</div>
+                {local}
             </section>
             {back_link(lang, path, end=True)}
         </div>
@@ -1293,9 +1516,21 @@ def render_eintracht(lang, other_href):
                     </div>
                 </section>''' if cta else ""
     sched = home_href(path) + PAGES["schedule"][lang]
+    # 04: from the stadium to the bar (only with a confirmed stadium entry in local.nearby_places)
+    stadium = nearby_place(SITE["local"]["stadium_name"])
+    way = f'''
+                <section class="page-sec ef-way" aria-labelledby="ef-way">
+                    <h2 class="sec-head" id="ef-way"><span class="sec-n" aria-hidden="true">04</span>{esc(t["efWay"])}</h2>
+                    <ul class="near-list">{near_item(lang, stadium, link_eintracht=False, hl=3)}</ul>
+                    <p class="near-note">{esc(t["nearNote"])}</p>
+                    {link_list(lang, home_href(path), ("local", "drinks"))}
+                </section>''' if stadium else ""
+    jump_items = [("ef-fixtures", "efFixtures"), ("ef-results", "efResults"), ("ef-table", "efTable")]
+    if way:
+        jump_items.append(("ef-way", "efWay"))
     jump = "".join(
         f'<li><a href="#{hid}"><span class="jump-n" aria-hidden="true">{n:02d}</span>{esc(t[key])}</a></li>'
-        for n, (hid, key) in enumerate((("ef-fixtures", "efFixtures"), ("ef-results", "efResults"), ("ef-table", "efTable")), 1))
+        for n, (hid, key) in enumerate(jump_items, 1))
     jump_nav = f'<nav class="ef-jump" aria-label="{attr(t["efJumpLabel"])}"><ol>{jump}</ol></nav>'
     head = page_head(lang, path, t["efH1"], t["efIntro"], t["efKicker"], extra=cta + jump_nav, art=True, cls="ef-head")
     ticker = ticker_html([EINTRACHT, t["efKicker"], t["efFixtures"], t["efResults"], t["efTable"]], "ticker-alt")
@@ -1333,7 +1568,7 @@ def render_eintracht(lang, other_href):
                     <h2 class="sec-head" id="ef-table"><span class="sec-n" aria-hidden="true">03</span>{esc(t["efTable"])}</h2>
                     {tb_note}
                     {standing_html(lang)}
-                </section>{cta_band}
+                </section>{cta_band}{way}
                 </div>
             </div>
             {back_link(lang, path, end=True)}
