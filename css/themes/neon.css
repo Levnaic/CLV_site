@@ -1,0 +1,80 @@
+/* ==========================================================================
+   THEME "neon": Neon night. Near-black violet base, magenta and cyan tubes,
+   amber LED digits. Light mode is "day-glow": cool light grey with saturated
+   neon-ink accents (the same hues, darkened until they read as text).
+   Used by PALETTE in build.py on the design-neon branch.
+
+   This theme defines the shared tokens of css/palette.css PLUS the extra
+   neon tokens below (accent-2, led, glow, tube, grid). css/style.css on this
+   branch uses them, so the other theme files are not drop-ins here.
+
+   Contrast (WCAG 2.2 AA, computed from these values; glow is decoration only,
+   every text colour passes on its own without the glow):
+     text, text-2, muted on bg and surface               >= 6:1
+     accent-text, accent-2, led on bg and surface         >= 5:1
+     on-accent on accent, on-accent-2 on accent-2         >= 5.5:1
+     tube-1, tube-2 (hero sign text) on bg                >= 5:1
+     ok, bad (status dots) on bg and surface              >= 3:1
+     night-* text pairs on night and night-2              >= 5:1
+   ========================================================================== */
+
+:root { color-scheme: light dark; }
+:root[data-theme="light"] { color-scheme: light; }
+:root[data-theme="dark"] { color-scheme: dark; }
+
+:root {
+    /* Page colours (light "day-glow" | dark "night") */
+    --bg:          light-dark(#e9ebf3, #07061a);
+    --surface:     light-dark(#f6f7fb, #0e0c2a);
+    --line:        light-dark(#c3c6d8, #2a2660);
+    --text:        light-dark(#120f2e, #f3f0ff);
+    --text-2:      light-dark(#2c2852, #cdc8ef);
+    --muted:       light-dark(#555178, #948fc4);
+
+    /* Magenta: the main tube. Fills (buttons, lit tabs) and readable text/lines */
+    --accent:      light-dark(#c4009b, #ff2bd6);
+    --accent-text: light-dark(#b0008c, #ff5ce0);
+    --on-accent:   light-dark(#ffffff, #07061a);
+
+    /* Cyan: second tube (outlines, HUD labels, focus ring) */
+    --accent-2:    light-dark(#006a82, #22e6ff);
+    --on-accent-2: light-dark(#ffffff, #07061a);
+
+    /* Amber LED: digits only (prices, times, scores) */
+    --led:         light-dark(#8a5000, #ffb547);
+
+    /* Hero sign text: tube core colours (glow comes from --glow / --glow-2) */
+    --tube-1:      light-dark(#b0008c, #ffe3f8);
+    --tube-2:      light-dark(#006a82, #dffbff);
+
+    /* Status */
+    --ok:          light-dark(#0b7a3a, #8dff5a);
+    --bad:         light-dark(#c0122f, #ff5c7a);
+
+    /* Light effects (never used as the only carrier of text contrast) */
+    --glow:        light-dark(rgb(196 0 155 / .28), rgb(255 43 214 / .62));
+    --glow-2:      light-dark(rgb(0 106 130 / .26), rgb(34 230 255 / .5));
+    --glow-led:    light-dark(rgb(138 80 0 / .2), rgb(255 181 71 / .55));
+    --grid-line:   light-dark(rgb(176 0 140 / .3), rgb(255 43 214 / .5));
+    --scan:        light-dark(rgb(18 15 46 / .045), rgb(0 0 0 / .3));
+
+    --shadow:      light-dark(rgb(40 30 90 / .18), rgb(0 0 0 / .65));
+
+    /* Always-dark zones (drinks board, ticker, footer, lightbox, LED scores):
+       the same in light and dark mode, like a lit sign on a dark wall. */
+    --night:             #07061a;
+    --night-2:           #110e30;   /* raised on night */
+    --night-line:        #2e2a66;
+    --night-text:        #f3f0ff;
+    --night-muted:       #a09bd0;
+    --night-accent:      #ff2bd6;   /* fills on night */
+    --night-accent-text: #ff5ce0;   /* accent text and lines on night */
+    --night-on-accent:   #07061a;
+    --night-accent-2:    #22e6ff;
+    --night-led:         #ffb547;
+    --night-ok:          #8dff5a;
+    --night-bad:         #ff5c7a;
+    --night-glow:        rgb(255 43 214 / .62);
+    --night-glow-2:      rgb(34 230 255 / .5);
+    --night-glow-led:    rgb(255 181 71 / .55);
+}

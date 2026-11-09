@@ -25,11 +25,14 @@
     <meta name="twitter:description" content="Sportsbar in Frankfurt-Niederrad: Bundesliga, Eintracht und Champions League live. Getränkekarte, Öffnungszeiten, Anfahrt.">
     <meta name="twitter:image" content="https://DOMAIN/assets/img/og-image.jpg">
     <meta name="twitter:image:alt" content="C&#x27;est la vie Sports Bar – Frankfurt-Niederrad">
-    <meta name="theme-color" content="#0a1210" media="(prefers-color-scheme: dark)">
-    <meta name="theme-color" content="#f1f5e6" media="(prefers-color-scheme: light)">
+    <meta name="theme-color" content="#07061a" media="(prefers-color-scheme: dark)">
+    <meta name="theme-color" content="#e9ebf3" media="(prefers-color-scheme: light)">
     <link rel="icon" href="assets/icons/favicon.svg" type="image/svg+xml">
     <script>try{var t=localStorage.getItem("theme");if(t==="light"||t==="dark")document.documentElement.dataset.theme=t}catch(e){}</script>
-    <link rel="stylesheet" href="css/palette.css">
+    <link rel="preload" href="assets/fonts/chakra-petch-latin-700-normal.woff2" as="font" type="font/woff2" crossorigin>
+    <link rel="preload" href="assets/fonts/space-grotesk-latin-wght-normal.woff2" as="font" type="font/woff2" crossorigin>
+    <link rel="stylesheet" href="css/fonts.css">
+    <link rel="stylesheet" href="css/themes/neon.css">
     <link rel="stylesheet" href="css/style.css">
     <script type="application/ld+json">
     {
@@ -116,10 +119,12 @@
         <section class="hero" id="top">
             <img class="hero-img" src="assets/img/hero.svg" width="1200" height="1600" fetchpriority="high" alt="">
             <div class="hero-overlay"></div>
+            <div class="hero-grid" aria-hidden="true"></div>
+            <svg class="hero-sign" viewBox="0 0 320 300" aria-hidden="true" focusable="false"><defs><filter id="neon-glow" x="-25%" y="-25%" width="150%" height="150%"><feGaussianBlur in="SourceGraphic" stdDeviation="3" result="b1"/><feGaussianBlur in="SourceGraphic" stdDeviation="10" result="b2"/><feMerge><feMergeNode in="b2"/><feMergeNode in="b1"/><feMergeNode in="SourceGraphic"/></feMerge></filter></defs><g filter="url(#neon-glow)"><rect class="sign-frame" x="18" y="18" width="284" height="204" rx="18"/><path class="sign-frame" d="M160 222V256M110 262H210"/><circle class="sign-ball" cx="160" cy="120" r="58"/><path class="sign-ball" d="M160 98L180.9 113.2L172.9 137.8H147.1L139.1 113.2ZM160 98V62M180.9 113.2L215.2 102.1M172.9 137.8L194.1 166.9M147.1 137.8L125.9 166.9M139.1 113.2L104.8 102.1"/><circle class="sign-dot" cx="48" cy="48" r="6"/><text class="sign-live" x="62" y="54">LIVE</text></g></svg>
             <div class="container hero-content">
                 <p class="status hero-status" data-status></p>
                 <p class="eyebrow">Frankfurt · Niederrad</p>
-                <h1>C'est la vie<br><span>Sports Bar</span></h1>
+                <h1>C'est la <span class="flick">v</span>ie<br><span class="h1-sub">Sports Bar</span></h1>
                 <p class="tagline">Live Sport · Kühle Drinks · Gute Leute</p>
                 <div class="hero-buttons">
                     <a class="btn btn-primary" href="spielplan/">Heute live</a>

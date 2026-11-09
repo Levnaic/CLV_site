@@ -20,8 +20,22 @@ SITE_URL = "https://DOMAIN"  # the ONE place to set the domain (no trailing slas
 LANGS = ["de", "en"]
 DEFAULT_LANG = "de"
 # Colour palette (all colour tokens live in this one file, loaded before css/style.css).
-# Default "pitch" = css/palette.css. Alternatives: css/themes/ember.css, volt.css, derby.css, gold.css
-PALETTE = "css/palette.css"
+# design-neon branch: css/themes/neon.css ("Neon night"). It adds tokens (accent-2, led, glow, tube)
+# that this branch's css/style.css needs, so the other theme files are not drop-ins here.
+PALETTE = "css/themes/neon.css"
+
+# Self-hosted fonts (latin subset, from @fontsource on npm; see css/fonts.css).
+# css/fonts.css is linked and the first-paint faces preloaded ONLY if every file exists,
+# so a checkout without the fonts falls back to local fonts with no broken requests.
+FONT_DIR = "assets/fonts"
+FONT_FILES = [
+    "chakra-petch-latin-600-normal.woff2",
+    "chakra-petch-latin-700-normal.woff2",
+    "space-grotesk-latin-wght-normal.woff2",
+    "share-tech-mono-latin-400-normal.woff2",
+]
+FONT_PRELOAD = ["chakra-petch-latin-700-normal.woff2", "space-grotesk-latin-wght-normal.woff2"]
+FONTS_MISSING = [f for f in FONT_FILES if not (ROOT / FONT_DIR / f).is_file()]
 
 DATA = Path(os.environ.get("CLV_DATA_DIR", ROOT / "data"))  # override only for tests
 OUT = Path(os.environ.get("CLV_OUT_DIR", ROOT))
@@ -407,12 +421,17 @@ def jsonld_scripts(lang, blocks=None):
 # ---------------------------------------------------------------- page fragments
 def head_common(lang, depth, extra=""):
     r = rel_root(lang, depth)
-    # theme-color: static fallback for the default palette; js/main.js replaces it with the active palette's background
-    return f'''    <meta name="theme-color" content="#0a1210" media="(prefers-color-scheme: dark)">
-    <meta name="theme-color" content="#f1f5e6" media="(prefers-color-scheme: light)">
+    fonts = ""
+    if not FONTS_MISSING:
+        fonts = "".join(f'    <link rel="preload" href="{r}{FONT_DIR}/{f}" as="font" type="font/woff2" crossorigin>\n'
+                        for f in FONT_PRELOAD)
+        fonts += f'    <link rel="stylesheet" href="{r}css/fonts.css">\n'
+    # theme-color: static fallback for the neon palette; js/main.js replaces it with the active palette's background
+    return f'''    <meta name="theme-color" content="#07061a" media="(prefers-color-scheme: dark)">
+    <meta name="theme-color" content="#e9ebf3" media="(prefers-color-scheme: light)">
     <link rel="icon" href="{r}assets/icons/favicon.svg" type="image/svg+xml">
     <script>try{{var t=localStorage.getItem("theme");if(t==="light"||t==="dark")document.documentElement.dataset.theme=t}}catch(e){{}}</script>
-    <link rel="stylesheet" href="{r}{PALETTE}">
+{fonts}    <link rel="stylesheet" href="{r}{PALETTE}">
     <link rel="stylesheet" href="{r}css/style.css">
 {extra}'''
 
@@ -439,6 +458,25 @@ def lang_switch(lang, other_href):
 def home_href(path):
     """Relative link from a page (path relative to its language root) to that language's home page."""
     return "../" * path.count("/") or "./"
+
+
+def hero_sign_svg():
+    """Decorative neon sign for the hero (wide screens only): a screen tube with a football and a LIVE light."""
+    # Football: pentagon (r 22) and five seams out to the ball outline (r 58), centred at 160,120
+    # The glow is an SVG blur of each tube merged under the sharp tube, so it takes the tube's own colour.
+    return ('<svg class="hero-sign" viewBox="0 0 320 300" aria-hidden="true" focusable="false">'
+            '<defs><filter id="neon-glow" x="-25%" y="-25%" width="150%" height="150%">'
+            '<feGaussianBlur in="SourceGraphic" stdDeviation="3" result="b1"/>'
+            '<feGaussianBlur in="SourceGraphic" stdDeviation="10" result="b2"/>'
+            '<feMerge><feMergeNode in="b2"/><feMergeNode in="b1"/><feMergeNode in="SourceGraphic"/></feMerge>'
+            '</filter></defs><g filter="url(#neon-glow)">'
+            '<rect class="sign-frame" x="18" y="18" width="284" height="204" rx="18"/>'
+            '<path class="sign-frame" d="M160 222V256M110 262H210"/>'
+            '<circle class="sign-ball" cx="160" cy="120" r="58"/>'
+            '<path class="sign-ball" d="M160 98L180.9 113.2L172.9 137.8H147.1L139.1 113.2Z'
+            'M160 98V62M180.9 113.2L215.2 102.1M172.9 137.8L194.1 166.9M147.1 137.8L125.9 166.9M139.1 113.2L104.8 102.1"/>'
+            '<circle class="sign-dot" cx="48" cy="48" r="6"/>'
+            '<text class="sign-live" x="62" y="54">LIVE</text></g></svg>')
 
 
 HOME_ICON = ('<svg class="nav-icon" viewBox="0 0 24 24" aria-hidden="true" focusable="false">'
@@ -685,9 +723,11 @@ def render_home(lang, other_href=None):
         <section class="hero" id="top">
             <img class="hero-img" src="{r}assets/img/hero.svg" width="1200" height="1600" fetchpriority="high" alt="{img_alt(t["heroAlt"])}">
             <div class="hero-overlay"></div>
+            <div class="hero-grid" aria-hidden="true"></div>
+            {hero_sign_svg()}
             <div class="container hero-content">
                 {hero_chip}<p class="eyebrow">Frankfurt · Niederrad</p>
-                <h1>C'est la vie<br><span>Sports Bar</span></h1>
+                <h1>C'est la <span class="flick">v</span>ie<br><span class="h1-sub">Sports Bar</span></h1>
                 <p class="tagline">{esc(t["tagline"])}</p>
                 <div class="hero-buttons">
                     <a class="btn btn-primary" href="{sched_href}">{esc(t["btnLive"])}</a>
@@ -1237,6 +1277,10 @@ def main():
         write(pre + PAGES["eintracht"][lang] + "index.html", render_eintracht(lang, switch_href(lang, PAGES["eintracht"][lang])))
     write("robots.txt", robots_txt())
     write("sitemap.xml", sitemap_xml())
+    if FONTS_MISSING:
+        print(f"\nNOTE: self-hosted fonts not linked (local fallbacks used). Missing in {FONT_DIR}/:")
+        for f in FONTS_MISSING:
+            print("  -", f)
     if TODOS:
         print("\nTODO – missing data (left out of the output, or shown as a 'to be filled in' placeholder):")
         for k in sorted(set(TODOS)):
