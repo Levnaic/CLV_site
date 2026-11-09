@@ -32,7 +32,7 @@
 
 /* Always-dark zones (header, heroes, scoreboards, drinks board, footer). They re-map the page
    tokens to the night-* tokens, so every component inside just works on black. */
-.site-header, .hero, .page-head, .site-footer, .lightbox, .drink-panel, .bento .bento-e, .kickoff {
+.site-header, .hero, .page-head, .site-footer, .lightbox, .drink-panel, .bento .bento-e, .kickoff, .perk-music, .near-dist {
     color-scheme: dark;
     --bg: var(--night);
     --surface: var(--night-2);
@@ -389,6 +389,39 @@ a.contact-card p { color: var(--text-2); }
 /* Drink items slide in when a category is chosen */
 .drink-item { animation: slide-in .3s var(--snap) both; animation-delay: calc(var(--i, 0) * 40ms); }
 
+/* Feature strip above the menu (build.py perks_html): beer types as kit chips, "you pick the music"
+   on a black board with an equaliser. Icons are decorative; headings and chip labels carry the meaning. */
+.perks { list-style: none; margin: 0 0 3rem; padding: 0; display: grid; gap: 1.5rem; }
+.perk { display: flex; flex-direction: column; align-items: flex-start; gap: .9rem; overflow: hidden; }
+.perk h3 { margin: 0; padding-right: 3.75rem; font-size: clamp(1.9rem, 5.2vw, 2.6rem); font-style: italic; line-height: .95; }
+.card.perk p { margin: 0; color: var(--text-2); }
+.perk-icon { position: absolute; top: 1.1rem; right: 1.1rem; width: 2.9rem; height: 2.9rem; fill: none; stroke: var(--accent-text); stroke-width: 3; stroke-linecap: square; stroke-linejoin: miter; }
+.perk-icon .nif { fill: var(--accent-text); stroke: none; }
+.perk .more-link { margin-top: auto; }
+.chip-group { display: grid; gap: .45rem; }
+.card.perk .chip-label { color: var(--muted); font: 700 .78rem/1.3 var(--font-body); letter-spacing: .14em; text-transform: uppercase; }
+.chips { display: flex; flex-wrap: wrap; gap: .6rem .8rem; margin: 0; padding: 0 0 0 4px; list-style: none; }
+.chips li { position: relative; isolation: isolate; padding: .2rem .85rem; color: var(--text); font: 800 1.15rem/1.25 var(--font-head); letter-spacing: .05em; text-transform: uppercase; }
+.chips li::before { content: ""; position: absolute; inset: 0; z-index: -1; border: 2px solid var(--border-hard); background: var(--bg); transform: skewX(var(--skew)); }
+/* First group (on tap): red kit chips with a hard shadow (white on red 5:1); the group label says what they are */
+.chip-group-main .chips li { color: var(--on-accent); }
+.chip-group-main .chips li::before { background: var(--accent); border-color: var(--accent); box-shadow: 3px 3px 0 var(--text); }
+/* Music: black board, red hatching in the lower right corner, equaliser bars */
+.card.perk-music { background: var(--bg) repeating-linear-gradient(-60deg, color-mix(in srgb, var(--accent) 26%, transparent) 0 10px, transparent 10px 26px) no-repeat right bottom / 46% 58%; }
+.card.perk-music .perk-claim { color: var(--text); font-size: 1.2rem; font-weight: 600; max-width: 30ch; }
+.eq { display: flex; align-items: flex-end; gap: 7px; height: 3.25rem; margin-top: auto; padding-left: 6px; }
+.eq span { width: 12px; height: var(--h, 50%); background: var(--accent); transform: skewX(var(--skew)); transform-origin: bottom; }
+.eq span:nth-child(even) { background: var(--text); }
+.eq span:nth-child(1) { --h: 42%; --n: 0; } .eq span:nth-child(2) { --h: 86%; --n: 1; } .eq span:nth-child(3) { --h: 60%; --n: 2; }
+.eq span:nth-child(4) { --h: 100%; --n: 3; } .eq span:nth-child(5) { --h: 32%; --n: 4; }
+/* A short burst when the tile scrolls in (about 2.5 s in total, so no pause control is needed) */
+@keyframes eq { 50% { transform: skewX(var(--skew)) scaleY(.35); } }
+.js .perk-music.visible .eq span { animation: eq .55s var(--ease) 4; animation-delay: calc(var(--n) * 70ms + .3s); }
+@media (min-width: 760px) {
+    .perks { grid-template-columns: minmax(0, 1.3fr) minmax(0, 1fr); }
+    .perks:has(> li:only-child) { grid-template-columns: minmax(0, 40rem); }
+}
+
 /* ---------- Events: match tickets with a striped, perforated stub ---------- */
 #events .grid { align-items: start; }
 .event { --stub: 2.75rem; padding: 0; }
@@ -464,7 +497,48 @@ address strong { color: var(--text); font: 800 1.35rem/1.2 var(--font-head); tex
 .faq-item { padding: .25rem 0 .25rem 1.25rem; border-left: 6px solid var(--accent); }
 .faq-item h3 { margin-bottom: .4em; }
 .faq-item p { margin: 0; color: var(--text-2); }
+.faq-item .faq-more { margin-top: .2rem; }
+.faq-item .faq-more a { font-size: 1rem; }
 .local p { max-width: 760px; color: var(--text-2); }
+
+/* Directions & area (home + schedule page): text column with follow-up links, "Nearby" ticket list */
+.local-grid { display: grid; gap: 2.5rem; }
+.local-grid > * { min-width: 0; }
+.link-list { list-style: none; margin: 1.25rem 0 0; padding: 0; display: grid; justify-items: start; gap: .1rem; }
+.nearby-title { display: flex; align-items: center; gap: .45rem; margin: 0 0 .6rem; font-size: clamp(1.9rem, 5.5vw, 2.6rem); font-style: italic; line-height: .95; }
+.near-pin { flex: none; width: .85em; height: .85em; fill: none; stroke: var(--accent-text); stroke-width: 2.4; stroke-linejoin: miter; }
+.near-pin .nif { fill: var(--accent-text); stroke: none; }
+.near-intro { max-width: 52ch; color: var(--text-2); }
+/* Each place is a ticket: name + kind + a line for people, then a scoreboard distance block
+   (always dark, red perforation, notches). The name comes first in the source; the grid puts the
+   board on the left. */
+.near-list { list-style: none; margin: 1.25rem 0 1rem; padding: 0; display: grid; gap: 1.1rem; }
+.near { --near-w: 5.6rem; position: relative; display: grid; grid-template-columns: var(--near-w) minmax(0, 1fr); grid-template-areas: "dist body"; background: var(--surface); border: 2px solid var(--border-hard); box-shadow: var(--off) var(--off) 0 var(--shadow-hard); }
+.near::before { content: ""; position: absolute; z-index: 1; top: -2px; bottom: -2px; left: calc(var(--near-w) - 10px); width: 20px; pointer-events: none;
+    background:
+        radial-gradient(circle at 50% 0, var(--notch) 0 8px, var(--border-hard) 8px 10px, transparent 10.5px),
+        radial-gradient(circle at 50% 100%, var(--notch) 0 8px, var(--border-hard) 8px 10px, transparent 10.5px); }
+.near-body { grid-area: body; min-width: 0; padding: .95rem 1rem 1rem 1.25rem; }
+.near-dist { grid-area: dist; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: .25rem; margin: 0; padding: .9rem .35rem; background: var(--bg); color: var(--text); border-right: 2px dashed var(--accent); text-align: center; font-family: var(--font-head); }
+.near-ca { color: var(--accent-text); font: 800 .85rem/1 var(--font-head); letter-spacing: .2em; text-transform: uppercase; }
+.near-km { font-size: 2rem; font-style: italic; font-weight: 800; line-height: 1; font-variant-numeric: tabular-nums; white-space: nowrap; }
+.near-unit { font-size: .5em; font-style: normal; letter-spacing: .06em; }
+.near-line { color: var(--muted); font: 600 .66rem/1.2 var(--font-body); letter-spacing: .12em; text-transform: uppercase; }
+.near-name { margin: 0 0 .2rem; color: var(--text); font-family: var(--font-head); font-size: clamp(1.35rem, 4.4vw, 1.75rem); font-weight: 800; font-style: italic; line-height: 1.02; letter-spacing: .01em; text-transform: uppercase; overflow-wrap: break-word; hyphens: manual; }
+.near-kind { margin: 0 0 .5rem; color: var(--accent-text); font: 700 .78rem/1.35 var(--font-body); letter-spacing: .1em; text-transform: uppercase; }
+.near-text { margin: 0; color: var(--text-2); font-size: 1rem; line-height: 1.5; }
+.near-link { margin: .3rem 0 0; }
+.near-link a { display: inline-flex; align-items: center; min-height: 44px; color: var(--accent-text); font: 800 1rem var(--font-head); letter-spacing: .06em; text-transform: uppercase; text-decoration: underline; text-decoration-thickness: 2px; text-underline-offset: .3em; }
+.near-link a:hover { color: var(--text); text-decoration-color: var(--accent); }
+.near-note { margin: 0; max-width: 56ch; color: var(--muted); font-size: .92rem; }
+@media (min-width: 600px) {
+    .near { --near-w: 6.75rem; }
+    .near-km { font-size: 2.4rem; }
+    .near-body { padding: 1.1rem 1.25rem 1.15rem 1.5rem; }
+}
+@media (min-width: 900px) {
+    .local-grid { grid-template-columns: minmax(0, 5fr) minmax(0, 7fr); gap: 4rem; align-items: start; }
+}
 
 /* ---------- Footer (always dark, kit stripes on top) and mobile bar ---------- */
 .site-footer { padding-block: 3rem 2.5rem; background: linear-gradient(var(--accent) 0 8px, var(--text) 8px 10px, var(--accent) 10px 14px, var(--bg) 14px); color: var(--muted); font-size: .95rem; }
@@ -505,6 +579,9 @@ address strong { color: var(--text); font: 800 1.35rem/1.2 var(--font-head); tex
 .more-link { margin: 0; }
 .more-link a { display: inline-flex; align-items: center; min-height: 44px; color: var(--accent-text); font: 800 1.1rem var(--font-head); letter-spacing: .06em; text-transform: uppercase; text-decoration: underline; text-decoration-thickness: 2px; text-underline-offset: .3em; }
 .more-link a:hover { color: var(--text); text-decoration-color: var(--accent); }
+/* Text links with a trailing arrow: inline-block (not flex), so the arrow keeps its space and wraps
+   with the last word; the padding keeps the 44px touch height */
+.more-link a, .near-link a { display: inline-block; min-height: 44px; padding-block: .62rem; line-height: 1.25; }
 
 /* ---------- Fixtures and results: ticket card + scoreboard date block ---------- */
 .match-list { list-style: none; margin: 1.5rem 0; padding: 0; display: grid; gap: 1.25rem; }
@@ -587,6 +664,13 @@ address strong { color: var(--text); font: 800 1.35rem/1.2 var(--font-head); tex
 .ef-grid { display: grid; gap: 3.5rem; }
 .ef-side { display: grid; gap: 3.5rem; align-content: start; }
 .ef-main > .page-sec + .page-sec { margin-top: 3.5rem; }
+.ef-side > .page-sec + .page-sec { margin-top: 0; } /* the grid gap already spaces them */
+.ef-way .near-list { margin-top: .5rem; }
+/* Four jump tiles (with "04 From the stadium"): 2 x 2 on phones, one row from 600px */
+.ef-jump ol:has(> li:nth-child(4)) { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+@media (min-width: 600px) {
+    .ef-jump ol:has(> li:nth-child(4)) { grid-template-columns: repeat(4, minmax(0, 1fr)); max-width: 48rem; }
+}
 
 /* Reservation ticket: red, with a black stub, perforation and notches */
 .ticket { --notch: var(--bg); position: relative; display: grid; grid-template-columns: 3rem minmax(0, 1fr); background: var(--accent); color: var(--on-accent); border: 2px solid var(--border-hard); box-shadow: var(--off) var(--off) 0 var(--text); }
@@ -633,6 +717,7 @@ address strong { color: var(--text); font: 800 1.35rem/1.2 var(--font-head); tex
 /* Scroll reveal (only when JS is active): a short slide from the left, staggered inside grids */
 .js .reveal { opacity: 0; transform: translateX(-28px); transition: opacity .4s var(--snap) var(--d, 0s), transform .4s var(--snap) var(--d, 0s), translate .15s var(--snap), box-shadow .15s var(--snap); }
 .js .reveal.visible { opacity: 1; transform: none; }
+.js .perks > .reveal:nth-child(2) { --d: .1s; }
 .js :is(.grid, .bento) > .reveal:nth-child(2) { --d: .07s; }
 .js :is(.grid, .bento) > .reveal:nth-child(3) { --d: .14s; }
 .js :is(.grid, .bento) > .reveal:nth-child(4) { --d: .21s; }

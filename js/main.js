@@ -185,6 +185,13 @@
             select(tabs[(i + (e.key === 'ArrowRight' ? 1 : -1) + tabs.length) % tabs.length], true);
         });
         select(tabs[0]);
+        // Links like <a href="#drinks-menu" data-drink-tab="tap"> (beer tile) open that category first;
+        // the default action then scrolls to the menu. Without JS all panels are visible anyway.
+        document.addEventListener('click', e => {
+            const a = e.target.closest('a[data-drink-tab]');
+            const tab = a && document.getElementById('tab-' + a.dataset.drinkTab);
+            if (tab) select(tab);
+        });
     }
 
     // ---------- Lightbox ----------
