@@ -194,7 +194,20 @@
     "efReserve": "Tisch reservieren",
     "efReserveWa": "Per WhatsApp anfragen",
     "efCtaTitle": "Platz fürs nächste Spiel",
-    "efCtaText": "Bei der Eintracht sind die Plätze begehrt. Meldet euch rechtzeitig."
+    "efCtaText": "Bei der Eintracht sind die Plätze begehrt. Meldet euch rechtzeitig.",
+    "menuText": "Menü",
+    "colWhen": "Anstoß",
+    "colDate": "Datum",
+    "colMatch": "Spiel",
+    "colResult": "Ergebnis",
+    "stateLive": "Läuft gerade",
+    "stateNext": "Nächstes Spiel",
+    "figLabel": "Abb.",
+    "colophon": "Kolophon",
+    "colophonType": "Gesetzt in Instrument Serif, IBM Plex Sans und IBM Plex Mono.",
+    "dlAddress": "Adresse",
+    "dlHours": "Öffnungszeiten",
+    "dlNow": "Jetzt"
   },
   "en": {
     "title": "C'est la vie Sports Bar Frankfurt-Niederrad | Watch Bundesliga & Eintracht live",
@@ -391,6 +404,19 @@
     "efReserve": "Reserve a table",
     "efReserveWa": "Ask on WhatsApp",
     "efCtaTitle": "A seat for the next match",
-    "efCtaText": "Seats go fast on Eintracht match days. Get in touch early."
+    "efCtaText": "Seats go fast on Eintracht match days. Get in touch early.",
+    "menuText": "Menu",
+    "colWhen": "Kick-off",
+    "colDate": "Date",
+    "colMatch": "Match",
+    "colResult": "Result",
+    "stateLive": "Live now",
+    "stateNext": "Next up",
+    "figLabel": "Fig.",
+    "colophon": "Colophon",
+    "colophonType": "Set in Instrument Serif, IBM Plex Sans and IBM Plex Mono.",
+    "dlAddress": "Address",
+    "dlHours": "Opening hours",
+    "dlNow": "Right now"
   }
 }

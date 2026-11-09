@@ -25,11 +25,14 @@
     <meta name="twitter:description" content="Eintracht Frankfurt live in der C&#x27;est la vie Sports Bar in Frankfurt-Niederrad: nächste Spiele, letzte Ergebnisse, Tabellenplatz und Reservierung.">
     <meta name="twitter:image" content="https://DOMAIN/assets/img/og-image.jpg">
     <meta name="twitter:image:alt" content="C&#x27;est la vie Sports Bar – Frankfurt-Niederrad">
-    <meta name="theme-color" content="#0a1210" media="(prefers-color-scheme: dark)">
-    <meta name="theme-color" content="#f1f5e6" media="(prefers-color-scheme: light)">
+    <meta name="theme-color" content="#0c0c0b" media="(prefers-color-scheme: dark)">
+    <meta name="theme-color" content="#fcfcfa" media="(prefers-color-scheme: light)">
     <link rel="icon" href="../assets/icons/favicon.svg" type="image/svg+xml">
     <script>try{var t=localStorage.getItem("theme");if(t==="light"||t==="dark")document.documentElement.dataset.theme=t}catch(e){}</script>
-    <link rel="stylesheet" href="../css/palette.css">
+    <link rel="preload" href="../assets/fonts/instrument-serif-latin-400-normal.woff2" as="font" type="font/woff2" crossorigin>
+    <link rel="preload" href="../assets/fonts/ibm-plex-sans-latin-400-normal.woff2" as="font" type="font/woff2" crossorigin>
+    <link rel="stylesheet" href="../css/fonts.css">
+    <link rel="stylesheet" href="../css/themes/editorial.css">
     <link rel="stylesheet" href="../css/style.css">
     <script type="application/ld+json">
     {
@@ -65,10 +68,10 @@
     <a class="skip-link" href="#main">Zum Inhalt springen</a>
     <header class="site-header">
         <div class="container header-inner">
-            <a class="brand" href="../" aria-label="C&#x27;est la Vie Café &amp; Sportsbar – zur Startseite"><svg class="logo-mark" viewBox="0 0 48 48" aria-hidden="true" focusable="false"><path class="lm-c" pathLength="1" d="M38.14 9.86A20 20 0 1 0 38.14 38.14"/><path class="lm-l" pathLength="1" d="M15 13V33H27"/><path class="lm-v" pathLength="1" d="M20 13L27 33L40 6"/></svg><span class="brand-title">C'est la <span>vie</span></span></a>
+            <a class="brand" href="../" aria-label="C&#x27;est la Vie Café &amp; Sportsbar – zur Startseite"><span class="brand-title">C’est la vie</span><span class="brand-sub" aria-hidden="true">Sports Bar</span></a>
             <nav id="nav" class="nav" aria-label="Hauptmenü">
                 <ul>
-                    <li><a href="../"><svg class="nav-icon" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M3 11.5 12 4l9 7.5M5.5 9.5V20h5v-6h3v6h5V9.5"/></svg>Startseite</a></li>
+                    <li><a href="../">Startseite</a></li>
                     <li><a href="../spielplan/">Spielplan</a></li>
                     <li><a href="../eintracht/" aria-current="page">Eintracht</a></li>
                     <li><a href="../#events">Events</a></li>
@@ -78,9 +81,7 @@
             <div class="header-actions">
                 <button class="theme-btn" id="themeBtn" type="button" aria-label="Design wechseln"></button>
                 <a class="lang-btn" href="../en/eintracht/" hreflang="en" lang="en" aria-label="Switch to English"><span class="" data-l="en">en</span> / <span class="is-active" data-l="de">de</span></a>
-                <button class="menu-btn" id="menuBtn" type="button" aria-expanded="false" aria-controls="nav" aria-label="Menü öffnen">
-                    <span></span><span></span><span></span>
-                </button>
+                <button class="menu-btn" id="menuBtn" type="button" aria-expanded="false" aria-controls="nav" aria-label="Menü öffnen"><span class="menu-btn-text">Menü</span><span class="menu-btn-bars" aria-hidden="true"></span></button>
             </div>
         </div>
     </header>
@@ -92,13 +93,13 @@
         <section aria-labelledby="ef-fixtures">
             <h2 id="ef-fixtures">Nächste Spiele</h2>
             <p class="pending-note"><span class="tag tag-pending">Wird noch ergänzt</span>Die nächsten Eintracht-Spiele tragen wir hier bald ein.</p>
-            <ol class="match-list"><li class="match is-pending"><p class="match-when">Termin folgt</p><h3 class="match-title">Eintracht Frankfurt – Gegner folgt</h3><span class="match-comp">Wettbewerb folgt</span></li><li class="match is-pending"><p class="match-when">Termin folgt</p><h3 class="match-title">Eintracht Frankfurt – Gegner folgt</h3><span class="match-comp">Wettbewerb folgt</span></li><li class="match is-pending"><p class="match-when">Termin folgt</p><h3 class="match-title">Eintracht Frankfurt – Gegner folgt</h3><span class="match-comp">Wettbewerb folgt</span></li></ol>
+            <table class="fixtures"><thead><tr><th scope="col">Anstoß</th><th scope="col">Spiel</th></tr></thead><tbody><tr class="is-pending"><td class="fx-when">Termin folgt</td><td class="fx-match"><h3 class="match-title">Eintracht Frankfurt – Gegner folgt</h3><p class="fx-meta"><span class="match-comp">Wettbewerb folgt</span></p></td></tr><tr class="is-pending"><td class="fx-when">Termin folgt</td><td class="fx-match"><h3 class="match-title">Eintracht Frankfurt – Gegner folgt</h3><p class="fx-meta"><span class="match-comp">Wettbewerb folgt</span></p></td></tr><tr class="is-pending"><td class="fx-when">Termin folgt</td><td class="fx-match"><h3 class="match-title">Eintracht Frankfurt – Gegner folgt</h3><p class="fx-meta"><span class="match-comp">Wettbewerb folgt</span></p></td></tr></tbody></table>
             <p class="match-note"><a href="../spielplan/">Alle Spiele, die wir zeigen, im Spielplan</a></p>
         </section>
         <section aria-labelledby="ef-results">
             <h2 id="ef-results">Letzte Ergebnisse</h2>
             <p class="pending-note"><span class="tag tag-pending">Wird noch ergänzt</span>Die letzten Ergebnisse tragen wir hier bald ein.</p>
-            <ol class="match-list"><li class="match result is-pending"><p class="match-when">Termin folgt</p><h3 class="match-title"><span>Eintracht Frankfurt</span> <span class="score"><span aria-hidden="true">–</span><span class="sr-only">noch offen</span></span> <span>Gegner folgt</span></h3><span class="match-comp">Wettbewerb folgt</span></li><li class="match result is-pending"><p class="match-when">Termin folgt</p><h3 class="match-title"><span>Eintracht Frankfurt</span> <span class="score"><span aria-hidden="true">–</span><span class="sr-only">noch offen</span></span> <span>Gegner folgt</span></h3><span class="match-comp">Wettbewerb folgt</span></li><li class="match result is-pending"><p class="match-when">Termin folgt</p><h3 class="match-title"><span>Eintracht Frankfurt</span> <span class="score"><span aria-hidden="true">–</span><span class="sr-only">noch offen</span></span> <span>Gegner folgt</span></h3><span class="match-comp">Wettbewerb folgt</span></li></ol>
+            <table class="fixtures results"><thead><tr><th scope="col">Datum</th><th scope="col">Spiel</th><th scope="col" class="fx-result">Ergebnis</th></tr></thead><tbody><tr class="is-pending"><td class="fx-when">Termin folgt</td><td class="fx-match"><h3 class="match-title">Eintracht Frankfurt – Gegner folgt</h3><p class="fx-meta"><span class="match-comp">Wettbewerb folgt</span></p></td><td class="fx-result"><span class="score"><span aria-hidden="true">–</span><span class="sr-only">noch offen</span></span></td></tr><tr class="is-pending"><td class="fx-when">Termin folgt</td><td class="fx-match"><h3 class="match-title">Eintracht Frankfurt – Gegner folgt</h3><p class="fx-meta"><span class="match-comp">Wettbewerb folgt</span></p></td><td class="fx-result"><span class="score"><span aria-hidden="true">–</span><span class="sr-only">noch offen</span></span></td></tr><tr class="is-pending"><td class="fx-when">Termin folgt</td><td class="fx-match"><h3 class="match-title">Eintracht Frankfurt – Gegner folgt</h3><p class="fx-meta"><span class="match-comp">Wettbewerb folgt</span></p></td><td class="fx-result"><span class="score"><span aria-hidden="true">–</span><span class="sr-only">noch offen</span></span></td></tr></tbody></table>
         </section>
         <section aria-labelledby="ef-table">
             <h2 id="ef-table">Tabelle</h2>
@@ -113,12 +114,21 @@
         <p class="back-row back-row-end"><a class="back-link" href="../"><span class="back-arrow" aria-hidden="true">←</span>Zur Startseite</a></p>
     </main>
     <footer class="site-footer">
-        <div class="container footer-inner">
-            <p>© <span id="year">2026</span> C'est la Vie Café &amp; Sportsbar · Frankfurt-Niederrad</p>
-            <p><a href="../impressum.html">Impressum</a> · <a href="../datenschutz.html">Datenschutz</a></p>
+        <div class="container colophon">
+            <p class="colophon-mark" aria-hidden="true">C’est la vie</p>
+            <div class="colophon-text">
+                <p class="colophon-label">Kolophon</p>
+                <p>© <span id="year">2026</span> C'est la Vie Café &amp; Sportsbar · Frankfurt-Niederrad</p>
+                <p>Schwarzwaldstraße 79, 60528 Frankfurt am Main</p>
+                <p class="colophon-type">Gesetzt in Instrument Serif, IBM Plex Sans und IBM Plex Mono.</p>
+            </div>
+            <ul class="colophon-links">
+                <li><a href="../impressum.html">Impressum</a></li>
+                <li><a href="../datenschutz.html">Datenschutz</a></li>
+            </ul>
         </div>
     </footer>
-    <script type="application/json" id="ui-data">{"strings":{"themeLight":"Helles Design aktivieren","themeDark":"Dunkles Design aktivieren","menuOpen":"Menü öffnen","menuClose":"Menü schließen","open":"Jetzt geöffnet","closed":"Gerade geschlossen","until":"bis","lbClose":"Schließen","lbPrev":"Zurück","lbNext":"Weiter","mapTitle":"OpenStreetMap-Karte","tickerPause":"Laufband anhalten","tickerPlay":"Laufband starten"},"hours":[[14.0,24.0],[16.0,25.0],[16.0,25.0],[16.0,25.0],[16.0,25.0],[16.0,27.0],[16.0,27.0]],"mapUrl":"https://www.openstreetmap.org/export/embed.html?bbox=8.629535%2C50.074443%2C8.673535000000001%2C50.097443&layer=mapnik&marker=50.085943%2C8.651535"}</script>
+    <script type="application/json" id="ui-data">{"strings":{"themeLight":"Helles Design aktivieren","themeDark":"Dunkles Design aktivieren","menuOpen":"Menü öffnen","menuClose":"Menü schließen","open":"Jetzt geöffnet","closed":"Gerade geschlossen","until":"bis","lbClose":"Schließen","lbPrev":"Zurück","lbNext":"Weiter","mapTitle":"OpenStreetMap-Karte","tickerPause":"Laufband anhalten","tickerPlay":"Laufband starten","stateLive":"Läuft gerade","stateNext":"Nächstes Spiel"},"hours":[[14.0,24.0],[16.0,25.0],[16.0,25.0],[16.0,25.0],[16.0,25.0],[16.0,27.0],[16.0,27.0]],"mapUrl":"https://www.openstreetmap.org/export/embed.html?bbox=8.629535%2C50.074443%2C8.673535000000001%2C50.097443&layer=mapnik&marker=50.085943%2C8.651535"}</script>
     <script src="../js/main.js"></script>
 </body>
 </html>

@@ -21,7 +21,22 @@ LANGS = ["de", "en"]
 DEFAULT_LANG = "de"
 # Colour palette (all colour tokens live in this one file, loaded before css/style.css).
 # Default "pitch" = css/palette.css. Alternatives: css/themes/ember.css, volt.css, derby.css, gold.css
-PALETTE = "css/palette.css"
+# This branch (editorial design): paper and ink with one signal green.
+PALETTE = "css/themes/editorial.css"
+
+# Self-hosted fonts (latin subset, woff2, OFL-1.1) expected in assets/fonts/. css/fonts.css is linked and the
+# first-paint faces are preloaded ONLY when every file exists; otherwise the local fallback stacks in
+# css/style.css are used and the build prints a NOTE. No external font requests in either case.
+FONT_DIR = "assets/fonts"
+FONT_FILES = [
+    "instrument-serif-latin-400-normal.woff2",   # @fontsource/instrument-serif
+    "instrument-serif-latin-400-italic.woff2",   # @fontsource/instrument-serif
+    "ibm-plex-sans-latin-400-normal.woff2",      # @fontsource/ibm-plex-sans
+    "ibm-plex-sans-latin-600-normal.woff2",      # @fontsource/ibm-plex-sans
+    "ibm-plex-mono-latin-400-normal.woff2",      # @fontsource/ibm-plex-mono
+    "ibm-plex-mono-latin-500-normal.woff2",      # @fontsource/ibm-plex-mono
+]
+FONT_PRELOAD = ["instrument-serif-latin-400-normal.woff2", "ibm-plex-sans-latin-400-normal.woff2"]
 
 DATA = Path(os.environ.get("CLV_DATA_DIR", ROOT / "data"))  # override only for tests
 OUT = Path(os.environ.get("CLV_OUT_DIR", ROOT))
@@ -283,8 +298,8 @@ def faq_section(lang):
     return f'''
         <section class="section" id="faq">
             <div class="container">
-                <h2>{esc(I18N[lang]["faqTitle"])}</h2>
-                <div class="faq">
+                {section_head(I18N[lang]["faqTitle"])}
+                <div class="section-body faq">
                     {body}
                 </div>
             </div>
@@ -405,23 +420,35 @@ def jsonld_scripts(lang, blocks=None):
 
 
 # ---------------------------------------------------------------- page fragments
+def fonts_ready():
+    """True when every self-hosted font file is in assets/fonts/ (then css/fonts.css is linked)."""
+    return all((ROOT / FONT_DIR / f).is_file() for f in FONT_FILES)
+
+
+def font_links(r):
+    if not fonts_ready():
+        return ""
+    pre = "".join(f'    <link rel="preload" href="{r}{FONT_DIR}/{f}" as="font" type="font/woff2" crossorigin>\n'
+                  for f in FONT_PRELOAD)
+    return pre + f'    <link rel="stylesheet" href="{r}css/fonts.css">\n'
+
+
 def head_common(lang, depth, extra=""):
     r = rel_root(lang, depth)
-    # theme-color: static fallback for the default palette; js/main.js replaces it with the active palette's background
-    return f'''    <meta name="theme-color" content="#0a1210" media="(prefers-color-scheme: dark)">
-    <meta name="theme-color" content="#f1f5e6" media="(prefers-color-scheme: light)">
+    # theme-color: static fallback for the palette; js/main.js replaces it with the active palette's background
+    return f'''    <meta name="theme-color" content="#0c0c0b" media="(prefers-color-scheme: dark)">
+    <meta name="theme-color" content="#fcfcfa" media="(prefers-color-scheme: light)">
     <link rel="icon" href="{r}assets/icons/favicon.svg" type="image/svg+xml">
     <script>try{{var t=localStorage.getItem("theme");if(t==="light"||t==="dark")document.documentElement.dataset.theme=t}}catch(e){{}}</script>
-    <link rel="stylesheet" href="{r}{PALETTE}">
+{font_links(r)}    <link rel="stylesheet" href="{r}{PALETTE}">
     <link rel="stylesheet" href="{r}css/style.css">
 {extra}'''
 
 
-def logo_svg():
-    return ('<svg class="logo-mark" viewBox="0 0 48 48" aria-hidden="true" focusable="false">'
-            '<path class="lm-c" pathLength="1" d="M38.14 9.86A20 20 0 1 0 38.14 38.14"/>'
-            '<path class="lm-l" pathLength="1" d="M15 13V33H27"/>'
-            '<path class="lm-v" pathLength="1" d="M20 13L27 33L40 6"/></svg>')
+def brand_html(href, label):
+    """Masthead wordmark: text only (no logo artwork)."""
+    return (f'<a class="brand" href="{attr(href)}" aria-label="{attr(label)}">'
+            f'<span class="brand-title">C’est la vie</span><span class="brand-sub" aria-hidden="true">Sports Bar</span></a>')
 
 
 def lang_switch(lang, other_href):
@@ -441,22 +468,18 @@ def home_href(path):
     return "../" * path.count("/") or "./"
 
 
-HOME_ICON = ('<svg class="nav-icon" viewBox="0 0 24 24" aria-hidden="true" focusable="false">'
-             '<path d="M3 11.5 12 4l9 7.5M5.5 9.5V20h5v-6h3v6h5V9.5"/></svg>')
-
-
 def menu_button(t):
-    return (f'<button class="menu-btn" id="menuBtn" type="button" aria-expanded="false" aria-controls="nav" aria-label="{attr(t["menuOpen"])}">\n'
-            '                    <span></span><span></span><span></span>\n'
-            '                </button>')
+    # Visible word "Menü"/"Menu" is part of both aria-labels (open/close), so label-in-name holds.
+    return (f'<button class="menu-btn" id="menuBtn" type="button" aria-expanded="false" aria-controls="nav" aria-label="{attr(t["menuOpen"])}">'
+            f'<span class="menu-btn-text">{esc(t["menuText"])}</span><span class="menu-btn-bars" aria-hidden="true"></span></button>')
 
 
 def subpage_header(lang, path, current, other_href):
-    """Header for every page except home: logo -> home, a nav with a clear Home item, theme, language, menu."""
+    """Header for every page except home: wordmark -> home, a nav with a clear Home item, theme, language, menu."""
     t = I18N[lang]
     home = home_href(path)
     links = [
-        ("home", home, HOME_ICON + esc(t["navHome"])),
+        ("home", home, esc(t["navHome"])),
         ("schedule", home + PAGES["schedule"][lang], esc(t["navSchedule"])),
         ("eintracht", home + PAGES["eintracht"][lang], esc(t["navEintracht"])),
         (None, home + "#events", esc(t["navEvents"])),
@@ -468,7 +491,7 @@ def subpage_header(lang, path, current, other_href):
         for key, href, label in links)
     return f'''    <header class="site-header">
         <div class="container header-inner">
-            <a class="brand" href="{home}" aria-label="{attr(t["brandHome"].format(name=SITE["name"]))}">{logo_svg()}<span class="brand-title">C'est la <span>vie</span></span></a>
+            {brand_html(home, t["brandHome"].format(name=SITE["name"]))}
             <nav id="nav" class="nav" aria-label="{attr(t["navLabel"])}">
                 <ul>
                     {items}
@@ -492,11 +515,22 @@ def back_link(lang, path, end=False):
 
 
 def site_footer(lang, home=""):
+    """Footer as a printed colophon: wordmark, imprint lines, legal links."""
     t = I18N[lang]
+    addr = full_address_line()
+    addr_line = f'\n                <p>{esc(addr)}</p>' if addr else ""
+    set_in = f'\n                <p class="colophon-type">{esc(t["colophonType"])}</p>' if fonts_ready() else ""
     return f'''    <footer class="site-footer">
-        <div class="container footer-inner">
-            <p>© <span id="year">2026</span> {esc(SITE["name"])} · {esc(SITE["area_label"])}</p>
-            <p><a href="{home}impressum.html">{esc(t["imprint"])}</a> · <a href="{home}datenschutz.html">{esc(t["privacy"])}</a></p>
+        <div class="container colophon">
+            <p class="colophon-mark" aria-hidden="true">C’est la vie</p>
+            <div class="colophon-text">
+                <p class="colophon-label">{esc(t["colophon"])}</p>
+                <p>© <span id="year">2026</span> {esc(SITE["name"])} · {esc(SITE["area_label"])}</p>{addr_line}{set_in}
+            </div>
+            <ul class="colophon-links">
+                <li><a href="{home}impressum.html">{esc(t["imprint"])}</a></li>
+                <li><a href="{home}datenschutz.html">{esc(t["privacy"])}</a></li>
+            </ul>
         </div>
     </footer>'''
 
@@ -547,38 +581,74 @@ def hours_html(lang):
     return "\n                            ".join(rows)
 
 
+def hours_compact(lang):
+    """Opening hours grouped by runs of days with equal times, e.g. ['Mo–Do 16:00–01:00', 'Fr–Sa 16:00–03:00', ...]."""
+    days = SITE["hours"]["days"]
+    short = I18N[lang]["dayShort"]  # index 0 = Sunday
+    en = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"]
+    groups = []  # [first_day, last_day, open, close]
+    for d in [1, 2, 3, 4, 5, 6, 0]:
+        e = days.get(en[d])
+        if not e:
+            continue
+        if groups and groups[-1][2:] == [e["open"], e["close"]] and groups[-1][1] == (d - 1) % 7:
+            groups[-1][1] = d
+        else:
+            groups.append([d, d, e["open"], e["close"]])
+    out = []
+    for a, b, o, c in groups:
+        label = short[a] if a == b else f"{short[a]}–{short[b]}"
+        out.append(f"{label} {o}–{c}")
+    return out
+
+
 def events_html(lang):
+    """Events as a ruled list: kicker (when), title, one line. Entries with details expand in place."""
     out = []
     for ev in SITE["events"]["items"]:
         tag, title, short = loc(ev["tag"], lang), loc(ev["title"], lang), loc(ev["short"], lang)
         more = loc(ev.get("more"), lang) if ev.get("more") else ""
-        head = f'<span class="tag">{esc(tag)}</span><h3>{esc(title)}</h3><p>{esc(short)}</p>'
+        head = f'<span class="event-when">{esc(tag)}</span><h3>{esc(title)}</h3><p>{esc(short)}</p>'
         if more and not missing(more):
-            out.append(f'<details class="card event reveal"><summary>{head}</summary>'
-                       f'<div class="event-more"><p>{esc(more)}</p></div></details>')
+            out.append(f'<li class="event reveal"><details><summary>{head}</summary>'
+                       f'<div class="event-more"><p>{esc(more)}</p></div></details></li>')
         else:
-            out.append(f'<article class="card event event-plain reveal"><div class="event-plain-body">{head}</div></article>')
+            out.append(f'<li class="event reveal"><div class="event-row">{head}</div></li>')
     return "\n                    ".join(out)
 
 
 def contact_cards(lang):
+    """Contact channels as ruled rows: label (mono) | value."""
     t = I18N[lang]
-    cards = []
+    rows = []
+
+    def row(href, label, value, ext=False):
+        target = ' target="_blank" rel="noopener"' if ext else ""
+        rows.append(f'<li><a class="contact-row reveal" href="{attr(href)}"{target}>'
+                    f'<span class="contact-label">{esc(label)}</span><span class="contact-value">{esc(value)}</span></a></li>')
+
     phone = get("contact.phone")
     if phone:
-        cards.append(f'<a class="card contact-card reveal" href="tel:+{digits(phone)}"><h3>{esc(t["phone"])}</h3><p>{esc(phone)}</p></a>')
+        row(f"tel:+{digits(phone)}", t["phone"], phone)
     wa = get("contact.whatsapp")
     if wa:
-        cards.append(f'<a class="card contact-card reveal" href="https://wa.me/{digits(wa)}" target="_blank" rel="noopener"><h3>{t["whatsapp"]}</h3><p>{esc(t["waText"])}</p></a>')
+        row(f"https://wa.me/{digits(wa)}", t["whatsapp"], t["waText"], ext=True)
     mail = get("contact.email")
     if mail:
-        cards.append(f'<a class="card contact-card reveal" href="mailto:{attr(mail)}"><h3>{esc(t["email"])}</h3><p>{esc(mail)}</p></a>')
+        row(f"mailto:{mail}", t["email"], mail)
     for key, label in (("instagram", "Instagram"), ("facebook", "Facebook"), ("tiktok", "TikTok")):
         url = get(f"social.{key}.url")
         if url:
-            handle = get(f"social.{key}.handle", SITE["name"])
-            cards.append(f'<a class="card contact-card reveal" href="{attr(url)}" target="_blank" rel="noopener"><h3>{label}</h3><p>{esc(handle)}</p></a>')
-    return "\n                    ".join(cards)
+            row(url, label, get(f"social.{key}.handle", SITE["name"]), ext=True)
+    return "\n                    ".join(rows)
+
+
+def section_head(title, lead="", hid=None):
+    """Numbered section heading (the number comes from a CSS counter): thick rule, label column, big title."""
+    idattr = f' id="{hid}"' if hid else ""
+    lead_html = f'\n                    <p class="lead">{esc(lead)}</p>' if lead else ""
+    return (f'<header class="section-head">\n                    <h2{idattr}>{esc(title)}</h2>{lead_html}\n'
+            '                </header>')
 
 
 def address_html():
@@ -593,7 +663,8 @@ def address_html():
 
 def ui_data(lang):
     t = I18N[lang]
-    keys = ["themeLight", "themeDark", "menuOpen", "menuClose", "open", "closed", "until", "lbClose", "lbPrev", "lbNext", "mapTitle", "tickerPause", "tickerPlay"]
+    keys = ["themeLight", "themeDark", "menuOpen", "menuClose", "open", "closed", "until", "lbClose", "lbPrev", "lbNext", "mapTitle", "tickerPause", "tickerPlay",
+            "stateLive", "stateNext"]
     lat, lng = get("geo.lat", report=False), get("geo.lng", report=False)
     try:
         lat, lng = float(lat), float(lng)
@@ -614,24 +685,36 @@ def render_home(lang, other_href=None):
     route = route_url()
     mobile_cls = "mobile-bar" + ("" if phone else " single")
     call = f'<a href="tel:+{digits(phone)}">{esc(t["call"])}</a>' if phone else ""
+    # Gallery: a plain grid of figures, each captioned "Abb. 01" (placeholder art carries no descriptive caption)
     gallery = "\n                    ".join(
-        f'<button type="button" class="gallery-item" aria-label="{attr(t["zoom"])}"><img src="{r}assets/img/gallery-{n}.svg" width="800" height="800" loading="lazy" decoding="async" alt="{img_alt(t["galleryItemAlt"].format(n=n))}"></button>'
+        f'<figure class="gallery-fig"><button type="button" class="gallery-item" aria-label="{attr(t["zoom"])} ({esc(t["figLabel"])} {n:02d})">'
+        f'<img src="{r}assets/img/gallery-{n}.svg" width="800" height="800" loading="lazy" decoding="async" alt="{img_alt(t["galleryItemAlt"].format(n=n))}"></button>'
+        f'<figcaption><span class="fig-n">{esc(t["figLabel"])} {n:02d}</span></figcaption></figure>'
         for n in range(1, 7))
     contact = contact_cards(lang)
     contact_section = f'''
         <section class="section" id="contact">
             <div class="container">
-                <h2>{esc(t["contactTitle"])}</h2>
-                <div class="grid grid-3">
+                {section_head(t["contactTitle"])}
+                <ul class="section-body contact-list">
                     {contact}
-                </div>
+                </ul>
             </div>
         </section>
 ''' if contact else ""
     nav_contact = f'\n                    <li><a href="#contact">{esc(t["navContact"])}</a></li>' if contact else ""
     has_hours = bool(SITE["hours"]["days"])
     status = '<p class="status" id="status" data-status aria-live="polite"></p>\n                        ' if has_hours else ""
-    hero_chip = '<p class="status hero-status" data-status></p>\n                ' if has_hours else ""
+    # Hero dateline: place, address, opening hours, live status (newspaper-style ruled facts)
+    addr = full_address_line()
+    dateline = []
+    if addr:
+        dateline.append(f'<div><dt>{esc(t["dlAddress"])}</dt><dd>{esc(addr)}</dd></div>')
+    if has_hours:
+        hrs = "".join(f'<span class="dl-line">{esc(x)}</span>' for x in hours_compact(lang))
+        dateline.append(f'<div><dt>{esc(t["dlHours"])}</dt><dd class="dl-hours">{hrs}</dd></div>')
+        dateline.append(f'<div><dt>{esc(t["dlNow"])}</dt><dd><span class="status hero-status" data-status></span></dd></div>')
+    dateline_html = ('<dl class="dateline">' + "".join(dateline) + "</dl>") if dateline else ""
     ticker_items = [p.strip() for p in t["tagline"].split("·") if p.strip()] + ["Bundesliga", "Eintracht Frankfurt", "Champions League"]
     ticker_group = "".join(f"<li>{esc(x)}</li>" for x in ticker_items)
     # Decorative: the same words are in the hero and the sport section, so the track is hidden from
@@ -660,7 +743,7 @@ def render_home(lang, other_href=None):
 
     <header class="site-header">
         <div class="container header-inner">
-            <a class="brand" href="#top" aria-label="{attr(SITE["name"])}">{logo_svg()}<span class="brand-title">C'est la <span>vie</span></span></a>
+            {brand_html("#top", SITE["name"])}
             <nav id="nav" class="nav" aria-label="{attr(t["navLabel"])}">
                 <ul>
                     <li><a href="#about">{esc(t["navAbout"])}</a></li>
@@ -682,13 +765,12 @@ def render_home(lang, other_href=None):
     </header>
 
     <main id="main">
-        <section class="hero" id="top">
-            <img class="hero-img" src="{r}assets/img/hero.svg" width="1200" height="1600" fetchpriority="high" alt="{img_alt(t["heroAlt"])}">
-            <div class="hero-overlay"></div>
-            <div class="container hero-content">
-                {hero_chip}<p class="eyebrow">Frankfurt · Niederrad</p>
-                <h1>C'est la vie<br><span>Sports Bar</span></h1>
+        <section class="hero" id="top" aria-labelledby="hero-title">
+            <div class="container hero-grid">
+                <p class="eyebrow">Frankfurt · Niederrad</p>
+                <h1 id="hero-title">C’est la vie <span>Sports Bar</span></h1>
                 <p class="tagline">{esc(t["tagline"])}</p>
+                {dateline_html}
                 <div class="hero-buttons">
                     <a class="btn btn-primary" href="{sched_href}">{esc(t["btnLive"])}</a>
                     <a class="btn btn-ghost" href="#visit">{esc(t["btnRoute"])}</a>
@@ -698,73 +780,75 @@ def render_home(lang, other_href=None):
         {ticker}
 
         <section class="section" id="about">
-            <div class="container split">
-                <div class="reveal">
-                    <h2>{esc(t["aboutTitle"])}</h2>
-                    <p>{esc(t["aboutP1"])}</p>
-                    <p>{esc(t["aboutP2"])}</p>
+            <div class="container">
+                {section_head(t["aboutTitle"])}
+                <div class="section-body about">
+                    <p class="standfirst reveal">{esc(t["aboutP1"])}</p>
+                    <p class="about-text reveal">{esc(t["aboutP2"])}</p>
+                    <figure class="about-fig reveal"><img src="{r}assets/img/about.svg" width="1200" height="900" loading="lazy" decoding="async" alt="{img_alt(t["aboutAlt"])}"></figure>
                 </div>
-                <img class="reveal media" src="{r}assets/img/about.svg" width="1200" height="900" loading="lazy" decoding="async" alt="{img_alt(t["aboutAlt"])}">
             </div>
         </section>
 
-        <section class="section section-alt" id="sport">
+        <section class="section" id="sport">
             <div class="container">
-                <h2>{esc(t["sportTitle"])}</h2>
-                <p class="lead">{esc(t["sportLead"])}</p>
-                {facts_html}
-                <div class="bento">
-                    <article class="card bento-card bento-a reveal"><span class="bento-n" aria-hidden="true">01</span><h3>Bundesliga</h3><p>{esc(t["sport1"])}</p></article>
-                    <article class="card bento-card bento-b reveal"><span class="bento-n" aria-hidden="true">02</span><h3>Eintracht Frankfurt</h3><p>{esc(t["sport2"])}</p></article>
-                    <article class="card bento-card bento-c reveal"><span class="bento-n" aria-hidden="true">03</span><h3>Champions League</h3><p>{esc(t["sport3"])}</p></article>
-                    <article class="card bento-card bento-d reveal"><span class="bento-n" aria-hidden="true">04</span><h3>{esc(t["sport4Title"])}</h3><p>{esc(t["sport4"])}</p></article>
-                    <article class="card bento-card bento-e reveal"><span class="bento-n" aria-hidden="true">05</span><h3>{esc(t["sport5Title"])}</h3><p>{esc(sport5)}</p></article>
+                {section_head(t["sportTitle"], t["sportLead"])}
+                <div class="section-body">
+                    {facts_html}
+                    <ol class="sport-list">
+                        <li class="reveal"><h3>Bundesliga</h3><p>{esc(t["sport1"])}</p></li>
+                        <li class="reveal"><h3>Eintracht Frankfurt</h3><p>{esc(t["sport2"])}</p></li>
+                        <li class="reveal"><h3>Champions League</h3><p>{esc(t["sport3"])}</p></li>
+                        <li class="reveal"><h3>{esc(t["sport4Title"])}</h3><p>{esc(t["sport4"])}</p></li>
+                        <li class="reveal"><h3>{esc(t["sport5Title"])}</h3><p>{esc(sport5)}</p></li>
+                    </ol>
                 </div>
             </div>
         </section>
 
         <section class="section" id="drinks">
             <div class="container">
-                <h2>{esc(t["drinksTitle"])}</h2>
-                <p class="lead">{esc(t["drinksLead"])}</p>
-                <div class="drinks" id="drinks-menu">
+                {section_head(t["drinksTitle"], t["drinksLead"])}
+                <div class="section-body drinks" id="drinks-menu">
                     {drinks_html(lang)}
                 </div>
             </div>
         </section>
 
-        <section class="section section-alt" id="events">
+        <section class="section" id="events">
             <div class="container">
-                <h2>{esc(t["eventsTitle"])}</h2>
-                <div class="grid grid-3">
+                {section_head(t["eventsTitle"])}
+                <ol class="section-body event-list">
                     {events_html(lang)}
-                </div>
+                </ol>
             </div>
         </section>
 
         <section class="section" id="gallery">
             <div class="container">
-                <h2>{esc(t["galleryTitle"])}</h2>
-                <div class="gallery" id="gallery-grid">
+                {section_head(t["galleryTitle"])}
+                <div class="section-body section-body-wide gallery" id="gallery-grid">
                     {gallery}
                 </div>
             </div>
         </section>
 
-        <section class="section section-alt" id="visit">
+        <section class="section" id="visit">
             <div class="container">
-                <h2>{esc(t["visitTitle"])}</h2>
-                <div class="split">
-                    <div>
-                        {status}<table class="hours"><tbody id="hours">
+                {section_head(t["visitTitle"])}
+                <div class="section-body visit">
+                    <div class="visit-hours">
+                        {status}<table class="hours"><caption class="sr-only">{esc(t["dlHours"])}</caption><tbody id="hours">
                             {hours_html(lang)}
                         </tbody></table>
+                    </div>
+                    <div class="visit-where">
                         {address_html()}
                         <a class="btn btn-primary" href="{attr(route)}" target="_blank" rel="noopener">{esc(t["btnRoute2"])}</a>
-                    </div>
-                    <div class="map" id="map">
-                        <p>{esc(t["mapText"])}</p>
-                        <button type="button" class="btn btn-ghost" id="mapBtn">{esc(t["mapBtn"])}</button>
+                        <div class="map" id="map">
+                            <p>{esc(t["mapText"])}</p>
+                            <button type="button" class="btn btn-ghost" id="mapBtn">{esc(t["mapBtn"])}</button>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -773,7 +857,7 @@ def render_home(lang, other_href=None):
 
 {site_footer(lang)}
 
-    <div class="{mobile_cls}" aria-label="{attr(t["quick"])}">
+    <div class="{mobile_cls}" role="group" aria-label="{attr(t["quick"])}">
         {call}
         <a href="{attr(route)}" target="_blank" rel="noopener">{esc(t["route"])}</a>
     </div>
@@ -874,6 +958,31 @@ def fmt_match_time(lang, start):
     return f"{day}, {d:%H:%M}{t['timeSuffix']}"
 
 
+def when_cell(lang, start):
+    """First table cell of a fixture: date over kick-off time (mono numerals), one <time> element."""
+    d = start.astimezone(TZ)
+    return (f'<td class="fx-when"><time datetime="{attr(start.isoformat())}">'
+            f'<span class="fx-date">{esc(fmt_date(lang, d))}</span> '
+            f'<span class="fx-time">{d:%H:%M}{esc(I18N[lang]["timeSuffix"])}</span></time></td>')
+
+
+def fixtures_table(lang, rows):
+    """Fixtures as a plain ruled table: When | Match (competition and labels on a meta line)."""
+    t = I18N[lang]
+    return ('<table class="fixtures"><thead><tr>'
+            f'<th scope="col">{esc(t["colWhen"])}</th><th scope="col">{esc(t["colMatch"])}</th>'
+            '</tr></thead><tbody>' + "".join(rows) + '</tbody></table>')
+
+
+def results_table(lang, rows):
+    """Results as a plain ruled table: Date | Match | Result."""
+    t = I18N[lang]
+    return ('<table class="fixtures results"><thead><tr>'
+            f'<th scope="col">{esc(t["colDate"])}</th><th scope="col">{esc(t["colMatch"])}</th>'
+            f'<th scope="col" class="fx-result">{esc(t["colResult"])}</th>'
+            '</tr></thead><tbody>' + "".join(rows) + '</tbody></table>')
+
+
 def sports_event_schema(lang, start, m):
     teams = f'{m["home"]} – {m["away"]}'
     name = f'{teams} ({m["competition"]})' if m.get("competition") else teams
@@ -917,8 +1026,8 @@ def local_section(lang):
     return f'''
         <section class="section" id="local">
             <div class="container">
-                <h2>{esc(t["localTitle"])}</h2>
-                <div class="local">{paras}</div>
+                {section_head(t["localTitle"])}
+                <div class="section-body local">{paras}</div>
             </div>
         </section>
 '''
@@ -938,11 +1047,13 @@ def render_schedule(lang, other_href):
         note = loc(m.get("note"), lang)
         note_html = f'<p class="match-note">{esc(note)}</p>' if note else ""
         items.append(
-            f'<li class="match" id="{attr(m["id"])}"><time datetime="{attr(start.isoformat())}">{esc(fmt_match_time(lang, start))}</time>'
-            f'<h3 class="match-title">{esc(m["home"])} – {esc(m["away"])}</h3>{comp}{badge}{note_html}</li>')
+            f'<tr id="{attr(m["id"])}" data-kickoff="{attr(start.isoformat())}">{when_cell(lang, start)}'
+            f'<td class="fx-match"><span class="fx-state" data-state></span>'
+            f'<h3 class="match-title">{esc(m["home"])} – {esc(m["away"])}</h3>'
+            f'<p class="fx-meta">{comp}{badge}</p>{note_html}</td></tr>')
         if not ex:
             blocks.append(sports_event_schema(lang, start, m))
-    body = ('<ul class="match-list">' + "".join(items) + "</ul>") if items else f'<p>{esc(t["schedEmpty"])}</p>'
+    body = fixtures_table(lang, items) if items else f'<p>{esc(t["schedEmpty"])}</p>'
     example_note = f'<p class="match-note">{esc(t["exampleNote"])}</p>' if any_example else ""
     local = "".join(f"<p>{esc(x)}</p>" for x in local_paragraphs(lang))
     return f'''<!DOCTYPE html>
@@ -959,7 +1070,7 @@ def render_schedule(lang, other_href):
     <main class="container legal schedule" id="main">
         {back_link(lang, path)}
         <h1>{esc(t["schedH1"])}</h1>
-        <p>{esc(t["schedIntro"])}</p>
+        <p class="lead">{esc(t["schedIntro"])}</p>
         {body}
         {example_note}
         <h2>{esc(t["localTitle"])}</h2>
@@ -1049,34 +1160,39 @@ def venue_tag(lang, e):
 
 
 def fixture_item(lang, start, e):
+    """One <tr> of the Eintracht fixtures table (see fixtures_table)."""
     t = I18N[lang]
     if e.get("placeholder"):
-        return (f'<li class="match is-pending"><p class="match-when">{esc(t["efDateTbd"])}</p>'
-                f'<h3 class="match-title">{esc(EINTRACHT)} – {esc(t["efOpponentTbd"])}</h3>'
-                f'<span class="match-comp">{esc(t["efCompTbd"])}</span></li>')
+        return (f'<tr class="is-pending"><td class="fx-when">{esc(t["efDateTbd"])}</td>'
+                f'<td class="fx-match"><h3 class="match-title">{esc(EINTRACHT)} – {esc(t["efOpponentTbd"])}</h3>'
+                f'<p class="fx-meta"><span class="match-comp">{esc(t["efCompTbd"])}</span></p></td></tr>')
     home, away = teams(e, e["opponent"])
     comp = f'<span class="match-comp">{esc(e["competition"])}</span>' if e.get("competition") else ""
     badge = f'<span class="tag">{esc(t["exampleBadge"])}</span>' if e.get("example") else ""
-    return (f'<li class="match"><time datetime="{attr(start.isoformat())}">{esc(fmt_match_time(lang, start))}</time>'
-            f'<h3 class="match-title">{esc(home)} – {esc(away)}</h3>{comp}{venue_tag(lang, e)}{badge}</li>')
+    return (f'<tr data-kickoff="{attr(start.isoformat())}">{when_cell(lang, start)}'
+            f'<td class="fx-match"><span class="fx-state" data-state></span>'
+            f'<h3 class="match-title">{esc(home)} – {esc(away)}</h3>'
+            f'<p class="fx-meta">{comp}{venue_tag(lang, e)}{badge}</p></td></tr>')
 
 
 def result_item(lang, e):
+    """One <tr> of the Eintracht results table (see results_table)."""
     t = I18N[lang]
     if e.get("placeholder"):
-        return (f'<li class="match result is-pending"><p class="match-when">{esc(t["efDateTbd"])}</p>'
-                f'<h3 class="match-title"><span>{esc(EINTRACHT)}</span> <span class="score">{tbd_html(lang)}</span> '
-                f'<span>{esc(t["efOpponentTbd"])}</span></h3>'
-                f'<span class="match-comp">{esc(t["efCompTbd"])}</span></li>')
+        return (f'<tr class="is-pending"><td class="fx-when">{esc(t["efDateTbd"])}</td>'
+                f'<td class="fx-match"><h3 class="match-title">{esc(EINTRACHT)} – {esc(t["efOpponentTbd"])}</h3>'
+                f'<p class="fx-meta"><span class="match-comp">{esc(t["efCompTbd"])}</span></p></td>'
+                f'<td class="fx-result"><span class="score">{tbd_html(lang)}</span></td></tr>')
     home, away = teams(e, e["opponent"])
     gf, ga = int(e["goals_for"]), int(e["goals_against"])
     hg, ag = (gf, ga) if e.get("home", True) else (ga, gf)
     outcome = t["efWin"] if gf > ga else t["efDraw"] if gf == ga else t["efLoss"]
     d = datetime.fromisoformat(e["date"]).date()
     comp = f'<span class="match-comp">{esc(e["competition"])}</span>' if e.get("competition") else ""
-    return (f'<li class="match result"><time datetime="{d.isoformat()}">{esc(fmt_date(lang, d))}</time>'
-            f'<h3 class="match-title"><span>{esc(home)}</span> <span class="score">{hg}:{ag}</span> <span>{esc(away)}</span></h3>'
-            f'{comp}{venue_tag(lang, e)}<span class="tag">{esc(outcome)}</span></li>')
+    return (f'<tr><td class="fx-when"><time datetime="{d.isoformat()}"><span class="fx-date">{esc(fmt_date(lang, d))}</span></time></td>'
+            f'<td class="fx-match"><h3 class="match-title">{esc(home)} – {esc(away)}</h3>'
+            f'<p class="fx-meta">{comp}{venue_tag(lang, e)}</p></td>'
+            f'<td class="fx-result"><span class="score">{hg}:{ag}</span><span class="fx-outcome">{esc(outcome)}</span></td></tr>')
 
 
 def standing_html(lang):
@@ -1132,10 +1248,10 @@ def render_eintracht(lang, other_href):
         if pend and msg not in TODOS:
             TODOS.append(msg)
     fx = ("".join(fixture_item(lang, s, e) for s, e in fixtures))
-    fx_html = (f'<ol class="match-list">{fx}</ol>' if fx else f'<p>{esc(t["efFixturesEmpty"])}</p>')
+    fx_html = (fixtures_table(lang, [fx]) if fx else f'<p>{esc(t["efFixturesEmpty"])}</p>')
     fx_note = pending_note(lang, "efPendingFixtures") if any(e.get("placeholder") for _, e in fixtures) else ""
     rs = "".join(result_item(lang, e) for e in results)
-    rs_html = (f'<ol class="match-list">{rs}</ol>' if rs else f'<p>{esc(t["efResultsEmpty"])}</p>')
+    rs_html = (results_table(lang, [rs]) if rs else f'<p>{esc(t["efResultsEmpty"])}</p>')
     rs_note = pending_note(lang, "efPendingResults") if any(e.get("placeholder") for e in results) else ""
     tb_note = pending_note(lang, "efPendingTable") if (EINTRACHT_DATA.get("standing") or {}).get("placeholder") else ""
     cta = reserve_buttons(lang)
@@ -1237,6 +1353,10 @@ def main():
         write(pre + PAGES["eintracht"][lang] + "index.html", render_eintracht(lang, switch_href(lang, PAGES["eintracht"][lang])))
     write("robots.txt", robots_txt())
     write("sitemap.xml", sitemap_xml())
+    if not fonts_ready():
+        missing_fonts = [f for f in FONT_FILES if not (ROOT / FONT_DIR / f).is_file()]
+        print(f"\nNOTE: self-hosted fonts missing in {FONT_DIR}/ ({', '.join(missing_fonts)}). "
+              "css/fonts.css is NOT linked; pages use the local fallback fonts. Add all files and rebuild.")
     if TODOS:
         print("\nTODO – missing data (left out of the output, or shown as a 'to be filled in' placeholder):")
         for k in sorted(set(TODOS)):

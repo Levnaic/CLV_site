@@ -8,6 +8,8 @@
      css/themes/volt.css      volt   electric blue and white, cool and crisp
      css/themes/derby.css     derby  classic football red and white
      css/themes/gold.css      gold   monochrome gold on black
+     css/themes/editorial.css editorial  paper and ink, one signal green (built for the
+                                         editorial style.css; other themes still work with it)
    (or copy a theme file over this one). Each file defines the SAME tokens.
 
    How light and dark work: light-dark(<light>, <dark>) picks by the used colour

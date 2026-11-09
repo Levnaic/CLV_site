@@ -1,0 +1,63 @@
+/* ==========================================================================
+   THEME "editorial": paper and ink, one signal green. Matchday programme /
+   newspaper sports page. Used by the editorial design (css/style.css on the
+   design-editorial branch); it defines the SAME tokens as css/palette.css.
+
+   Rules of this palette
+   - Two colours do almost all the work: paper (--bg) and ink (--text).
+   - ONE accent, pitch green, and only for state: open now, today, next/live
+     match, current nav item, selected drinks tab, link underlines.
+     Never the only signal: every state also has a text label or a shape.
+   - No shadows: --shadow is transparent on purpose.
+   - Closed/"bad" is not red here (one accent only): it is shown in muted ink
+     with its text label.
+
+   Contrast (WCAG 2.2, relative luminance, computed from these values)
+     light  text      #0d0d0c on #fcfcfa  18.9:1  AAA
+            text-2    #1d1d1b on #fcfcfa  16.4:1  AAA   (body copy)
+            muted     #52524e on #fcfcfa   7.6:1  AAA
+            accent    #007a3d on #fcfcfa   5.3:1  AA    (text, markers)
+            on-accent #fcfcfa on #007a3d   5.3:1  AA
+     dark   text      #f3f2ed on #0c0c0b  17.4:1  AAA
+            text-2    #dedcd4 on #0c0c0b  14.2:1  AAA   (body copy)
+            muted     #a29f96 on #0c0c0b   7.4:1  AAA
+            accent    #3ad981 on #0c0c0b  10.6:1  AAA
+            on-accent #0c0c0b on #3ad981  10.6:1  AAA
+   ========================================================================== */
+
+:root { color-scheme: light dark; }
+:root[data-theme="light"] { color-scheme: light; }
+:root[data-theme="dark"] { color-scheme: dark; }
+
+:root {
+    /* Paper and ink (light | dark) */
+    --bg:          light-dark(#fcfcfa, #0c0c0b);   /* paper */
+    --surface:     light-dark(#f2f2ee, #171715);   /* hover wash, pending rows */
+    --line:        light-dark(#d6d6d0, #34332f);   /* hairlines between rows */
+    --text:        light-dark(#0d0d0c, #f3f2ed);   /* ink: headings, thick rules */
+    --text-2:      light-dark(#1d1d1b, #dedcd4);   /* body copy */
+    --muted:       light-dark(#52524e, #a29f96);   /* captions, labels */
+
+    /* The one signal colour */
+    --accent:      light-dark(#007a3d, #3ad981);
+    --accent-text: light-dark(#007a3d, #3ad981);
+    --on-accent:   light-dark(#fcfcfa, #0c0c0b);
+
+    /* Status: open = accent; closed = muted ink (always with a text label) */
+    --ok:          light-dark(#007a3d, #3ad981);
+    --bad:         light-dark(#52524e, #a29f96);
+
+    --shadow:      transparent;
+
+    /* Ink zone (lightbox only in this design): the same in light and dark */
+    --night:             #0c0c0b;
+    --night-2:           #171715;
+    --night-line:        #34332f;
+    --night-text:        #f3f2ed;
+    --night-muted:       #a29f96;
+    --night-accent:      #3ad981;
+    --night-accent-text: #3ad981;
+    --night-on-accent:   #0c0c0b;
+    --night-ok:          #3ad981;
+    --night-bad:         #a29f96;
+}
