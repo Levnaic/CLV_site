@@ -20,8 +20,24 @@ SITE_URL = "https://DOMAIN"  # the ONE place to set the domain (no trailing slas
 LANGS = ["de", "en"]
 DEFAULT_LANG = "de"
 # Colour palette (all colour tokens live in this one file, loaded before css/style.css).
-# Default "pitch" = css/palette.css. Alternatives: css/themes/ember.css, volt.css, derby.css, gold.css
-PALETTE = "css/palette.css"
+# This branch (design 4, clean modern) uses css/themes/modern.css.
+# Others: css/palette.css (pitch), css/themes/ember.css, volt.css, derby.css, gold.css
+PALETTE = "css/themes/modern.css"
+
+# Self-hosted fonts (latin subset, variable weight, from npm @fontsource-variable/plus-jakarta-sans
+# and @fontsource-variable/inter). css/fonts.css is linked only when ALL files exist in
+# assets/fonts/; otherwise the pages use the locally installed fallbacks from css/style.css.
+FONT_DIR = ROOT / "assets" / "fonts"
+FONT_FILES = [
+    "plus-jakarta-sans-latin-wght-normal.woff2",
+    "inter-latin-wght-normal.woff2",
+]
+FONT_PRELOAD = FONT_FILES
+
+
+def fonts_present():
+    return all((FONT_DIR / f).is_file() for f in FONT_FILES)
+
 
 DATA = Path(os.environ.get("CLV_DATA_DIR", ROOT / "data"))  # override only for tests
 OUT = Path(os.environ.get("CLV_OUT_DIR", ROOT))
@@ -407,12 +423,17 @@ def jsonld_scripts(lang, blocks=None):
 # ---------------------------------------------------------------- page fragments
 def head_common(lang, depth, extra=""):
     r = rel_root(lang, depth)
-    # theme-color: static fallback for the default palette; js/main.js replaces it with the active palette's background
-    return f'''    <meta name="theme-color" content="#0a1210" media="(prefers-color-scheme: dark)">
-    <meta name="theme-color" content="#f1f5e6" media="(prefers-color-scheme: light)">
+    fonts = ""
+    if fonts_present():
+        fonts = "".join(f'    <link rel="preload" href="{r}assets/fonts/{f}" as="font" type="font/woff2" crossorigin>\n'
+                        for f in FONT_PRELOAD)
+        fonts += f'    <link rel="stylesheet" href="{r}css/fonts.css">\n'
+    # theme-color: static fallback for the modern palette; js/main.js replaces it with the active palette's background
+    return f'''    <meta name="theme-color" content="#181b1c" media="(prefers-color-scheme: dark)">
+    <meta name="theme-color" content="#f6f3ee" media="(prefers-color-scheme: light)">
     <link rel="icon" href="{r}assets/icons/favicon.svg" type="image/svg+xml">
     <script>try{{var t=localStorage.getItem("theme");if(t==="light"||t==="dark")document.documentElement.dataset.theme=t}}catch(e){{}}</script>
-    <link rel="stylesheet" href="{r}{PALETTE}">
+{fonts}    <link rel="stylesheet" href="{r}{PALETTE}">
     <link rel="stylesheet" href="{r}css/style.css">
 {extra}'''
 
@@ -495,6 +516,7 @@ def site_footer(lang, home=""):
     t = I18N[lang]
     return f'''    <footer class="site-footer">
         <div class="container footer-inner">
+            <p class="footer-motto">{esc(t["tagline"])}</p>
             <p>© <span id="year">2026</span> {esc(SITE["name"])} · {esc(SITE["area_label"])}</p>
             <p><a href="{home}impressum.html">{esc(t["imprint"])}</a> · <a href="{home}datenschutz.html">{esc(t["privacy"])}</a></p>
         </div>
@@ -683,28 +705,35 @@ def render_home(lang, other_href=None):
 
     <main id="main">
         <section class="hero" id="top">
-            <img class="hero-img" src="{r}assets/img/hero.svg" width="1200" height="1600" fetchpriority="high" alt="{img_alt(t["heroAlt"])}">
-            <div class="hero-overlay"></div>
-            <div class="container hero-content">
-                {hero_chip}<p class="eyebrow">Frankfurt · Niederrad</p>
-                <h1>C'est la vie<br><span>Sports Bar</span></h1>
-                <p class="tagline">{esc(t["tagline"])}</p>
-                <div class="hero-buttons">
-                    <a class="btn btn-primary" href="{sched_href}">{esc(t["btnLive"])}</a>
-                    <a class="btn btn-ghost" href="#visit">{esc(t["btnRoute"])}</a>
+            <div class="container hero-grid">
+                <div class="hero-content">
+                    <p class="eyebrow">Frankfurt · Niederrad</p>
+                    <h1>C'est la vie<br><span>Sports Bar</span></h1>
+                    <p class="tagline">{esc(t["tagline"])}</p>
+                    <div class="hero-buttons">
+                        <a class="btn btn-primary" href="{sched_href}">{esc(t["btnLive"])}</a>
+                        <a class="btn btn-ghost" href="#visit">{esc(t["btnRoute"])}</a>
+                    </div>
+                </div>
+                <div class="hero-collage">
+                    <div class="hero-frame"><img class="hero-img" src="{r}assets/img/hero.svg" width="1200" height="1600" fetchpriority="high" alt="{img_alt(t["heroAlt"])}"></div>
+                    <div class="hero-orb" aria-hidden="true"><img src="{r}assets/img/gallery-3.svg" width="800" height="800" loading="lazy" decoding="async" alt=""></div>
+                    {hero_chip}
                 </div>
             </div>
         </section>
         {ticker}
 
         <section class="section" id="about">
-            <div class="container split">
-                <div class="reveal">
+            <div class="container split about">
+                <div class="about-text reveal">
                     <h2>{esc(t["aboutTitle"])}</h2>
                     <p>{esc(t["aboutP1"])}</p>
                     <p>{esc(t["aboutP2"])}</p>
                 </div>
-                <img class="reveal media" src="{r}assets/img/about.svg" width="1200" height="900" loading="lazy" decoding="async" alt="{img_alt(t["aboutAlt"])}">
+                <div class="about-media reveal">
+                    <img class="media" src="{r}assets/img/about.svg" width="1200" height="900" loading="lazy" decoding="async" alt="{img_alt(t["aboutAlt"])}">
+                </div>
             </div>
         </section>
 
@@ -754,8 +783,8 @@ def render_home(lang, other_href=None):
         <section class="section section-alt" id="visit">
             <div class="container">
                 <h2>{esc(t["visitTitle"])}</h2>
-                <div class="split">
-                    <div>
+                <div class="split visit">
+                    <div class="card visit-card">
                         {status}<table class="hours"><tbody id="hours">
                             {hours_html(lang)}
                         </tbody></table>
@@ -1237,6 +1266,10 @@ def main():
         write(pre + PAGES["eintracht"][lang] + "index.html", render_eintracht(lang, switch_href(lang, PAGES["eintracht"][lang])))
     write("robots.txt", robots_txt())
     write("sitemap.xml", sitemap_xml())
+    if not fonts_present():
+        missing_fonts = [f for f in FONT_FILES if not (FONT_DIR / f).is_file()]
+        print("\nNOTE: self-hosted fonts missing in assets/fonts/ (" + ", ".join(missing_fonts)
+              + "): css/fonts.css is not linked, pages use local fallback fonts.")
     if TODOS:
         print("\nTODO – missing data (left out of the output, or shown as a 'to be filled in' placeholder):")
         for k in sorted(set(TODOS)):

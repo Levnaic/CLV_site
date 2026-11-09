@@ -1,0 +1,69 @@
+/* ==========================================================================
+   THEME "modern" (design 4, clean modern): warm off-white and soft stone,
+   one calm deep teal-green accent, a gentle apricot secondary tint and pastel
+   section washes. Dark mode is a soft charcoal (never pure black) with the
+   same teal lifted for contrast.
+   Defines the SAME tokens as css/palette.css, plus modern-only tokens
+   (--surface-2, --accent-soft, --warm*, --tint-*, --blob-*). css/style.css
+   falls back to the shared tokens when a palette does not define them.
+
+   Contrast (WCAG 2.2 AA, computed from these values):
+     text / text-2 / muted / accent-text on bg, surface, surface-2, tint-*  >= 4.5:1
+       (worst case: muted on tint-mist, light 5.3:1, dark 5.6:1)
+     accent-text on accent-soft                                            >= 6.6:1
+     on-accent on accent                                       light 6.0:1, dark 9.3:1
+     ok, bad (status dots) on bg and surface                               >= 3:1
+     night-* text pairs on night and night-2                               >= 6.4:1
+   ========================================================================== */
+
+:root { color-scheme: light dark; }
+:root[data-theme="light"] { color-scheme: light; }
+:root[data-theme="dark"] { color-scheme: dark; }
+
+:root {
+    /* Page colours (light | dark) */
+    --bg:          light-dark(#f6f3ee, #181b1c);   /* warm off-white | soft charcoal */
+    --surface:     light-dark(#fffdfa, #212526);   /* cards */
+    --surface-2:   light-dark(#efebe4, #262a2b);   /* soft stone: tracks, wells, stats */
+    --line:        light-dark(#e3ddd3, #33393a);   /* hairlines */
+    --text:        light-dark(#1c2321, #f1efea);
+    --text-2:      light-dark(#3d4744, #cfd3d0);
+    --muted:       light-dark(#57615d, #9aa29f);
+
+    /* Accent: deep teal-green, lifted in dark mode */
+    --accent:      light-dark(#1f6f64, #6fd0bf);
+    --accent-text: light-dark(#17594f, #7fd8c8);
+    --on-accent:   light-dark(#ffffff, #0f1f1c);
+    --accent-soft: light-dark(#dcece7, #203a36);   /* chips, selected rows, icon wells */
+
+    /* Secondary: apricot. Decoration only (dots, blobs, rings), never text. */
+    --warm:        light-dark(#e8a476, #e7a77c);
+    --warm-soft:   light-dark(#f8e6d6, #2e2620);
+
+    /* Pastel section washes */
+    --tint-sage:   light-dark(#e7efe9, #1c2422);
+    --tint-peach:  light-dark(#f8eadf, #2a2320);
+    --tint-mist:   light-dark(#e8eaf3, #1f2229);
+
+    /* Soft background shapes (page top, hero) */
+    --blob-1:      light-dark(#d9eae3, #1d2b29);
+    --blob-2:      light-dark(#f7e2d0, #2a231f);
+
+    /* Status */
+    --ok:          light-dark(#1c7a4a, #5fd394);
+    --bad:         light-dark(#b3362f, #ff8a80);
+
+    --shadow:      light-dark(rgb(64 52 36 / .09), rgb(0 0 0 / .42));
+
+    /* Always-dark zones (footer card, lightbox): deep ink-teal, the same in light and dark */
+    --night:             #12302b;
+    --night-2:           #1a3d37;
+    --night-line:        #2c524b;
+    --night-text:        #f3f1ec;
+    --night-muted:       #a9c4bd;
+    --night-accent:      #f2b98a;   /* apricot fills on night */
+    --night-accent-text: #f2b98a;
+    --night-on-accent:   #12302b;
+    --night-ok:          #5fd394;
+    --night-bad:         #ff8a80;
+}

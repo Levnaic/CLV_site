@@ -1,19 +1,17 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 1600" width="1200" height="1600" role="img" aria-label="HERO PHOTO (placeholder)">
 <defs>
-<linearGradient id="g" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#16261f"/><stop offset="1" stop-color="#0a1210"/></linearGradient>
-<radialGradient id="l" cx="82%" cy="12%" r="55%"><stop offset="0" stop-color="#c8f031" stop-opacity=".22"/><stop offset="1" stop-color="#c8f031" stop-opacity="0"/></radialGradient>
+<linearGradient id="g" x1="0" y1="0" x2=".6" y2="1"><stop offset="0" stop-color="#dcece7"/><stop offset=".55" stop-color="#eef0ea"/><stop offset="1" stop-color="#f8e6d6"/></linearGradient>
+<radialGradient id="w" cx="78%" cy="20%" r="45%"><stop offset="0" stop-color="#f2b98a" stop-opacity=".55"/><stop offset="1" stop-color="#f2b98a" stop-opacity="0"/></radialGradient>
 </defs>
 <rect width="1200" height="1600" fill="url(#g)"/>
-<rect width="1200" height="1600" fill="url(#l)"/>
-<g fill="none" stroke="#eef4e6" stroke-opacity=".18" stroke-width="6">
-<rect x="90" y="110" width="1020" height="1380"/>
-<path d="M90 800H1110"/>
-<circle cx="600" cy="800" r="190"/>
-<rect x="330" y="110" width="540" height="250"/>
-<rect x="330" y="1240" width="540" height="250"/>
-<path d="M480 360A140 140 0 0 0 720 360M480 1240A140 140 0 0 1 720 1240"/>
-</g>
-<circle cx="600" cy="800" r="14" fill="#c8f031"/>
-<text x="50%" y="48%" fill="#9db0a4" font-family="Arial,sans-serif" font-size="66" font-weight="700" text-anchor="middle">HERO PHOTO</text>
-<text x="50%" y="48%" dy="85" fill="#c8f031" font-family="Arial,sans-serif" font-size="40" text-anchor="middle">1200×1600</text>
+<rect width="1200" height="1600" fill="url(#w)"/>
+<circle cx="250" cy="1330" r="330" fill="#1f6f64" fill-opacity=".08"/>
+<rect x="190" y="430" width="820" height="500" rx="56" fill="#fffdfa" fill-opacity=".7" stroke="#1f6f64" stroke-opacity=".18" stroke-width="4"/>
+<rect x="230" y="470" width="740" height="420" rx="32" fill="#1f6f64" fill-opacity=".1"/>
+<circle cx="600" cy="680" r="96" fill="none" stroke="#1f6f64" stroke-opacity=".3" stroke-width="5"/>
+<path d="M600 470V890" stroke="#1f6f64" stroke-opacity=".22" stroke-width="5"/>
+<circle cx="600" cy="680" r="12" fill="#1f6f64" fill-opacity=".55"/>
+<rect x="520" y="930" width="160" height="70" rx="20" fill="#1f6f64" fill-opacity=".14"/>
+<text x="50%" y="1170" fill="#3d5a54" font-family="Arial,sans-serif" font-size="62" font-weight="700" text-anchor="middle">HERO PHOTO</text>
+<text x="50%" y="1170" dy="78" fill="#57615d" font-family="Arial,sans-serif" font-size="38" text-anchor="middle">1200×1600</text>
 </svg>

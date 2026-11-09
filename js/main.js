@@ -48,19 +48,29 @@
     darkMq.addEventListener('change', renderTheme);
 
     // ---------- Mobile menu ----------
+    // While the menu is open, everything outside the header (skip link, main, footer, quick bar,
+    // dialogs) is inert, so Tab stays in the header and the menu panel. Focus moves to the first
+    // menu link on open and back to the menu button when the menu is dismissed.
     const nav = $('#nav'), menuBtn = $('#menuBtn');
     let menuOpen = false;
-    function setMenu(open) {
-        if (!nav) return;
+    function setMenu(open, returnFocus = false) {
+        if (!nav || !menuBtn || open === menuOpen) return;
         menuOpen = open;
         nav.classList.toggle('open', open);
         menuBtn.setAttribute('aria-expanded', String(open));
         menuBtn.setAttribute('aria-label', open ? S.menuClose : S.menuOpen);
         document.body.style.overflow = open ? 'hidden' : '';
+        [...document.body.children].forEach(el => { if (!el.contains(nav)) el.inert = open; });
+        if (open) $('a', nav)?.focus();
+        else if (returnFocus) menuBtn.focus();
     }
     if (menuBtn) menuBtn.addEventListener('click', () => setMenu(!menuOpen));
-    if (nav) nav.addEventListener('click', e => { if (e.target.closest('a')) setMenu(false); });
-    document.addEventListener('keydown', e => { if (e.key === 'Escape' && menuOpen && menuBtn) { setMenu(false); menuBtn.focus(); } });
+    // A link closes the menu (the browser then follows it); a click on the backdrop closes it too.
+    if (nav) nav.addEventListener('click', e => {
+        if (e.target.closest('a')) setMenu(false);
+        else if (e.target === nav) setMenu(false, true);
+    });
+    document.addEventListener('keydown', e => { if (e.key === 'Escape' && menuOpen) setMenu(false, true); });
     // Same breakpoint as the desktop nav in css/style.css
     window.matchMedia('(min-width: 1200px)').addEventListener('change', e => { if (e.matches) setMenu(false); });
 

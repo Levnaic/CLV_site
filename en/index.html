@@ -25,11 +25,14 @@
     <meta name="twitter:description" content="Sports bar in Frankfurt-Niederrad: Bundesliga, Eintracht and Champions League live. Drinks menu, opening hours, directions.">
     <meta name="twitter:image" content="https://DOMAIN/assets/img/og-image.jpg">
     <meta name="twitter:image:alt" content="C&#x27;est la vie Sports Bar – Frankfurt-Niederrad">
-    <meta name="theme-color" content="#0a1210" media="(prefers-color-scheme: dark)">
-    <meta name="theme-color" content="#f1f5e6" media="(prefers-color-scheme: light)">
+    <meta name="theme-color" content="#181b1c" media="(prefers-color-scheme: dark)">
+    <meta name="theme-color" content="#f6f3ee" media="(prefers-color-scheme: light)">
     <link rel="icon" href="../assets/icons/favicon.svg" type="image/svg+xml">
     <script>try{var t=localStorage.getItem("theme");if(t==="light"||t==="dark")document.documentElement.dataset.theme=t}catch(e){}</script>
-    <link rel="stylesheet" href="../css/palette.css">
+    <link rel="preload" href="../assets/fonts/plus-jakarta-sans-latin-wght-normal.woff2" as="font" type="font/woff2" crossorigin>
+    <link rel="preload" href="../assets/fonts/inter-latin-wght-normal.woff2" as="font" type="font/woff2" crossorigin>
+    <link rel="stylesheet" href="../css/fonts.css">
+    <link rel="stylesheet" href="../css/themes/modern.css">
     <link rel="stylesheet" href="../css/style.css">
     <script type="application/ld+json">
     {
@@ -114,29 +117,36 @@
 
     <main id="main">
         <section class="hero" id="top">
-            <img class="hero-img" src="../assets/img/hero.svg" width="1200" height="1600" fetchpriority="high" alt="">
-            <div class="hero-overlay"></div>
-            <div class="container hero-content">
-                <p class="status hero-status" data-status></p>
-                <p class="eyebrow">Frankfurt · Niederrad</p>
-                <h1>C'est la vie<br><span>Sports Bar</span></h1>
-                <p class="tagline">Live Sport · Cold Drinks · Good People</p>
-                <div class="hero-buttons">
-                    <a class="btn btn-primary" href="schedule/">Live today</a>
-                    <a class="btn btn-ghost" href="#visit">Find us</a>
+            <div class="container hero-grid">
+                <div class="hero-content">
+                    <p class="eyebrow">Frankfurt · Niederrad</p>
+                    <h1>C'est la vie<br><span>Sports Bar</span></h1>
+                    <p class="tagline">Live Sport · Cold Drinks · Good People</p>
+                    <div class="hero-buttons">
+                        <a class="btn btn-primary" href="schedule/">Live today</a>
+                        <a class="btn btn-ghost" href="#visit">Find us</a>
+                    </div>
+                </div>
+                <div class="hero-collage">
+                    <div class="hero-frame"><img class="hero-img" src="../assets/img/hero.svg" width="1200" height="1600" fetchpriority="high" alt=""></div>
+                    <div class="hero-orb" aria-hidden="true"><img src="../assets/img/gallery-3.svg" width="800" height="800" loading="lazy" decoding="async" alt=""></div>
+                    <p class="status hero-status" data-status></p>
+                
                 </div>
             </div>
         </section>
         <div class="ticker"><div class="ticker-track" aria-hidden="true"><ul><li>Live Sport</li><li>Cold Drinks</li><li>Good People</li><li>Bundesliga</li><li>Eintracht Frankfurt</li><li>Champions League</li></ul><ul class="ticker-dup"><li>Live Sport</li><li>Cold Drinks</li><li>Good People</li><li>Bundesliga</li><li>Eintracht Frankfurt</li><li>Champions League</li></ul><ul class="ticker-dup"><li>Live Sport</li><li>Cold Drinks</li><li>Good People</li><li>Bundesliga</li><li>Eintracht Frankfurt</li><li>Champions League</li></ul><ul class="ticker-dup"><li>Live Sport</li><li>Cold Drinks</li><li>Good People</li><li>Bundesliga</li><li>Eintracht Frankfurt</li><li>Champions League</li></ul></div></div>
 
         <section class="section" id="about">
-            <div class="container split">
-                <div class="reveal">
+            <div class="container split about">
+                <div class="about-text reveal">
                     <h2>About us</h2>
                     <p>In the heart of Frankfurt-Niederrad, fans, neighbours and friends meet at our place. Bundesliga, Champions League or a relaxed evening after work – there is always something going on.</p>
                     <p>Big screens, proper sound and a team that knows how to pour a good drink. Welcome to C'est la vie Sports Bar.</p>
                 </div>
-                <img class="reveal media" src="../assets/img/about.svg" width="1200" height="900" loading="lazy" decoding="async" alt="">
+                <div class="about-media reveal">
+                    <img class="media" src="../assets/img/about.svg" width="1200" height="900" loading="lazy" decoding="async" alt="">
+                </div>
             </div>
         </section>
 
@@ -198,8 +208,8 @@
         <section class="section section-alt" id="visit">
             <div class="container">
                 <h2>Opening hours &amp; directions</h2>
-                <div class="split">
-                    <div>
+                <div class="split visit">
+                    <div class="card visit-card">
                         <p class="status" id="status" data-status aria-live="polite"></p>
                         <table class="hours"><tbody id="hours">
                             <tr data-d="1"><th scope="row">Monday</th><td>16:00 – 01:00</td></tr>
@@ -254,6 +264,7 @@
 
     <footer class="site-footer">
         <div class="container footer-inner">
+            <p class="footer-motto">Live Sport · Cold Drinks · Good People</p>
             <p>© <span id="year">2026</span> C'est la Vie Café &amp; Sportsbar · Frankfurt-Niederrad</p>
             <p><a href="impressum.html">Legal notice</a> · <a href="datenschutz.html">Privacy policy</a></p>
         </div>
