@@ -178,7 +178,8 @@ p { margin: 0 0 1em; }
     transition: opacity .25s var(--ease), visibility .25s;
     overflow-y: auto; overscroll-behavior: contain;
 }
-.nav.open { opacity: 1; visibility: visible; }
+/* visibility flips at once on open (0s), so js/main.js can move focus into the menu immediately */
+.nav.open { opacity: 1; visibility: visible; transition: opacity .25s var(--ease), visibility 0s; }
 .nav ul {
     list-style: none; margin: 0 auto; padding: .5rem; max-width: 34rem;
     display: grid; gap: .125rem;
@@ -206,7 +207,7 @@ p { margin: 0 0 1em; }
 .sr-only { position: absolute; width: 1px; height: 1px; overflow: hidden; clip-path: inset(50%); white-space: nowrap; }
 
 /* ---------- Hero: split, text left, rounded collage right ---------- */
-.hero { position: relative; padding-block: clamp(1.75rem, 5vw, 4.5rem) clamp(2.5rem, 6vw, 5rem); }
+.hero { position: relative; overflow-x: clip; padding-block: clamp(1.75rem, 5vw, 4.5rem) clamp(2.5rem, 6vw, 5rem); }
 .hero-grid { display: grid; gap: clamp(2.5rem, 6vw, 4.5rem); align-items: center; }
 .hero-content { min-width: 0; }
 .eyebrow { display: inline-flex; align-items: center; gap: .55rem; margin: 0 0 1.5rem; padding: .4rem 1rem .4rem .75rem; background: var(--surface); border: 1px solid var(--line); border-radius: var(--r-pill); box-shadow: var(--shadow-sm); color: var(--text-2); font-size: .9rem; font-weight: 500; line-height: 1.3; }
@@ -225,7 +226,7 @@ p { margin: 0 0 1em; }
 .hero-orb img { width: 100%; height: 100%; object-fit: cover; }
 .hero-status { position: absolute; top: .875rem; right: .875rem; background: color-mix(in srgb, var(--surface) 80%, transparent); -webkit-backdrop-filter: blur(10px) saturate(1.4); backdrop-filter: blur(10px) saturate(1.4); box-shadow: var(--shadow-md); }
 @media (min-width: 600px) {
-    .hero-frame { aspect-ratio: 4 / 3; }
+    .hero-frame { aspect-ratio: 16 / 10; }
     .hero-orb { width: 28%; left: -1rem; bottom: -2rem; border-width: 6px; }
 }
 @media (min-width: 900px) {
@@ -233,6 +234,12 @@ p { margin: 0 0 1em; }
     .hero-frame { aspect-ratio: 4 / 5; max-height: 40rem; margin-left: auto; border-radius: 999px 999px var(--r-lg) var(--r-lg); }
     .hero-orb { width: 36%; left: -2.5rem; bottom: -1.5rem; }
     .hero-status { top: auto; bottom: 1.5rem; right: -.75rem; }
+}
+
+/* Dark mode: soften bright photos and illustrations so they do not glare on charcoal */
+:root[data-theme="dark"] :is(.hero-img, .hero-orb img, .media, .gallery-item img) { filter: brightness(.86) saturate(.92); }
+@media (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]) :is(.hero-img, .hero-orb img, .media, .gallery-item img) { filter: brightness(.86) saturate(.92); }
 }
 
 /* ---------- Buttons: pills ---------- */
@@ -506,7 +513,7 @@ address strong { color: var(--text); font: 600 1.15rem var(--font-head); }
 .pending-note { display: flex; flex-wrap: wrap; align-items: center; gap: .5rem .75rem; margin: 0 0 1rem; color: var(--muted); }
 .tag-pending { margin: 0; background: transparent; border: 1px dashed var(--muted); color: var(--text-2); }
 .match.is-pending, .standing.is-pending { border-style: dashed; border-color: color-mix(in srgb, var(--muted) 70%, transparent); background: color-mix(in srgb, var(--surface) 50%, transparent); box-shadow: none; }
-.match.is-pending::before { border-color: var(--muted); border-style: dashed; }
+.match.is-pending::before { border-color: var(--muted); border-width: 2px; }
 .is-pending .match-when { background: transparent; border: 1px dashed var(--muted); color: var(--text-2); }
 .is-pending .match-title, .is-pending .standing-n { color: var(--muted); }
 .is-pending .score { background: var(--line); color: var(--text); }
