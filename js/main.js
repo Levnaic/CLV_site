@@ -48,25 +48,40 @@
     darkMq.addEventListener('change', renderTheme);
 
     // ---------- Mobile menu ----------
+    // While the overlay is open everything outside the header is inert, so Tab stays in the menu
+    // and the header controls next to it. Opening moves focus to the first menu link (the CSS makes
+    // the overlay visible instantly on .open); Escape closes and returns focus to the menu button.
+    const header = $('.site-header');
     const nav = $('#nav'), menuBtn = $('#menuBtn');
     let menuOpen = false;
+    const pageBehind = () => [...document.body.children].filter(el => el !== header && !el.matches('script, dialog'));
     function setMenu(open) {
-        if (!nav) return;
+        if (!nav || !menuBtn) return;
         menuOpen = open;
         nav.classList.toggle('open', open);
         menuBtn.setAttribute('aria-expanded', String(open));
         menuBtn.setAttribute('aria-label', open ? S.menuClose : S.menuOpen);
         document.body.style.overflow = open ? 'hidden' : '';
+        pageBehind().forEach(el => { el.inert = open; });
+        if (open) {
+            const first = $('a', nav);
+            first?.focus();
+            if (first && document.activeElement !== first) requestAnimationFrame(() => first.focus());
+        }
     }
-    if (menuBtn) menuBtn.addEventListener('click', () => setMenu(!menuOpen));
-    if (nav) nav.addEventListener('click', e => { if (e.target.closest('a')) setMenu(false); });
-    document.addEventListener('keydown', e => { if (e.key === 'Escape' && menuOpen && menuBtn) { setMenu(false); menuBtn.focus(); } });
-    // Same breakpoint as the desktop nav in css/style.css
-    window.matchMedia('(min-width: 1200px)').addEventListener('change', e => { if (e.matches) setMenu(false); });
+    menuBtn?.addEventListener('click', () => setMenu(!menuOpen));
+    nav?.addEventListener('click', e => { if (menuOpen && e.target.closest('a')) setMenu(false); });
+    document.addEventListener('keydown', e => {
+        if (e.key === 'Escape' && menuOpen) { setMenu(false); menuBtn.focus(); }
+    });
+    // The desktop breakpoint lives only in css/style.css (it hides .menu-btn): close the overlay
+    // as soon as the button is gone, e.g. after rotating a tablet or widening the window.
+    window.addEventListener('resize', () => {
+        if (menuOpen && getComputedStyle(menuBtn).display === 'none') setMenu(false);
+    });
 
     // ---------- Header shadow + nav scroll-spy ----------
     // The link whose section crosses the 40% line of the viewport gets aria-current="location".
-    const header = $('.site-header');
     const spyLinks = $$('.nav a[href^="#"]')
         .map(a => [a, document.getElementById(a.hash.slice(1))])
         .filter(([, section]) => section);

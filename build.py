@@ -510,8 +510,72 @@ def kickoff_tbd(lang, with_time=True):
             f'<span class="ko-date">{esc(t["efDateTbd"])}</span>{clock}</p>')
 
 
-HOME_ICON = ('<svg class="nav-icon" viewBox="0 0 24 24" aria-hidden="true" focusable="false">'
-             '<path d="M3 11.5 12 4l9 7.5M5.5 9.5V20h5v-6h3v6h5V9.5"/></svg>')
+# Decorative nav icons (24x24, drawn in currentColor; the text label is always next to them).
+# "eintracht" is the site's own generic wing motif (three slanted feather bars), not a club crest.
+NAV_ICONS = {
+    "home": '<path d="M3 11.5 12 4l9 7.5M5.5 9.5V20h5v-6h3v6h5V9.5"/>',
+    "schedule": '<path d="M3.5 6h17v14.5h-17zM3.5 10.5h17M8 3v5M16 3v5"/><path class="nif" d="M12.5 13.5H17V18h-4.5z"/>',
+    "eintracht": ('<path class="nif" d="M4 2.5h19l-3 5H1z"/><path class="nif" d="M8 9.5h13.5l-3 5H5z"/>'
+                  '<path class="nif" d="M12 16.5h8l-3 5H9z"/>'),
+}
+# "Opens another page" cue (arrow out of the corner), shown after every standalone page link
+GO_ICON = ('<svg class="nav-go" viewBox="0 0 24 24" aria-hidden="true" focusable="false">'
+           '<path d="M6 18 17.5 6.5M8.5 6H18v9.5"/></svg>')
+NAV_PAGE_KEYS = {"home": "navHome", "schedule": "navSchedule", "eintracht": "navEintracht"}
+NAV_SECTION_KEYS = {"about": "navAbout", "sport": "navSport", "drinks": "navDrinks", "events": "navEvents",
+                    "gallery": "navGallery", "visit": "navVisit", "contact": "navContact"}
+
+
+def nav_icon(key):
+    return f'<svg class="nav-icon" viewBox="0 0 24 24" aria-hidden="true" focusable="false">{NAV_ICONS[key]}</svg>'
+
+
+def home_sections(lang):
+    """Ids of the home page's .section blocks in page order (CSS numbers them 01, 02, … in this order)."""
+    ids = ["about", "sport", "drinks", "events", "gallery", "visit", "local"]
+    if faq_items(lang):
+        ids.append("faq")
+    if contact_cards(lang):
+        ids.append("contact")
+    return ids
+
+
+def site_nav(lang, pages, sections, home="", current=None):
+    """Main nav in two labelled groups, the same structure on every page:
+    1. standalone pages (icon + label + 'opens a page' arrow, drawn as plates),
+    2. section jumps on the home page (numbered like the section headings, so '03' = section 03).
+    home: relative link to this language's home page ('' on the home page itself)."""
+    t = I18N[lang]
+    num = {sid: n for n, sid in enumerate(home_sections(lang), 1)}
+    ind = "\n                        "
+
+    def page_href(k):
+        return (home or "./") if k == "home" else home + PAGES[k][lang]
+
+    cur = ' aria-current="page"'
+    page_items = ind.join(
+        f'<li><a class="nav-page" href="{attr(page_href(k))}"{cur if k == current else ""}>'
+        f'{nav_icon(k)}<span class="nav-label">{esc(t[NAV_PAGE_KEYS[k]])}</span>{GO_ICON}</a></li>'
+        for k in pages)
+    section_items = ind.join(
+        f'<li><a href="{attr(home)}#{sid}" data-n="{num.get(sid, 0):02d}">{esc(t[NAV_SECTION_KEYS[sid]])}</a></li>'
+        for sid in sections)
+    here = t["navOnPage"] if not home else t["navOnHome"]
+    # The visible group headings are aria-hidden: each group is already named by them via aria-labelledby.
+    return f'''<nav id="nav" class="nav" aria-label="{attr(t["navLabel"])}">
+                <div class="nav-group nav-pages" role="group" aria-labelledby="nav-pages-h">
+                    <p class="nav-heading" id="nav-pages-h" aria-hidden="true">{esc(t["navPages"])}</p>
+                    <ul>
+                        {page_items}
+                    </ul>
+                </div>
+                <div class="nav-group nav-sections" role="group" aria-labelledby="nav-sections-h">
+                    <p class="nav-heading" id="nav-sections-h" aria-hidden="true">{esc(here)}</p>
+                    <ul>
+                        {section_items}
+                    </ul>
+                </div>
+            </nav>'''
 
 
 def menu_button(t):
@@ -524,25 +588,11 @@ def subpage_header(lang, path, current, other_href):
     """Header for every page except home: logo -> home, a nav with a clear Home item, theme, language, menu."""
     t = I18N[lang]
     home = home_href(path)
-    links = [
-        ("home", home, HOME_ICON + esc(t["navHome"])),
-        ("schedule", home + PAGES["schedule"][lang], esc(t["navSchedule"])),
-        ("eintracht", home + PAGES["eintracht"][lang], esc(t["navEintracht"])),
-        (None, home + "#events", esc(t["navEvents"])),
-        (None, home + "#visit", esc(t["navVisit"])),
-    ]
-    cur = ' aria-current="page"'
-    items = "\n                    ".join(
-        f'<li><a href="{attr(href)}"{cur if key == current else ""}>{label}</a></li>'
-        for key, href, label in links)
+    nav = site_nav(lang, ["home", "schedule", "eintracht"], ["events", "visit"], home=home, current=current)
     return f'''    <header class="site-header">
         <div class="container header-inner">
             <a class="brand" href="{home}" aria-label="{attr(t["brandHome"].format(name=SITE["name"]))}">{logo_svg()}<span class="brand-title">C'est la <span>vie</span></span></a>
-            <nav id="nav" class="nav" aria-label="{attr(t["navLabel"])}">
-                <ul>
-                    {items}
-                </ul>
-            </nav>
+            {nav}
             <div class="header-actions">
                 <button class="theme-btn" id="themeBtn" type="button" aria-label="{attr(t["themeBtn"])}"></button>
                 {lang_switch(lang, other_href)}
@@ -697,7 +747,9 @@ def render_home(lang, other_href=None):
             </div>
         </section>
 ''' if contact else ""
-    nav_contact = f'\n                    <li><a href="#contact">{esc(t["navContact"])}</a></li>' if contact else ""
+    nav = site_nav(lang, ["schedule", "eintracht"],
+                   ["about", "sport", "drinks", "events", "gallery", "visit"] + (["contact"] if contact else []),
+                   current="home")
     has_hours = bool(SITE["hours"]["days"])
     status = '<p class="status" id="status" data-status aria-live="polite"></p>\n                        ' if has_hours else ""
     hero_chip = '<p class="status hero-status" data-status></p>\n                ' if has_hours else ""
@@ -726,18 +778,7 @@ def render_home(lang, other_href=None):
     <header class="site-header">
         <div class="container header-inner">
             <a class="brand" href="#top" aria-label="{attr(SITE["name"])}">{logo_svg()}<span class="brand-title">C'est la <span>vie</span></span></a>
-            <nav id="nav" class="nav" aria-label="{attr(t["navLabel"])}">
-                <ul>
-                    <li><a href="#about">{esc(t["navAbout"])}</a></li>
-                    <li><a href="#sport">{esc(t["navSport"])}</a></li>
-                    <li><a href="{sched_href}">{esc(t["navSchedule"])}</a></li>
-                    <li><a href="{PAGES["eintracht"][lang]}">{esc(t["navEintracht"])}</a></li>
-                    <li><a href="#drinks">{esc(t["navDrinks"])}</a></li>
-                    <li><a href="#events">{esc(t["navEvents"])}</a></li>
-                    <li><a href="#gallery">{esc(t["navGallery"])}</a></li>
-                    <li><a href="#visit">{esc(t["navVisit"])}</a></li>{nav_contact}
-                </ul>
-            </nav>
+            {nav}
             <div class="header-actions">
                 <button class="theme-btn" id="themeBtn" type="button" aria-label="{attr(t["themeBtn"])}"></button>
                 {lang_switch(lang, other_href)}

@@ -25,13 +25,21 @@
         <div class="container header-inner">
             <a class="brand" href="./" aria-label="C&#x27;est la Vie Café &amp; Sportsbar – zur Startseite"><svg class="logo-mark" viewBox="0 0 48 48" aria-hidden="true" focusable="false"><path class="lm-c" pathLength="1" d="M38.14 9.86A20 20 0 1 0 38.14 38.14"/><path class="lm-l" pathLength="1" d="M15 13V33H27"/><path class="lm-v" pathLength="1" d="M20 13L27 33L40 6"/></svg><span class="brand-title">C'est la <span>vie</span></span></a>
             <nav id="nav" class="nav" aria-label="Hauptmenü">
-                <ul>
-                    <li><a href="./"><svg class="nav-icon" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M3 11.5 12 4l9 7.5M5.5 9.5V20h5v-6h3v6h5V9.5"/></svg>Startseite</a></li>
-                    <li><a href="./spielplan/">Spielplan</a></li>
-                    <li><a href="./eintracht/">Eintracht</a></li>
-                    <li><a href="./#events">Events</a></li>
-                    <li><a href="./#visit">Anfahrt</a></li>
-                </ul>
+                <div class="nav-group nav-pages" role="group" aria-labelledby="nav-pages-h">
+                    <p class="nav-heading" id="nav-pages-h" aria-hidden="true">Seiten</p>
+                    <ul>
+                        <li><a class="nav-page" href="./"><svg class="nav-icon" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M3 11.5 12 4l9 7.5M5.5 9.5V20h5v-6h3v6h5V9.5"/></svg><span class="nav-label">Startseite</span><svg class="nav-go" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M6 18 17.5 6.5M8.5 6H18v9.5"/></svg></a></li>
+                        <li><a class="nav-page" href="./spielplan/"><svg class="nav-icon" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M3.5 6h17v14.5h-17zM3.5 10.5h17M8 3v5M16 3v5"/><path class="nif" d="M12.5 13.5H17V18h-4.5z"/></svg><span class="nav-label">Spielplan</span><svg class="nav-go" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M6 18 17.5 6.5M8.5 6H18v9.5"/></svg></a></li>
+                        <li><a class="nav-page" href="./eintracht/"><svg class="nav-icon" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path class="nif" d="M4 2.5h19l-3 5H1z"/><path class="nif" d="M8 9.5h13.5l-3 5H5z"/><path class="nif" d="M12 16.5h8l-3 5H9z"/></svg><span class="nav-label">Eintracht</span><svg class="nav-go" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M6 18 17.5 6.5M8.5 6H18v9.5"/></svg></a></li>
+                    </ul>
+                </div>
+                <div class="nav-group nav-sections" role="group" aria-labelledby="nav-sections-h">
+                    <p class="nav-heading" id="nav-sections-h" aria-hidden="true">Auf der Startseite</p>
+                    <ul>
+                        <li><a href="./#events" data-n="04">Events</a></li>
+                        <li><a href="./#visit" data-n="06">Anfahrt</a></li>
+                    </ul>
+                </div>
             </nav>
             <div class="header-actions">
                 <button class="theme-btn" id="themeBtn" type="button" aria-label="Design wechseln"></button>
