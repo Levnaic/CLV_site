@@ -197,7 +197,7 @@ p { margin: 0 0 1em; }
 
 /* ---------- Hero: arena wall, glowing sign, perspective grid floor ---------- */
 .hero { position: relative; display: flex; align-items: flex-end; overflow: hidden; background: var(--bg); color: var(--text-2); min-height: min(calc(100svh - var(--header-h) - var(--ticker-h)), 60rem); }
-.hero-img { position: absolute; inset: 0; z-index: 0; width: 100%; height: 100%; object-fit: cover; opacity: .3; filter: grayscale(1) contrast(1.15); }
+.hero-img { position: absolute; inset: 0; z-index: 0; width: 100%; height: 100%; object-fit: cover; opacity: .22; filter: grayscale(1) contrast(1.15); }
 .hero-overlay {
     position: absolute; inset: 0; z-index: 1;
     background:
@@ -207,12 +207,12 @@ p { margin: 0 0 1em; }
 }
 /* Grid floor: two line gradients tilted back in 3D, fading into the dark */
 .hero-grid {
-    position: absolute; z-index: 1; left: -50%; width: 200%; bottom: 0; height: 52%;
+    position: absolute; z-index: 1; left: -50%; width: 200%; bottom: 0; height: 64%;
     background-image: linear-gradient(var(--grid-line) 2px, transparent 2px), linear-gradient(90deg, var(--grid-line) 2px, transparent 2px);
     background-size: 72px 72px;
     background-position: center bottom;
     transform-origin: 50% 100%;
-    transform: perspective(360px) rotateX(64deg);
+    transform: perspective(440px) rotateX(60deg);
     -webkit-mask-image: linear-gradient(to top, #000 0%, rgb(0 0 0 / .6) 45%, transparent 92%);
     mask-image: linear-gradient(to top, #000 0%, rgb(0 0 0 / .6) 45%, transparent 92%);
     opacity: .5;
@@ -640,7 +640,7 @@ address strong { color: var(--text); font: 600 1.1rem var(--font-head); text-tra
             radial-gradient(ellipse 40% 50% at 5% 60%, color-mix(in srgb, var(--accent-2) 14%, transparent), transparent 70%),
             linear-gradient(to right, var(--bg) 10%, color-mix(in srgb, var(--bg) 62%, transparent));
     }
-    .hero-grid { opacity: .85; height: 48%; }
+    .hero-grid { opacity: .9; height: 75%; transform: perspective(500px) rotateX(58deg); }
     .tagline { font-size: 1.2rem; }
     /* Asymmetric splits: about leans on the text, visit leans on the map */
     .split { grid-template-columns: 7fr 5fr; gap: 4rem; }
