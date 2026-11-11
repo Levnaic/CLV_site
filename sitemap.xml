@@ -5,36 +5,84 @@
     <loc>https://DOMAIN/</loc>
     <xhtml:link rel="alternate" hreflang="de" href="https://DOMAIN/"/>
     <xhtml:link rel="alternate" hreflang="en" href="https://DOMAIN/en/"/>
+    <xhtml:link rel="alternate" hreflang="it" href="https://DOMAIN/it/"/>
     <xhtml:link rel="alternate" hreflang="x-default" href="https://DOMAIN/"/>
   </url>
   <url>
     <loc>https://DOMAIN/en/</loc>
     <xhtml:link rel="alternate" hreflang="de" href="https://DOMAIN/"/>
     <xhtml:link rel="alternate" hreflang="en" href="https://DOMAIN/en/"/>
+    <xhtml:link rel="alternate" hreflang="it" href="https://DOMAIN/it/"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://DOMAIN/"/>
+  </url>
+  <url>
+    <loc>https://DOMAIN/it/</loc>
+    <xhtml:link rel="alternate" hreflang="de" href="https://DOMAIN/"/>
+    <xhtml:link rel="alternate" hreflang="en" href="https://DOMAIN/en/"/>
+    <xhtml:link rel="alternate" hreflang="it" href="https://DOMAIN/it/"/>
     <xhtml:link rel="alternate" hreflang="x-default" href="https://DOMAIN/"/>
   </url>
   <url>
     <loc>https://DOMAIN/spielplan/</loc>
     <xhtml:link rel="alternate" hreflang="de" href="https://DOMAIN/spielplan/"/>
     <xhtml:link rel="alternate" hreflang="en" href="https://DOMAIN/en/schedule/"/>
+    <xhtml:link rel="alternate" hreflang="it" href="https://DOMAIN/it/calendario/"/>
     <xhtml:link rel="alternate" hreflang="x-default" href="https://DOMAIN/spielplan/"/>
   </url>
   <url>
     <loc>https://DOMAIN/en/schedule/</loc>
     <xhtml:link rel="alternate" hreflang="de" href="https://DOMAIN/spielplan/"/>
     <xhtml:link rel="alternate" hreflang="en" href="https://DOMAIN/en/schedule/"/>
+    <xhtml:link rel="alternate" hreflang="it" href="https://DOMAIN/it/calendario/"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://DOMAIN/spielplan/"/>
+  </url>
+  <url>
+    <loc>https://DOMAIN/it/calendario/</loc>
+    <xhtml:link rel="alternate" hreflang="de" href="https://DOMAIN/spielplan/"/>
+    <xhtml:link rel="alternate" hreflang="en" href="https://DOMAIN/en/schedule/"/>
+    <xhtml:link rel="alternate" hreflang="it" href="https://DOMAIN/it/calendario/"/>
     <xhtml:link rel="alternate" hreflang="x-default" href="https://DOMAIN/spielplan/"/>
   </url>
   <url>
     <loc>https://DOMAIN/eintracht/</loc>
     <xhtml:link rel="alternate" hreflang="de" href="https://DOMAIN/eintracht/"/>
     <xhtml:link rel="alternate" hreflang="en" href="https://DOMAIN/en/eintracht/"/>
+    <xhtml:link rel="alternate" hreflang="it" href="https://DOMAIN/it/eintracht/"/>
     <xhtml:link rel="alternate" hreflang="x-default" href="https://DOMAIN/eintracht/"/>
   </url>
   <url>
     <loc>https://DOMAIN/en/eintracht/</loc>
     <xhtml:link rel="alternate" hreflang="de" href="https://DOMAIN/eintracht/"/>
     <xhtml:link rel="alternate" hreflang="en" href="https://DOMAIN/en/eintracht/"/>
+    <xhtml:link rel="alternate" hreflang="it" href="https://DOMAIN/it/eintracht/"/>
     <xhtml:link rel="alternate" hreflang="x-default" href="https://DOMAIN/eintracht/"/>
+  </url>
+  <url>
+    <loc>https://DOMAIN/it/eintracht/</loc>
+    <xhtml:link rel="alternate" hreflang="de" href="https://DOMAIN/eintracht/"/>
+    <xhtml:link rel="alternate" hreflang="en" href="https://DOMAIN/en/eintracht/"/>
+    <xhtml:link rel="alternate" hreflang="it" href="https://DOMAIN/it/eintracht/"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://DOMAIN/eintracht/"/>
+  </url>
+  <url>
+    <loc>https://DOMAIN/kontakt/</loc>
+    <xhtml:link rel="alternate" hreflang="de" href="https://DOMAIN/kontakt/"/>
+    <xhtml:link rel="alternate" hreflang="en" href="https://DOMAIN/en/contact/"/>
+    <xhtml:link rel="alternate" hreflang="it" href="https://DOMAIN/it/contatti/"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://DOMAIN/kontakt/"/>
+  </url>
+  <url>
+    <loc>https://DOMAIN/en/contact/</loc>
+    <xhtml:link rel="alternate" hreflang="de" href="https://DOMAIN/kontakt/"/>
+    <xhtml:link rel="alternate" hreflang="en" href="https://DOMAIN/en/contact/"/>
+    <xhtml:link rel="alternate" hreflang="it" href="https://DOMAIN/it/contatti/"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://DOMAIN/kontakt/"/>
+  </url>
+  <url>
+    <loc>https://DOMAIN/it/contatti/</loc>
+    <xhtml:link rel="alternate" hreflang="de" href="https://DOMAIN/kontakt/"/>
+    <xhtml:link rel="alternate" hreflang="en" href="https://DOMAIN/en/contact/"/>
+    <xhtml:link rel="alternate" hreflang="it" href="https://DOMAIN/it/contatti/"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://DOMAIN/kontakt/"/>
   </url>
 </urlset>
