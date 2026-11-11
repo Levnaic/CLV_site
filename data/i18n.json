@@ -1,6 +1,6 @@
 {
   "de": {
-    "title": "C'est la vie Sports Bar Frankfurt-Niederrad | Bundesliga & Eintracht live",
+    "title": "C'est la vie Sports Bar Frankfurt | Eintracht & Bundesliga live",
     "description": "Sportsbar in Frankfurt-Niederrad{near}: Bundesliga und Eintracht live{screens}, Bier vom Fass, du wählst die Musik.",
     "descNear": ", {dist} vom {stadium}",
     "ogDescription": "Live-Sport, kühle Drinks, gute Leute in Frankfurt-Niederrad.",
@@ -256,7 +256,7 @@
     "dayRange": "{a} bis {b}"
   },
   "en": {
-    "title": "C'est la vie Sports Bar Frankfurt-Niederrad | Watch Bundesliga & Eintracht live",
+    "title": "C'est la vie Sports Bar Frankfurt | Eintracht & Bundesliga live",
     "description": "Sports bar in Frankfurt-Niederrad{near}: Bundesliga and Eintracht live{screens}, beer on tap, and you pick the music.",
     "descNear": ", {dist} from {stadium}",
     "ogDescription": "Live sport, cold drinks, good people in Frankfurt-Niederrad.",
@@ -512,7 +512,7 @@
     "dayRange": "{a} to {b}"
   },
   "it": {
-    "title": "C'est la vie Sports Bar Francoforte-Niederrad | Bundesliga ed Eintracht in diretta",
+    "title": "C'est la vie Sports Bar Francoforte | Eintracht e Bundesliga live",
     "description": "Sports bar a Francoforte-Niederrad{near}: Bundesliga ed Eintracht live{screens}, birra alla spina e musica a tua scelta.",
     "descNear": ", a {dist} dal {stadium}",
     "ogDescription": "Sport in diretta, drink freschi e bella gente a Francoforte-Niederrad.",

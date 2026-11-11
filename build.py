@@ -631,12 +631,13 @@ def lang_switch(lang, hrefs):
         f'{CHECK_ICON}<span class="lang-name">{esc(LANG_NAMES[l])}</span>'
         f'<span class="lang-item-code" aria-hidden="true">{l.upper()}</span></a></li>'
         for l in LANGS)
-    # Accessible name = visible code + hidden explanation ("DE, Sprache: Deutsch"), so the name starts
-    # with what is on screen (WCAG 2.5.3 label in name; no aria-label replacing the visible text)
-    hint = t["langLabel"].format(name=LANG_NAMES[lang])
+    # Accessible name starts with the visible code: "DE, Sprache: Deutsch" (WCAG 2.5.3 label in name).
+    # An aria-label, not visually hidden text: browsers put a space before an absolutely positioned
+    # .sr-only span when computing the name ("DE , Sprache").
+    name = f'{lang.upper()}, {t["langLabel"].format(name=LANG_NAMES[lang])}'
     return (f'<details class="lang" id="langBox">'
-            f'<summary class="lang-btn" aria-controls="langMenu">'
-            f'{GLOBE_ICON}<span class="lang-code">{lang.upper()}</span><span class="sr-only">, {esc(hint)}</span>{CARET_ICON}</summary>'
+            f'<summary class="lang-btn" aria-controls="langMenu" aria-label="{attr(name)}">'
+            f'{GLOBE_ICON}<span class="lang-code">{lang.upper()}</span>{CARET_ICON}</summary>'
             f'<ul class="lang-menu" id="langMenu" aria-label="{attr(t["langMenu"])}">{items}</ul></details>')
 
 

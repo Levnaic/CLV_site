@@ -51,7 +51,12 @@
 }
 
 *, *::before, *::after { box-sizing: border-box; }
-html { scroll-behavior: smooth; scroll-padding-top: calc(var(--header-h) + 12px); -webkit-text-size-adjust: 100%; }
+html { scroll-behavior: smooth; -webkit-text-size-adjust: 100%; }
+/* Anchor targets and focused controls in the page stop 12px below the sticky header (also keeps a
+   focused link from hiding under it, WCAG 2.4.11). Deliberately NOT html { scroll-padding-top }: that
+   also applies to focus inside the sticky header itself, and the browser then scrolls the page up by
+   half a screen whenever a header control (menu, theme, language) gets focus. */
+main [id], main :is(a[href], button, summary, [tabindex]) { scroll-margin-top: calc(var(--header-h) + 12px); }
 body {
     margin: 0;
     background: var(--bg);
@@ -851,8 +856,10 @@ address strong { color: var(--text); font: 800 1.35rem/1.2 var(--font-head); tex
    Layout: [page plates] / [section links]: a slanted red bar divides the two groups; the group
    headings are visually hidden here (they still name the groups for screen readers). */
 @media (min-width: 1200px) {
-    /* Home (5 section links) and sub pages (4 page plates) get the wider header row */
-    .site-header .container:has(.nav-sections li:nth-child(5), .nav-pages li:nth-child(4)) { max-width: 1340px; }
+    /* Home (5 section links) and sub pages (4 page plates) get a wider header row than the page content:
+       at full nav spacing the German home row needs about 1310px of content width (swept 1200-1920px
+       with a 17px scrollbar in de/en/it) */
+    .site-header .container:has(.nav-sections li:nth-child(5), .nav-pages li:nth-child(4)) { max-width: 1400px; }
     .menu-btn { display: none; }
     .nav { position: static; display: flex; align-items: center; transform: none; visibility: visible; padding: 0; overflow: visible; background: none; order: 2; transition: none; }
     .nav::after { display: none; }
@@ -896,8 +903,9 @@ address strong { color: var(--text); font: 800 1.35rem/1.2 var(--font-head); tex
 /* Tightest desktop widths: denser labels, plates and brand so the longest home navs (German and
    Italian: three page plates + five sections + the language menu) fit from 1200px. The media query
    counts a classic scrollbar, the layout does not get its 15-17px: measured with the self-hosted
-   fonts at a 1200px window minus a 17px scrollbar, German still has about 20px to spare. */
-@media (min-width: 1200px) and (max-width: 1339px) {
+   fonts at a 1200px window minus a 17px scrollbar, German still has about 20px to spare. Kept up to
+   1399px: below that a window with a scrollbar is too narrow for the full spacing. */
+@media (min-width: 1200px) and (max-width: 1399px) {
     .nav ul { gap: .1rem; }
     .nav a { padding-inline: .35rem; font-size: 1rem; letter-spacing: .01em; }
     .nav a:is(:hover, [aria-current]) { padding-left: .35rem; }
