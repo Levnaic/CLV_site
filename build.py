@@ -41,7 +41,9 @@ FONT_FILES = [
     "barlow-latin-600-normal.woff2",
     "barlow-latin-700-normal.woff2",
 ]
-FONT_PRELOAD = "barlow-condensed-latin-800-italic.woff2"  # the hero / page headline face
+# Preloaded faces: the hero / page headline face, and the desktop nav face (the nav is measured to fit
+# the 1200px header in this font; a wider fallback font for the first paint could push it over)
+FONT_PRELOAD = ["barlow-condensed-latin-800-italic.woff2", "barlow-condensed-latin-700-normal.woff2"]
 
 DATA = Path(os.environ.get("CLV_DATA_DIR", ROOT / "data"))  # override only for tests
 OUT = Path(os.environ.get("CLV_OUT_DIR", ROOT))
@@ -120,16 +122,16 @@ def full_address_line():
 
 
 def route_url():
-    maps = get("maps_url", report=False)
-    if maps:
-        return maps
+    """Google Maps directions to the bar (all 'Route' buttons). The destination is the confirmed name +
+    street address, not site.json geo: those coordinates are about 230 m off the Google listing (TODO.md).
+    The place link (site.json maps_url) stays the schema's hasMap."""
     street = get("address.street", report=False)
     name = SITE["name"]
     if street:
-        q = f'{name}, {street}, {get("address.postal_code", "")} {get("address.locality", "")}'
+        dest = f'{name}, {street}, {get("address.postal_code", "")} {get("address.locality", "")}'
     else:
-        q = f'{name} {SITE["area_label"]}'
-    return "https://www.google.com/maps/search/?api=1&query=" + quote(q)
+        dest = f'{name}, {SITE["area_label"]}'
+    return "https://www.google.com/maps/dir/?api=1&destination=" + quote(dest)
 
 
 def hours_numeric():
@@ -583,8 +585,9 @@ def head_common(lang, depth, extra=""):
     r = rel_root(lang, depth)
     fonts = ""
     if fonts_ready():
-        fonts = (f'    <link rel="preload" href="{r}assets/fonts/{FONT_PRELOAD}" as="font" type="font/woff2" crossorigin>\n'
-                 f'    <link rel="stylesheet" href="{r}css/fonts.css">\n')
+        fonts = "".join(f'    <link rel="preload" href="{r}assets/fonts/{f}" as="font" type="font/woff2" crossorigin>\n'
+                        for f in FONT_PRELOAD)
+        fonts += f'    <link rel="stylesheet" href="{r}css/fonts.css">\n'
     elif "assets/fonts" not in " ".join(TODOS):
         TODOS.append("assets/fonts: self-hosted Barlow / Barlow Condensed files missing (local font fallbacks in use), see FONT_FILES in build.py")
     # theme-color: static fallback for the active palette; js/main.js replaces it with the live background
@@ -628,9 +631,12 @@ def lang_switch(lang, hrefs):
         f'{CHECK_ICON}<span class="lang-name">{esc(LANG_NAMES[l])}</span>'
         f'<span class="lang-item-code" aria-hidden="true">{l.upper()}</span></a></li>'
         for l in LANGS)
+    # Accessible name = visible code + hidden explanation ("DE, Sprache: Deutsch"), so the name starts
+    # with what is on screen (WCAG 2.5.3 label in name; no aria-label replacing the visible text)
+    hint = t["langLabel"].format(name=LANG_NAMES[lang])
     return (f'<details class="lang" id="langBox">'
-            f'<summary class="lang-btn" aria-controls="langMenu" aria-label="{attr(t["langLabel"].format(name=LANG_NAMES[lang]))}">'
-            f'{GLOBE_ICON}<span class="lang-code">{lang.upper()}</span>{CARET_ICON}</summary>'
+            f'<summary class="lang-btn" aria-controls="langMenu">'
+            f'{GLOBE_ICON}<span class="lang-code">{lang.upper()}</span><span class="sr-only">, {esc(hint)}</span>{CARET_ICON}</summary>'
             f'<ul class="lang-menu" id="langMenu" aria-label="{attr(t["langMenu"])}">{items}</ul></details>')
 
 

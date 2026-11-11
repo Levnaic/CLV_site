@@ -612,7 +612,8 @@ address strong { color: var(--text); font: 800 1.35rem/1.2 var(--font-head); tex
 .site-footer { padding-block: 3rem 2.5rem; background: linear-gradient(var(--accent) 0 8px, var(--text) 8px 10px, var(--accent) 10px 14px, var(--bg) 14px); color: var(--muted); font-size: .95rem; }
 .footer-inner { display: grid; gap: .5rem; }
 .footer-inner p { margin: 0; }
-.footer-inner a { color: var(--text-2); text-underline-offset: .25em; }
+/* 44px tall tap targets (inline-flex keeps the underline on the text only) */
+.footer-inner a { display: inline-flex; align-items: center; min-height: 44px; color: var(--text-2); text-underline-offset: .25em; }
 .footer-inner a:hover { color: var(--accent-text); }
 .mobile-bar { height: 64px; display: grid; grid-template-columns: 1fr 1fr; background: var(--night-accent); border-top: 3px solid var(--night); }
 .mobile-bar.single { grid-template-columns: 1fr; }
@@ -893,15 +894,17 @@ address strong { color: var(--text); font: 800 1.35rem/1.2 var(--font-head); tex
     .header-actions { order: 3; }
 }
 /* Tightest desktop widths: denser labels, plates and brand so the longest home navs (German and
-   Italian: three page plates + five sections + the language menu) fit from 1200px. Measured with
-   the self-hosted fonts at 1200px: about 10px to spare in German and Italian. */
+   Italian: three page plates + five sections + the language menu) fit from 1200px. The media query
+   counts a classic scrollbar, the layout does not get its 15-17px: measured with the self-hosted
+   fonts at a 1200px window minus a 17px scrollbar, German still has about 20px to spare. */
 @media (min-width: 1200px) and (max-width: 1339px) {
-    .nav a { padding-inline: .35rem; font-size: 1rem; letter-spacing: .02em; }
+    .nav ul { gap: .1rem; }
+    .nav a { padding-inline: .35rem; font-size: 1rem; letter-spacing: .01em; }
     .nav a:is(:hover, [aria-current]) { padding-left: .35rem; }
     .nav a.nav-page, .nav a.nav-page:is(:hover, [aria-current="page"]) { gap: .25rem; margin-inline: .15rem; padding-inline: .45rem; }
     .nav-group + .nav-group::before { margin-inline: .5rem .25rem; }
     .header-inner { gap: .75rem; }
-    .brand-title { font-size: 1.4rem; }
+    .brand-title { font-size: 1.3rem; }
     .lang-btn { padding-inline: .45rem; }
 }
 @media (max-width: 359px) {

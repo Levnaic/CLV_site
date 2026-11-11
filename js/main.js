@@ -102,12 +102,16 @@
             langBox.open = false;
             if (refocus) summary.focus();
         };
+        // Escape is caught on the document, not on the menu: Safari and Firefox on macOS do not focus a
+        // clicked <summary>, so after a mouse click the key event never reaches #langBox. Capture phase,
+        // so this runs before the mobile menu's document listener; preventDefault tells that listener
+        // to leave the overlay open (one Escape closes one layer).
+        document.addEventListener('keydown', e => {
+            if (e.key !== 'Escape' || !langBox.open) return;
+            e.preventDefault();
+            close(true);
+        }, true);
         langBox.addEventListener('keydown', e => {
-            if (e.key === 'Escape' && langBox.open) {
-                e.preventDefault(); // tells the mobile menu not to close as well
-                close(true);
-                return;
-            }
             const step = { ArrowDown: 1, ArrowUp: -1, Home: 'first', End: 'last' }[e.key];
             if (!step || !links.length) return;
             const i = links.indexOf(document.activeElement);
@@ -165,8 +169,25 @@
     // ---------- "Open now" badge + highlight today (hours table is static HTML) ----------
     const pad = n => String(n).padStart(2, '0');
     const fmt = h => { h = h % 24; return pad(Math.floor(h)) + ':' + pad(Math.round((h % 1) * 60)); };
-    function isOpen(now) {
-        const day = now.getDay(), h = now.getHours() + now.getMinutes() / 60;
+    // The bar's clock, not the visitor's: weekday (0 = Sunday, like HOURS) and hour in Europe/Berlin,
+    // so someone in London or New York sees whether the bar in Frankfurt is open right now.
+    const WEEKDAYS = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
+    let berlin = null;
+    try {
+        berlin = new Intl.DateTimeFormat('en-US', { timeZone: 'Europe/Berlin', weekday: 'short', hour: '2-digit', minute: '2-digit', hourCycle: 'h23' });
+    } catch { /* no time zone support: fall back to the device clock */ }
+    function barClock(date) {
+        if (berlin) {
+            const p = Object.fromEntries(berlin.formatToParts(date).map(x => [x.type, x.value]));
+            const day = WEEKDAYS.indexOf(p.weekday);
+            // % 24: some engines write midnight as "24"
+            if (day >= 0) return { day, h: (Number(p.hour) % 24) + Number(p.minute) / 60 };
+        }
+        return { day: date.getDay(), h: date.getHours() + date.getMinutes() / 60 };
+    }
+    // Same rule as build.py hours_numeric(): [open, close] with close > 24 when it is after midnight,
+    // so 01:30 on a Saturday can still belong to Friday's opening hours.
+    function isOpen({ day, h }) {
         const today = HOURS[day];
         if (today && h >= today[0] && h < today[1]) return today[1];
         const prev = HOURS[(day + 6) % 7];
@@ -177,8 +198,8 @@
     function renderStatus() {
         const chips = $$('[data-status]');
         if (!chips.length || !HOURS.length) return;
-        const now = new Date();
-        $$('#hours tr').forEach(tr => tr.classList.toggle('today', Number(tr.dataset.d) === now.getDay()));
+        const now = barClock(new Date());
+        $$('#hours tr').forEach(tr => tr.classList.toggle('today', Number(tr.dataset.d) === now.day));
         const close = isOpen(now);
         const text = close ? `${S.open} · ${S.until} ${fmt(close)}` : S.closed;
         chips.forEach(chip => {

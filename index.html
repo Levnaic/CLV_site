@@ -33,6 +33,7 @@
     <link rel="icon" href="assets/icons/favicon.svg" type="image/svg+xml">
     <script>try{var t=localStorage.getItem("theme");if(t==="light"||t==="dark")document.documentElement.dataset.theme=t}catch(e){}</script>
     <link rel="preload" href="assets/fonts/barlow-condensed-latin-800-italic.woff2" as="font" type="font/woff2" crossorigin>
+    <link rel="preload" href="assets/fonts/barlow-condensed-latin-700-normal.woff2" as="font" type="font/woff2" crossorigin>
     <link rel="stylesheet" href="css/fonts.css">
     <link rel="stylesheet" href="css/themes/eintracht.css">
     <link rel="stylesheet" href="css/style.css">
@@ -102,7 +103,7 @@
             </nav>
             <div class="header-actions">
                 <button class="theme-btn" id="themeBtn" type="button" aria-label="Design wechseln"></button>
-                <details class="lang" id="langBox"><summary class="lang-btn" aria-controls="langMenu" aria-label="Sprache: Deutsch"><svg class="lang-globe" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M12 3a9 9 0 1 0 0 18a9 9 0 1 0 0-18z"/><path d="M12 3c-2.6 2.5-3.9 5.5-3.9 9s1.3 6.5 3.9 9c2.6-2.5 3.9-5.5 3.9-9S14.6 5.5 12 3z"/><path d="M3.5 9h17M3.5 15h17"/></svg><span class="lang-code">DE</span><svg class="lang-caret" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M5 9l7 7 7-7"/></svg></summary><ul class="lang-menu" id="langMenu" aria-label="Sprache wählen"><li><a href="./" hreflang="de" lang="de" aria-current="true"><svg class="lang-check" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M4 12.5l5 5L20 6.5"/></svg><span class="lang-name">Deutsch</span><span class="lang-item-code" aria-hidden="true">DE</span></a></li><li><a href="en/" hreflang="en" lang="en"><svg class="lang-check" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M4 12.5l5 5L20 6.5"/></svg><span class="lang-name">English</span><span class="lang-item-code" aria-hidden="true">EN</span></a></li><li><a href="it/" hreflang="it" lang="it"><svg class="lang-check" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M4 12.5l5 5L20 6.5"/></svg><span class="lang-name">Italiano</span><span class="lang-item-code" aria-hidden="true">IT</span></a></li></ul></details>
+                <details class="lang" id="langBox"><summary class="lang-btn" aria-controls="langMenu"><svg class="lang-globe" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M12 3a9 9 0 1 0 0 18a9 9 0 1 0 0-18z"/><path d="M12 3c-2.6 2.5-3.9 5.5-3.9 9s1.3 6.5 3.9 9c2.6-2.5 3.9-5.5 3.9-9S14.6 5.5 12 3z"/><path d="M3.5 9h17M3.5 15h17"/></svg><span class="lang-code">DE</span><span class="sr-only">, Sprache: Deutsch</span><svg class="lang-caret" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M5 9l7 7 7-7"/></svg></summary><ul class="lang-menu" id="langMenu" aria-label="Sprache wählen"><li><a href="./" hreflang="de" lang="de" aria-current="true"><svg class="lang-check" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M4 12.5l5 5L20 6.5"/></svg><span class="lang-name">Deutsch</span><span class="lang-item-code" aria-hidden="true">DE</span></a></li><li><a href="en/" hreflang="en" lang="en"><svg class="lang-check" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M4 12.5l5 5L20 6.5"/></svg><span class="lang-name">English</span><span class="lang-item-code" aria-hidden="true">EN</span></a></li><li><a href="it/" hreflang="it" lang="it"><svg class="lang-check" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M4 12.5l5 5L20 6.5"/></svg><span class="lang-name">Italiano</span><span class="lang-item-code" aria-hidden="true">IT</span></a></li></ul></details>
                 <button class="menu-btn" id="menuBtn" type="button" aria-expanded="false" aria-controls="nav" aria-label="Menü öffnen">
                     <span></span><span></span><span></span>
                 </button>
@@ -214,7 +215,7 @@
                 </div>
                 <div class="vs-go">
                     <div class="cta-row">
-                        <a class="btn btn-primary" href="https://maps.app.goo.gl/U6kGrxTTeQX3aGoNA" target="_blank" rel="noopener">Route planen</a>
+                        <a class="btn btn-primary" href="https://www.google.com/maps/dir/?api=1&amp;destination=C%27est%20la%20Vie%20Caf%C3%A9%20%26%20Sportsbar%2C%20Schwarzwaldstra%C3%9Fe%2079%2C%2060528%20Frankfurt%20am%20Main" target="_blank" rel="noopener">Route planen</a>
                         <a class="btn btn-ghost" href="tel:+491744800000">Anrufen</a>
                     </div>
                     <p class="more-link"><a href="kontakt/">Alle Infos zu Anfahrt &amp; Kontakt<span aria-hidden="true">&nbsp;→</span></a></p>
@@ -232,7 +233,7 @@
 
     <div class="mobile-bar" aria-label="Schnellaktionen">
         <a href="tel:+491744800000">Anrufen</a>
-        <a href="https://maps.app.goo.gl/U6kGrxTTeQX3aGoNA" target="_blank" rel="noopener">Route</a>
+        <a href="https://www.google.com/maps/dir/?api=1&amp;destination=C%27est%20la%20Vie%20Caf%C3%A9%20%26%20Sportsbar%2C%20Schwarzwaldstra%C3%9Fe%2079%2C%2060528%20Frankfurt%20am%20Main" target="_blank" rel="noopener">Route</a>
     </div>
 
     <dialog class="lightbox" id="lightbox" aria-label="Bildansicht">
