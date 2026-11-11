@@ -853,7 +853,7 @@ address strong { color: var(--text); font: 800 1.35rem/1.2 var(--font-head); tex
    so the menu button + overlay is used up to here. This is the only place the breakpoint lives:
    js/main.js closes the overlay when .menu-btn is hidden, it does not repeat the number.
    A header with a long nav (home page) gets a wider row than the page content so every item fits.
-   Layout: [page plates] / [section links]: a slanted red bar divides the two groups; the group
+   Layout: [page plates]  [section links], separated by a gap (no divider bar); the group
    headings are visually hidden here (they still name the groups for screen readers). */
 @media (min-width: 1200px) {
     /* Home (5 section links) and sub pages (4 page plates) get a wider header row than the page content:
@@ -866,13 +866,16 @@ address strong { color: var(--text); font: 800 1.35rem/1.2 var(--font-head); tex
     .nav.open :is(li, .nav-heading) { animation: none; }
     .nav-group { display: flex; align-items: center; }
     .nav-group + .nav-group { margin-top: 0; }
-    /* One bar geometry for the group divider and the hover marker: 3px wide, 1.7rem tall, skewX only */
+    /* Hover marker geometry: 3px wide, 1.7rem tall, skewX only */
     .nav { --bar-w: 3px; --bar-h: 1.7rem; }
-    .nav-group + .nav-group::before { content: ""; flex: none; width: var(--bar-w); height: var(--bar-h); margin-inline: .75rem .4rem; background: var(--accent); transform: skewX(var(--skew)); }
+    /* No divider bar between the groups (next to the hover marker of the first section link it read as
+       a double slash "//"): the plates vs. plain text already tell the groups apart. The gap keeps the
+       old divider's total width (margins + 3px), so the measured header fit does not change. */
+    .nav-group + .nav-group { margin-left: calc(1.15rem + 3px); }
     .nav-heading { position: absolute; width: 1px; height: 1px; margin: 0; overflow: hidden; clip-path: inset(50%); white-space: nowrap; }
     .nav ul { display: flex; align-items: center; gap: clamp(.1rem, 1.2vw - .7rem, .5rem); }
     .nav a { position: relative; isolation: isolate; display: block; padding: .35rem .5rem; white-space: nowrap; font-size: 1.1rem; font-weight: 700; font-style: normal; letter-spacing: .05em; color: var(--text-2); border: 0; box-shadow: none; }
-    /* Section links, hover: the divider bar (same size, same slant) drops in at the left of the label.
+    /* Section links, hover: a thin slanted bar (the --skew angle) drops in at the left of the label.
        It replaces the mobile section number in ::before. Scaling only in Y, listed after the skew,
        keeps the edge angle exactly at --skew. */
     .nav a::before { content: ""; position: absolute; left: 0; top: calc(50% - var(--bar-h) / 2); width: var(--bar-w); height: var(--bar-h); background: var(--accent); transform: skewX(var(--skew)) scaleY(0); transition: transform .18s var(--snap); }
@@ -910,7 +913,7 @@ address strong { color: var(--text); font: 800 1.35rem/1.2 var(--font-head); tex
     .nav a { padding-inline: .35rem; font-size: 1rem; letter-spacing: .01em; }
     .nav a:is(:hover, [aria-current]) { padding-left: .35rem; }
     .nav a.nav-page, .nav a.nav-page:is(:hover, [aria-current="page"]) { gap: .25rem; margin-inline: .15rem; padding-inline: .45rem; }
-    .nav-group + .nav-group::before { margin-inline: .5rem .25rem; }
+    .nav-group + .nav-group { margin-left: calc(.75rem + 3px); }
     .header-inner { gap: .75rem; }
     .brand-title { font-size: 1.3rem; }
     .lang-btn { padding-inline: .45rem; }
