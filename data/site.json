@@ -4,7 +4,8 @@
   "area_label": "Frankfurt-Niederrad",
   "slogan": {
     "de": "Live Sport · Kühle Drinks · Gute Leute",
-    "en": "Live Sport · Cold Drinks · Good People"
+    "en": "Live Sport · Cold Drinks · Good People",
+    "it": "Sport live · Drink freschi · Bella gente"
   },
   "address": {
     "street": "Schwarzwaldstraße 79",
@@ -77,7 +78,8 @@
     "music_choice": true,
     "music_choice_how": {
       "de": "TODO: Wie wünschen sich Gäste Musik? (z. B. Zuruf an der Theke, Playlist, Jukebox)",
-      "en": "TODO: How do guests choose the music?"
+      "en": "TODO: How do guests choose the music?",
+      "it": "TODO: Come scelgono la musica i clienti?"
     },
     "beer_variety": true,
     "screens": "TODO: Anzahl Bildschirme",
@@ -88,7 +90,8 @@
     "accepts_reservations": "TODO: true/false",
     "reservation_how": {
       "de": "TODO: Wie reserviert man? (Telefon / WhatsApp / E-Mail)",
-      "en": "TODO: How to reserve"
+      "en": "TODO: How to reserve",
+      "it": "TODO: Come si prenota"
     },
     "price_range": "TODO: €, €€ oder €€€"
   },
@@ -108,7 +111,8 @@
     "stadium_name": "Deutsche Bank Park",
     "walk_from_stadium": {
       "de": "ca. 2 km, etwa 25 Minuten zu Fuß",
-      "en": "about 2 km, roughly a 25-minute walk"
+      "en": "about 2 km, roughly a 25-minute walk",
+      "it": "circa 2 km, più o meno 25 minuti a piedi"
     },
     "nearby": [
       "DFB-Campus",
@@ -117,21 +121,21 @@
     "nearby_places": [
       {
         "name": "Deutsche Bank Park",
-        "kind": {"de": "Stadion, Heimspiele von Eintracht Frankfurt und Konzerte", "en": "Stadium, Eintracht Frankfurt home games and concerts"},
+        "kind": {"de": "Stadion, Heimspiele von Eintracht Frankfurt und Konzerte", "en": "Stadium, Eintracht Frankfurt home games and concerts", "it": "Stadio, partite in casa dell'Eintracht Frankfurt e concerti"},
         "distance_km": 2.0,
         "lat": 50.0686,
         "lng": 8.6455
       },
       {
         "name": "Festhalle Frankfurt",
-        "kind": {"de": "Konzert- und Veranstaltungshalle", "en": "Concert and event hall"},
+        "kind": {"de": "Konzert- und Veranstaltungshalle", "en": "Concert and event hall", "it": "Sala per concerti ed eventi"},
         "distance_km": 3.0,
         "lat": 50.1124,
         "lng": 8.6511
       },
       {
         "name": "Frankfurt Hauptbahnhof",
-        "kind": {"de": "Hauptbahnhof", "en": "Main station"},
+        "kind": {"de": "Hauptbahnhof", "en": "Main station", "it": "Stazione centrale"},
         "distance_km": 2.5,
         "lat": 50.1071,
         "lng": 8.6638
@@ -140,7 +144,8 @@
     "nearby_places_note": "Luftlinie, grob gerundet (Koordinaten der Orte per Karte geschätzt). Fußwege/Fahrzeiten bitte vor Ort prüfen. Quelle der Richtwerte: Reiseportale, nicht amtlich.",
     "public_transport": {
       "de": "TODO: ÖPNV-Anbindung (Haltestelle, Linien)",
-      "en": "TODO: Public transport"
+      "en": "TODO: Public transport",
+      "it": "TODO: Mezzi pubblici"
     },
     "nearby_confirmed": true,
     "nearby_confirmed_note": "Auf true setzen, sobald bestätigt ist, dass die Bar wirklich in der Nähe von DFB-Campus / Bürostadt Niederrad liegt. Erst dann erscheint 'In der Nähe' auf der Seite."
@@ -153,15 +158,18 @@
         "id": "matchday",
         "tag": {
           "de": "Jeden Spieltag",
-          "en": "Every matchday"
+          "en": "Every matchday",
+          "it": "Ogni giornata"
         },
         "title": {
           "de": "Match Day",
-          "en": "Match Day"
+          "en": "Match Day",
+          "it": "Match Day"
         },
         "short": {
           "de": "Anstoß, Stimmung, Getränkeangebote. Kommt früh, die Plätze sind begehrt.",
-          "en": "Kick-off, atmosphere, drink specials. Come early, seats go fast."
+          "en": "Kick-off, atmosphere, drink specials. Come early, seats go fast.",
+          "it": "Calcio d'inizio, atmosfera, offerte sulle bevande. Venite presto, i posti vanno a ruba."
         },
         "more": null
       },
@@ -169,15 +177,18 @@
         "id": "party",
         "tag": {
           "de": "Regelmäßig",
-          "en": "Regularly"
+          "en": "Regularly",
+          "it": "Regolarmente"
         },
         "title": {
           "de": "Partyabende",
-          "en": "Party nights"
+          "en": "Party nights",
+          "it": "Serate di festa"
         },
         "short": {
           "de": "Musik, Drinks und gute Laune bis spät in die Nacht.",
-          "en": "Music, drinks and good vibes late into the night."
+          "en": "Music, drinks and good vibes late into the night.",
+          "it": "Musica, drink e buonumore fino a tarda notte."
         },
         "more": null
       },
@@ -185,15 +196,18 @@
         "id": "private",
         "tag": {
           "de": "Auf Anfrage",
-          "en": "On request"
+          "en": "On request",
+          "it": "Su richiesta"
         },
         "title": {
           "de": "Private Feiern",
-          "en": "Private parties"
+          "en": "Private parties",
+          "it": "Feste private"
         },
         "short": {
           "de": "Geburtstag, Vereinsabend oder Firmenfeier – sprecht uns einfach an.",
-          "en": "Birthday, club night or company party – just talk to us."
+          "en": "Birthday, club night or company party – just talk to us.",
+          "it": "Compleanno, serata del club o festa aziendale: parlatene con noi."
         },
         "more": null
       },
@@ -201,15 +215,18 @@
         "id": "quiz",
         "tag": {
           "de": "Wöchentlich",
-          "en": "Weekly"
+          "en": "Weekly",
+          "it": "Ogni settimana"
         },
         "title": {
           "de": "Quizabend",
-          "en": "Quiz night"
+          "en": "Quiz night",
+          "it": "Serata quiz"
         },
         "short": {
           "de": "Teste dein Wissen im Team und gewinne Getränke.",
-          "en": "Test your knowledge as a team and win drinks."
+          "en": "Test your knowledge as a team and win drinks.",
+          "it": "Metti alla prova le tue conoscenze in squadra e vinci da bere."
         },
         "more": null
       }

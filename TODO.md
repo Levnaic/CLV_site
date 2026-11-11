@@ -4,7 +4,7 @@ Things only you can supply or confirm. After each change run `python3 build.py`.
 list of missing data (`TODO – missing data`). Business facts live in `data/site.json`; a value that
 starts with `TODO` is left out of the site until you replace it.
 
-Last updated: 2026-11-09.
+Last updated: 2026-11-11.
 
 ## 1. Before going live (most important)
 
@@ -34,7 +34,7 @@ Last updated: 2026-11-09.
 - [ ] `sports.confirmed`: check the sports list and set it to `true`
 - [ ] `events.confirmed`: check the event texts and set it to `true` (the detail texts are still missing)
 
-## 3. Eintracht page (`/eintracht/`, `/en/eintracht/`)
+## 3. Eintracht page (`/eintracht/`, `/en/eintracht/`, `/it/eintracht/`)
 
 The page shows "to be filled in" boxes until real data is in.
 
@@ -62,7 +62,36 @@ The page shows "to be filled in" boxes until real data is in.
 
 - [ ] **Which name is official?** The data says "C'est la Vie Café & Sportsbar", the page titles say "C'est la vie Sports Bar". Pick one and use it everywhere.
 
-## 7. Repository and design decisions
+## 7. Italian (new)
+
+The site now has a third language, Italian, under `/it/` (German stays the main language at `/`).
+
+- [ ] **Have a native Italian speaker review every Italian text.** They are machine-quality
+  translations, written by the AI and not checked by a person. Where they are:
+  - `data/i18n.json`, the whole `"it"` block (all page texts, buttons, FAQ, legal pages)
+  - `data/site.json`, every `"it"` value (slogan, walking time from the stadium, kinds of nearby places, the four event texts)
+  - `data/drinks.json`, every `"it"` value (category names, drink names, cocktail ingredients)
+  - `data/schedule.json`: the `"it"` notes are empty for now, like the German and English ones
+- [ ] **Italian legal pages** (`/it/impressum.html`, `/it/datenschutz.html`) are translations of the
+  German ones. The German Impressum and Datenschutz stay the legally binding versions: have the
+  Italian wording checked together with the German texts before launch (see section 1).
+- [ ] Words to confirm: "Francoforte" is used in Italian texts (the usual Italian name), team, stadium
+  and hall names stay as they are ("Eintracht Frankfurt", "Deutsche Bank Park", "Festhalle").
+- [ ] When you later fill in a `TODO` value that has languages (for example `music_choice_how`,
+  `reservation_how`, `public_transport`), write the `"it"` text too. A missing Italian value falls
+  back to German on the Italian pages.
+
+### New page "Besuch & Kontakt"
+
+- New page with opening hours, address and route, map, directions and nearby places, FAQ and the
+  contact cards: `/kontakt/`, `/en/contact/`, `/it/contatti/`. These sections moved there from the
+  home page. The home page now ends with a short red "Komm vorbei" band (open/closed, address,
+  hours, route and call buttons, link to the new page).
+- [ ] Check the new page once real data is in: hours (`hours.confirmed`), phone, e-mail and social
+  links all show up there.
+- The FAQ structured data (FAQPage) now belongs to the contact page, not the home page.
+
+## 8. Repository and design decisions
 
 - [ ] Decide what happens with the other design branches on GitHub (`design-pub`, `design-neon`, `design-modern`, `design-editorial`): keep, delete or reuse parts. Only `design-eintracht` / `main` is the main design.
 - [ ] The new navigation (pages vs. sections) is only in `main`. The other designs do not have it yet. Ask if you want it in one of them.
@@ -70,7 +99,7 @@ The page shows "to be filled in" boxes until real data is in.
 - [ ] Run a QA pass and a code review before going live (not done on any branch yet).
 - [ ] Optional: set the upstream for the nav branch with `git branch --set-upstream-to=origin/nav-page-links nav-page-links`.
 
-## 8. Tips for working with the agents
+## 9. Tips for working with the agents
 
 - Start the preview server in your own terminal before a browser check: `cd /home/l/projects/CLV_site && python3 -m http.server 8765 --bind 127.0.0.1`.
 - Design branches and the status of each design are described in the Claude project memory (`design-catalog.md`, `design-variations-plan.md`).

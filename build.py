@@ -17,8 +17,13 @@ from urllib.parse import quote
 
 ROOT = Path(__file__).resolve().parent
 SITE_URL = "https://DOMAIN"  # the ONE place to set the domain (no trailing slash)
-LANGS = ["de", "en"]
-DEFAULT_LANG = "de"
+LANGS = ["de", "en", "it"]
+DEFAULT_LANG = "de"  # served at the root, also the hreflang x-default
+# Native language names for the language menu (always shown in their own language, never translated)
+LANG_NAMES = {"de": "Deutsch", "en": "English", "it": "Italiano"}
+DECIMAL_COMMA = {"de", "it"}   # 2,5 km / 4,60 € (English uses a decimal point)
+NUMERIC_DATES = {"de"}         # 'Sa., 06.02.' ; the other languages write 'Sat 6 Feb' / 'Sab 6 feb'
+CAPITAL_NOUNS = {"de"}         # German nouns keep their capital inside a sentence
 # Colour palette (all colour tokens live in this one file, loaded before css/style.css).
 # Default "pitch" = css/palette.css. Alternatives: css/themes/ember.css, volt.css, derby.css, gold.css
 # Branch design-eintracht: black / red / white matchday theme.
@@ -36,7 +41,9 @@ FONT_FILES = [
     "barlow-latin-600-normal.woff2",
     "barlow-latin-700-normal.woff2",
 ]
-FONT_PRELOAD = "barlow-condensed-latin-800-italic.woff2"  # the hero / page headline face
+# Preloaded faces: the hero / page headline face, and the desktop nav face (the nav is measured to fit
+# the 1200px header in this font; a wider fallback font for the first paint could push it over)
+FONT_PRELOAD = ["barlow-condensed-latin-800-italic.woff2", "barlow-condensed-latin-700-normal.woff2"]
 
 DATA = Path(os.environ.get("CLV_DATA_DIR", ROOT / "data"))  # override only for tests
 OUT = Path(os.environ.get("CLV_OUT_DIR", ROOT))
@@ -115,16 +122,16 @@ def full_address_line():
 
 
 def route_url():
-    maps = get("maps_url", report=False)
-    if maps:
-        return maps
+    """Google Maps directions to the bar (all 'Route' buttons). The destination is the confirmed name +
+    street address, not site.json geo: those coordinates are about 230 m off the Google listing (TODO.md).
+    The place link (site.json maps_url) stays the schema's hasMap."""
     street = get("address.street", report=False)
     name = SITE["name"]
     if street:
-        q = f'{name}, {street}, {get("address.postal_code", "")} {get("address.locality", "")}'
+        dest = f'{name}, {street}, {get("address.postal_code", "")} {get("address.locality", "")}'
     else:
-        q = f'{name} {SITE["area_label"]}'
-    return "https://www.google.com/maps/search/?api=1&query=" + quote(q)
+        dest = f'{name}, {SITE["area_label"]}'
+    return "https://www.google.com/maps/dir/?api=1&destination=" + quote(dest)
 
 
 def hours_numeric():
@@ -161,11 +168,12 @@ def page_url(lang, path=""):
 
 # page key -> {lang: path relative to that language's root}. Every key exists in every language.
 PAGES = {
-    "home": {"de": "", "en": ""},
-    "impressum": {"de": "impressum.html", "en": "impressum.html"},
-    "datenschutz": {"de": "datenschutz.html", "en": "datenschutz.html"},
-    "schedule": {"de": "spielplan/", "en": "schedule/"},
-    "eintracht": {"de": "eintracht/", "en": "eintracht/"},
+    "home": {"de": "", "en": "", "it": ""},
+    "impressum": {"de": "impressum.html", "en": "impressum.html", "it": "impressum.html"},
+    "datenschutz": {"de": "datenschutz.html", "en": "datenschutz.html", "it": "datenschutz.html"},
+    "schedule": {"de": "spielplan/", "en": "schedule/", "it": "calendario/"},
+    "eintracht": {"de": "eintracht/", "en": "eintracht/", "it": "eintracht/"},
+    "contact": {"de": "kontakt/", "en": "contact/", "it": "contatti/"},
 }
 
 
@@ -181,20 +189,27 @@ def alternates(lang, path):
     return lines
 
 
-def switch_href(lang, path):
-    """Relative link from this page to the same page in the other language."""
-    other = [l for l in LANGS if l != lang][0]
+def lang_hrefs(lang, path):
+    """{language: relative link from this page to the same page in that language} for every language
+    (the current one included: the language menu lists it too, marked as current)."""
+    key = page_key(lang, path)
     up = "../" * (path.count("/") + (0 if lang == DEFAULT_LANG else 1))
-    return up + lang_prefix(other) + PAGES[page_key(lang, path)][other]
+    return {l: (up + lang_prefix(l) + PAGES[key][l]) or "./" for l in LANGS}
+
+
+def near_phrase(lang):
+    """', ca. 2 km vom Deutsche Bank Park' for meta descriptions ('' without a confirmed stadium entry)."""
+    stadium = nearby_place(SITE["local"]["stadium_name"])
+    if not stadium:
+        return ""
+    return I18N[lang]["descNear"].format(dist=fmt_dist(lang, stadium["distance_km"]), stadium=stadium["name"])
 
 
 def home_description(lang):
     t = I18N[lang]
     n = get("venue.screens", report=False)
-    stadium = nearby_place(SITE["local"]["stadium_name"])
-    near = t["descNear"].format(dist=fmt_dist(lang, stadium["distance_km"]), stadium=stadium["name"]) if stadium else ""
     return (t["description"].replace("{screens}", t["descScreens"].format(n=n) if n else "")
-            .replace("{near}", near))
+            .replace("{near}", near_phrase(lang)))
 
 
 def meta_block(lang, path, title, desc, social=True):
@@ -210,6 +225,9 @@ def meta_block(lang, path, title, desc, social=True):
             '<meta property="og:type" content="website">',
             f'<meta property="og:site_name" content="{attr(SITE["name"])}">',
             f'<meta property="og:locale" content="{t["ogLocale"]}">',
+        ]
+        lines += [f'<meta property="og:locale:alternate" content="{I18N[l]["ogLocale"]}">' for l in LANGS if l != lang]
+        lines += [
             f'<meta property="og:title" content="{attr(title)}">',
             f'<meta property="og:description" content="{attr(desc)}">',
             f'<meta property="og:url" content="{attr(url)}">',
@@ -252,11 +270,11 @@ def venue_facts(lang):
 
 
 def join_list(lang, items):
-    """'A, B und C' / 'A, B and C'."""
+    """'A, B und C' / 'A, B and C' / 'A, B e C' (the word comes from i18n.json "and")."""
     items = list(items)
     if len(items) < 2:
         return "".join(items)
-    return ", ".join(items[:-1]) + (" und " if lang == "de" else " and ") + items[-1]
+    return ", ".join(items[:-1]) + f' {I18N[lang]["and"]} ' + items[-1]
 
 
 def cap(s):
@@ -264,9 +282,9 @@ def cap(s):
 
 
 def fmt_km(lang, km):
-    """2.0 -> '2', 2.5 -> '2,5' (de) / '2.5' (en)."""
+    """2.0 -> '2', 2.5 -> '2,5' (de, it) / '2.5' (en)."""
     s = f"{float(km):g}"
-    return s.replace(".", ",") if lang == "de" else s
+    return s.replace(".", ",") if lang in DECIMAL_COMMA else s
 
 
 def fmt_dist(lang, km):
@@ -289,8 +307,9 @@ def beer_groups(lang):
             if not any(w in loc(it["name"], "de").lower() for w in BEER_WORDS):
                 continue
             n = loc(it["name"], lang)
-            # English translations are common nouns ("wheat beer"); German nouns and names ("Pils") keep their capital
-            inline = n[:1].lower() + n[1:] if lang != "de" and isinstance(it["name"], dict) else n
+            # Translations are common nouns ("wheat beer", "birra weizen") and go lower case inside a sentence;
+            # German nouns and untranslated names ("Pils") keep their capital
+            inline = n[:1].lower() + n[1:] if lang not in CAPITAL_NOUNS and isinstance(it["name"], dict) else n
             if n not in [x for x, _ in names]:
                 names.append((n, inline))
         if names:
@@ -342,10 +361,28 @@ def hours_summary(lang):
     return "; ".join(f'{names[d]}: {days[en[d]]["open"]}–{days[en[d]]["close"]}' for d in [1, 2, 3, 4, 5, 6, 0] if en[d] in days)
 
 
-def faq_items(lang):
+def hours_groups():
+    """[[first day, last day, open, close]], Monday first, days in a row with the same hours merged
+    (day numbers as in JS getDay(): 0 = Sunday). A day without hours (closed) breaks the run."""
+    days = SITE["hours"]["days"]
+    order = [1, 2, 3, 4, 5, 6, 0]
+    out = []
+    for i, d in enumerate(order):
+        e = days.get(SCHEMA_DAYS[d])
+        if not e:
+            continue
+        if out and out[-1][1] == order[i - 1] and out[-1][2:] == [e["open"], e["close"]]:
+            out[-1][1] = d
+        else:
+            out.append([d, d, e["open"], e["close"]])
+    return out
+
+
+def faq_items(lang, home=""):
     """[(question, answer, more)] built only from confirmed site.json / drinks.json data; entries without
-    data are left out. more = None or (href on the home page, label): a visible follow-up link only
-    (the FAQPage schema carries question and answer text, exactly as shown)."""
+    data are left out. more = None or (href, label): a visible follow-up link only (the FAQPage schema
+    carries question and answer text, exactly as shown). The FAQ is shown on the contact page, which also
+    has the #local section; home = relative link from there to this language's home page."""
     t = I18N[lang]
     items = []
     if get("venue.shows_all_eintracht_matches") is True:
@@ -364,7 +401,7 @@ def faq_items(lang):
         pt = loc(get("local.public_transport"), lang)
         if pt and not missing(pt):
             a += t["faqA3pt"].format(pt=pt)
-        items.append((t["faqQ3"].format(stadium=stadium), a, (PAGES["eintracht"][lang], t["faqMoreEintracht"])))
+        items.append((t["faqQ3"].format(stadium=stadium), a, (home + PAGES["eintracht"][lang], t["faqMoreEintracht"])))
     # Places near the bar (rounded straight-line distances, always worded as "about")
     for name, key in (("Festhalle Frankfurt", "Festhalle"), ("Frankfurt Hauptbahnhof", "Hbf")):
         p = nearby_place(name)
@@ -388,15 +425,15 @@ def faq_items(lang):
         rest = [i for g in groups[1:] for _, i in g[2]]
         if rest:
             a += t["faqAbeerAlso"].format(list=join_list(lang, rest))
-        items.append((t["faqQbeer"], a + t["faqAbeerEnd"], ("#drinks", t["faqMoreDrinks"])))
+        items.append((t["faqQbeer"], a + t["faqAbeerEnd"], (home + "#drinks", t["faqMoreDrinks"])))
     if show_music():
         how = music_how(lang)
         items.append((t["faqQmusic"], t["faqAmusic"] + (t["faqAmusicHow"].format(how=how) if how else ""), None))
     return items
 
 
-def faq_section(lang):
-    items = faq_items(lang)
+def faq_section(lang, home="", cls="section"):
+    items = faq_items(lang, home)
     if not items:
         return ""
 
@@ -406,7 +443,7 @@ def faq_section(lang):
     body = "\n                    ".join(
         f'<div class="faq-item reveal"><h3>{esc(q)}</h3><p>{esc(a)}</p>{more(m)}</div>' for q, a, m in items)
     return f'''
-        <section class="section" id="faq">
+        <section class="{cls}" id="faq">
             <div class="container">
                 <h2>{esc(I18N[lang]["faqTitle"])}</h2>
                 <div class="faq">
@@ -425,6 +462,8 @@ AMENITY = {
            "music": "Gäste bestimmen die Musik"},
     "en": {"screens": "Screens", "seats": "Seats", "sound": "Sound on for Eintracht Frankfurt matches",
            "music": "Guests choose the music"},
+    "it": {"screens": "Schermi", "seats": "Posti a sedere", "sound": "Audio acceso durante le partite dell'Eintracht Frankfurt",
+           "music": "La musica la scelgono i clienti"},
 }
 BAD_VALUES = ("TODO", "Muster", "example.com", "000000", "Platzhalter")
 
@@ -502,14 +541,16 @@ def bar_schema(lang):
 
 
 def faq_schema(lang):
+    """FAQPage for the contact page, the only page that shows the FAQ."""
     items = faq_items(lang)
     if not items:
         return None
+    url = page_url(lang, PAGES["contact"][lang])
     return {
         "@context": "https://schema.org",
         "@type": "FAQPage",
-        "@id": page_url(lang) + "#faq",
-        "url": page_url(lang),
+        "@id": url + "#faq",
+        "url": url,
         "inLanguage": lang,
         "about": {"@id": BAR_ID},
         "mainEntity": [{"@type": "Question", "name": q, "acceptedAnswer": {"@type": "Answer", "text": a}}
@@ -527,7 +568,7 @@ def check_schema(obj, where):
 
 def jsonld_scripts(lang, blocks=None):
     out = []
-    for block in (blocks if blocks is not None else (bar_schema(lang), faq_schema(lang))):
+    for block in (blocks if blocks is not None else [bar_schema(lang)]):
         if block:
             check_schema(block, lang)
             txt = json.dumps(block, ensure_ascii=False, indent=4).replace("</", "<\\/")
@@ -544,8 +585,9 @@ def head_common(lang, depth, extra=""):
     r = rel_root(lang, depth)
     fonts = ""
     if fonts_ready():
-        fonts = (f'    <link rel="preload" href="{r}assets/fonts/{FONT_PRELOAD}" as="font" type="font/woff2" crossorigin>\n'
-                 f'    <link rel="stylesheet" href="{r}css/fonts.css">\n')
+        fonts = "".join(f'    <link rel="preload" href="{r}assets/fonts/{f}" as="font" type="font/woff2" crossorigin>\n'
+                        for f in FONT_PRELOAD)
+        fonts += f'    <link rel="stylesheet" href="{r}css/fonts.css">\n'
     elif "assets/fonts" not in " ".join(TODOS):
         TODOS.append("assets/fonts: self-hosted Barlow / Barlow Condensed files missing (local font fallbacks in use), see FONT_FILES in build.py")
     # theme-color: static fallback for the active palette; js/main.js replaces it with the live background
@@ -565,16 +607,38 @@ def logo_svg():
             '<path class="lm-v" pathLength="1" d="M20 13L27 33L40 6"/></svg>')
 
 
-def lang_switch(lang, other_href):
-    """Language switch: a real link to the other language version (omitted if there is only one language)."""
-    if len(LANGS) < 2 or other_href is None:
+# Decorative icons of the language menu (currentColor, drawn like .nav-icon)
+GLOBE_ICON = ('<svg class="lang-globe" viewBox="0 0 24 24" aria-hidden="true" focusable="false">'
+              '<path d="M12 3a9 9 0 1 0 0 18a9 9 0 1 0 0-18z"/><path d="M12 3c-2.6 2.5-3.9 5.5-3.9 9s1.3 6.5 3.9 9c2.6-2.5 3.9-5.5 3.9-9S14.6 5.5 12 3z"/>'
+              '<path d="M3.5 9h17M3.5 15h17"/></svg>')
+CARET_ICON = ('<svg class="lang-caret" viewBox="0 0 24 24" aria-hidden="true" focusable="false">'
+              '<path d="M5 9l7 7 7-7"/></svg>')
+CHECK_ICON = ('<svg class="lang-check" viewBox="0 0 24 24" aria-hidden="true" focusable="false">'
+              '<path d="M4 12.5l5 5L20 6.5"/></svg>')
+
+
+def lang_switch(lang, hrefs):
+    """Language menu: a <details> disclosure, so the links work without JavaScript (js/main.js adds
+    Escape, arrow keys and closing on an outside click / when focus leaves). The summary shows a globe
+    and the current code; the list has a real link to this page in every language, native names,
+    the current one marked with aria-current and a check mark. Omitted with only one language."""
+    if len(LANGS) < 2 or not hrefs:
         return ""
-    other = [l for l in LANGS if l != lang][0]
-    label = ('<span class="{a}" data-l="en">en</span> / <span class="{b}" data-l="de">de</span>'
-             .format(a="is-active" if lang == "en" else "", b="is-active" if lang == "de" else ""))
-    aria = "Auf Deutsch wechseln" if other == "de" else "Switch to English"
-    return (f'<a class="lang-btn" href="{attr(other_href)}" hreflang="{other}" lang="{other}" '
-            f'aria-label="{aria}">{label}</a>')
+    t = I18N[lang]
+    cur = ' aria-current="true"'
+    items = "".join(
+        f'<li><a href="{attr(hrefs[l])}" hreflang="{l}" lang="{l}"{cur if l == lang else ""}>'
+        f'{CHECK_ICON}<span class="lang-name">{esc(LANG_NAMES[l])}</span>'
+        f'<span class="lang-item-code" aria-hidden="true">{l.upper()}</span></a></li>'
+        for l in LANGS)
+    # Accessible name starts with the visible code: "DE, Sprache: Deutsch" (WCAG 2.5.3 label in name).
+    # An aria-label, not visually hidden text: browsers put a space before an absolutely positioned
+    # .sr-only span when computing the name ("DE , Sprache").
+    name = f'{lang.upper()}, {t["langLabel"].format(name=LANG_NAMES[lang])}'
+    return (f'<details class="lang" id="langBox">'
+            f'<summary class="lang-btn" aria-controls="langMenu" aria-label="{attr(name)}">'
+            f'{GLOBE_ICON}<span class="lang-code">{lang.upper()}</span>{CARET_ICON}</summary>'
+            f'<ul class="lang-menu" id="langMenu" aria-label="{attr(t["langMenu"])}">{items}</ul></details>')
 
 
 def home_href(path):
@@ -607,7 +671,7 @@ def kickoff_html(lang, start, with_time=True):
     t = I18N[lang]
     d = start.astimezone(TZ)
     wd = t["dayShort"][(d.weekday() + 1) % 7]
-    if lang == "de":
+    if lang in NUMERIC_DATES:
         day, date, year = f"{wd}.", f"{d.day:02d}.{d.month:02d}.", f"{d.year}"
     else:
         day, date, year = wd, f"{d.day} {t['months'][d.month - 1]}", f" {d.year}"
@@ -633,13 +697,18 @@ NAV_ICONS = {
     "schedule": '<path d="M3.5 6h17v14.5h-17zM3.5 10.5h17M8 3v5M16 3v5"/><path class="nif" d="M12.5 13.5H17V18h-4.5z"/>',
     "eintracht": ('<path class="nif" d="M4 2.5h19l-3 5H1z"/><path class="nif" d="M8 9.5h13.5l-3 5H5z"/>'
                   '<path class="nif" d="M12 16.5h8l-3 5H9z"/>'),
+    # map pin with a slanted plate inside (same drawing as PIN_ICON in the "Nearby" heading)
+    "contact": '<path d="M12 22s7-7.2 7-12.5A7 7 0 0 0 5 9.5C5 14.8 12 22 12 22z"/><path class="nif" d="M9.5 7.5h5l-1 4h-5z"/>',
 }
 # "Opens another page" cue (arrow out of the corner), shown after every standalone page link
 GO_ICON = ('<svg class="nav-go" viewBox="0 0 24 24" aria-hidden="true" focusable="false">'
            '<path d="M6 18 17.5 6.5M8.5 6H18v9.5"/></svg>')
-NAV_PAGE_KEYS = {"home": "navHome", "schedule": "navSchedule", "eintracht": "navEintracht"}
+NAV_PAGE_KEYS = {"home": "navHome", "schedule": "navSchedule", "eintracht": "navEintracht", "contact": "navContactPage"}
 NAV_SECTION_KEYS = {"about": "navAbout", "sport": "navSport", "drinks": "navDrinks", "events": "navEvents",
-                    "gallery": "navGallery", "visit": "navVisit", "contact": "navContact"}
+                    "gallery": "navGallery"}
+HOME_NAV_PAGES = ["schedule", "eintracht", "contact"]
+SUB_NAV_PAGES = ["home"] + HOME_NAV_PAGES
+SUB_NAV_SECTIONS = ["drinks", "events"]  # the home sections a visitor of a sub page most likely wants
 
 
 def nav_icon(key):
@@ -647,13 +716,9 @@ def nav_icon(key):
 
 
 def home_sections(lang):
-    """Ids of the home page's .section blocks in page order (CSS numbers them 01, 02, … in this order)."""
-    ids = ["about", "sport", "drinks", "events", "gallery", "visit", "local"]
-    if faq_items(lang):
-        ids.append("faq")
-    if contact_cards(lang):
-        ids.append("contact")
-    return ids
+    """Ids of the home page's .section blocks in page order (CSS numbers them 01, 02, … in this order).
+    The visit strip at the end of the home page is a band, not a numbered .section."""
+    return ["about", "sport", "drinks", "events", "gallery"]
 
 
 def site_nav(lang, pages, sections, home="", current=None):
@@ -700,18 +765,18 @@ def menu_button(t):
             '                </button>')
 
 
-def subpage_header(lang, path, current, other_href):
+def subpage_header(lang, path, current, hrefs):
     """Header for every page except home: logo -> home, a nav with a clear Home item, theme, language, menu."""
     t = I18N[lang]
     home = home_href(path)
-    nav = site_nav(lang, ["home", "schedule", "eintracht"], ["events", "visit"], home=home, current=current)
+    nav = site_nav(lang, SUB_NAV_PAGES, SUB_NAV_SECTIONS, home=home, current=current)
     return f'''    <header class="site-header">
         <div class="container header-inner">
             <a class="brand" href="{home}" aria-label="{attr(t["brandHome"].format(name=SITE["name"]))}">{logo_svg()}<span class="brand-title">C'est la <span>vie</span></span></a>
             {nav}
             <div class="header-actions">
                 <button class="theme-btn" id="themeBtn" type="button" aria-label="{attr(t["themeBtn"])}"></button>
-                {lang_switch(lang, other_href)}
+                {lang_switch(lang, hrefs)}
                 {menu_button(t)}
             </div>
         </div>
@@ -728,10 +793,11 @@ def back_link(lang, path, end=False):
 
 def site_footer(lang, home=""):
     t = I18N[lang]
+    contact = f'<a href="{home}{PAGES["contact"][lang]}">{esc(t["navContactPage"])}</a> · '
     return f'''    <footer class="site-footer">
         <div class="container footer-inner">
             <p>© <span id="year">2026</span> {esc(SITE["name"])} · {esc(SITE["area_label"])}</p>
-            <p><a href="{home}impressum.html">{esc(t["imprint"])}</a> · <a href="{home}datenschutz.html">{esc(t["privacy"])}</a></p>
+            <p>{contact}<a href="{home}impressum.html">{esc(t["imprint"])}</a> · <a href="{home}datenschutz.html">{esc(t["privacy"])}</a></p>
         </div>
     </footer>'''
 
@@ -742,7 +808,7 @@ def drinks_html(lang):
 
     def price(n):
         s = f"{n:.2f}"
-        if lang == "de":
+        if lang in DECIMAL_COMMA:
             s = s.replace(".", ",")
         return f"{s} {cur}"
 
@@ -864,6 +930,102 @@ def address_html():
     return f"<address>\n                            {body}\n                        </address>"
 
 
+def call_link(lang, cls):
+    """'Call' button for the confirmed phone number ('' without one)."""
+    phone = get("contact.phone", report=False)
+    return f'<a class="{cls}" href="tel:+{digits(phone)}">{esc(I18N[lang]["call"])}</a>' if phone else ""
+
+
+def visit_section(lang, cls="section"):
+    """Contact page 01: open/closed chip, opening hours table (today marked by js/main.js), address,
+    route button and the map that only loads on click."""
+    t = I18N[lang]
+    has_hours = bool(SITE["hours"]["days"])
+    status = '<p class="status" id="status" data-status aria-live="polite"></p>\n                        ' if has_hours else ""
+    hours = f'''<table class="hours"><tbody id="hours">
+                            {hours_html(lang)}
+                        </tbody></table>
+                        ''' if has_hours else ""
+    return f'''
+        <section class="{cls}" id="visit">
+            <div class="container">
+                <h2>{esc(t["visitTitle"])}</h2>
+                <div class="split">
+                    <div>
+                        {status}{hours}{address_html()}
+                        <a class="btn btn-primary" href="{attr(route_url())}" target="_blank" rel="noopener">{esc(t["btnRoute2"])}</a>
+                    </div>
+                    <div class="map" id="map">
+                        <p>{esc(t["mapText"])}</p>
+                        <button type="button" class="btn btn-ghost" id="mapBtn">{esc(t["mapBtn"])}</button>
+                    </div>
+                </div>
+            </div>
+        </section>
+'''
+
+
+def contact_section(lang, cls="section"):
+    """Contact page: phone / WhatsApp / e-mail / social cards ('' when none is confirmed)."""
+    cards = contact_cards(lang)
+    if not cards:
+        return ""
+    return f'''
+        <section class="{cls}" id="contact">
+            <div class="container">
+                <h2>{esc(I18N[lang]["contactTitle"])}</h2>
+                <div class="grid grid-3">
+                    {cards}
+                </div>
+            </div>
+        </section>
+'''
+
+
+def hours_compact_html(lang):
+    """Opening hours in a few lines ('Mo–Do 16:00–01:00'); screen readers get the full day names."""
+    t = I18N[lang]
+    short, names = t["dayShort"], t["days"]
+    items = []
+    for a, b, o, c in hours_groups():
+        vis = short[a] if a == b else f"{short[a]}–{short[b]}"
+        full = names[a] if a == b else t["dayRange"].format(a=names[a], b=names[b])
+        items.append(f'<li><span class="vs-days"><span aria-hidden="true">{esc(vis)}</span><span class="sr-only">{esc(full)}</span></span>'
+                     f' <span class="vs-time">{o}–{c}</span></li>')
+    return "".join(items)
+
+
+def visit_strip(lang):
+    """Home page: compact red 'come by' band (live open/closed chip, address, hours, route / call buttons,
+    link to the contact page). Keeps name, address and hours on the home page; id="visit" so older
+    links to /#visit still land here."""
+    t = I18N[lang]
+    hours = hours_compact_html(lang)
+    chip = '<p class="status" data-status></p>\n                    ' if hours else ""
+    when = f'''
+                <div class="vs-when">
+                    <p class="vs-label" id="vs-hours">{esc(t["hoursLabel"])}</p>
+                    <ul class="vs-hours" aria-labelledby="vs-hours">{hours}</ul>
+                </div>''' if hours else ""
+    return f'''
+        <section class="visit-strip" id="visit" aria-labelledby="visit-h">
+            <div class="container vs-inner">
+                <div class="vs-where">
+                    <h2 id="visit-h">{esc(t["stripTitle"])}</h2>
+                    {chip}{address_html()}
+                </div>{when}
+                <div class="vs-go">
+                    <div class="cta-row">
+                        <a class="btn btn-primary" href="{attr(route_url())}" target="_blank" rel="noopener">{esc(t["btnRoute2"])}</a>
+                        {call_link(lang, "btn btn-ghost")}
+                    </div>
+                    <p class="more-link"><a href="{PAGES["contact"][lang]}">{esc(t["stripMore"])}<span aria-hidden="true">&nbsp;→</span></a></p>
+                </div>
+            </div>
+        </section>
+'''
+
+
 def ui_data(lang):
     t = I18N[lang]
     keys = ["themeLight", "themeDark", "menuOpen", "menuClose", "open", "closed", "until", "lbClose", "lbPrev", "lbNext", "mapTitle", "tickerPause", "tickerPlay"]
@@ -880,7 +1042,7 @@ def ui_data(lang):
 
 
 # ---------------------------------------------------------------- pages
-def render_home(lang, other_href=None):
+def render_home(lang, hrefs=None):
     t = I18N[lang]
     r = rel_root(lang)
     phone = get("contact.phone", report=False)
@@ -890,22 +1052,8 @@ def render_home(lang, other_href=None):
     gallery = "\n                    ".join(
         f'<button type="button" class="gallery-item" aria-label="{attr(t["zoom"])}"><img src="{r}assets/img/gallery-{n}.svg" width="800" height="800" loading="lazy" decoding="async" alt="{img_alt(t["galleryItemAlt"].format(n=n))}"></button>'
         for n in range(1, 7))
-    contact = contact_cards(lang)
-    contact_section = f'''
-        <section class="section" id="contact">
-            <div class="container">
-                <h2>{esc(t["contactTitle"])}</h2>
-                <div class="grid grid-3">
-                    {contact}
-                </div>
-            </div>
-        </section>
-''' if contact else ""
-    nav = site_nav(lang, ["schedule", "eintracht"],
-                   ["about", "sport", "drinks", "events", "gallery", "visit"] + (["contact"] if contact else []),
-                   current="home")
+    nav = site_nav(lang, HOME_NAV_PAGES, home_sections(lang), current="home")
     has_hours = bool(SITE["hours"]["days"])
-    status = '<p class="status" id="status" data-status aria-live="polite"></p>\n                        ' if has_hours else ""
     hero_chip = '<p class="status hero-status" data-status></p>\n                ' if has_hours else ""
     ticker_items = [p.strip() for p in t["tagline"].split("·") if p.strip()] + ["Bundesliga", "Eintracht Frankfurt", "Champions League"]
     # Decorative: the same words are in the hero and the sport section
@@ -915,9 +1063,7 @@ def render_home(lang, other_href=None):
     facts_html = ('<ul class="facts">' + "".join(f"<li>{esc(f)}</li>" for f in facts) + "</ul>") if facts else ""
     n_screens = get("venue.screens", report=False)
     sport5 = t["sport5Screens"].format(n=n_screens) if n_screens else t["sport5"]
-    faq = faq_section(lang)
     sched_href = PAGES["schedule"][lang]
-    local = local_section(lang)
     return f'''<!DOCTYPE html>
 <html lang="{lang}">
 <head>
@@ -935,7 +1081,7 @@ def render_home(lang, other_href=None):
             {nav}
             <div class="header-actions">
                 <button class="theme-btn" id="themeBtn" type="button" aria-label="{attr(t["themeBtn"])}"></button>
-                {lang_switch(lang, other_href)}
+                {lang_switch(lang, hrefs)}
                 {menu_button(t)}
             </div>
         </div>
@@ -1014,25 +1160,7 @@ def render_home(lang, other_href=None):
             </div>
         </section>
 
-        <section class="section section-alt" id="visit">
-            <div class="container">
-                <h2>{esc(t["visitTitle"])}</h2>
-                <div class="split">
-                    <div>
-                        {status}<table class="hours"><tbody id="hours">
-                            {hours_html(lang)}
-                        </tbody></table>
-                        {address_html()}
-                        <a class="btn btn-primary" href="{attr(route)}" target="_blank" rel="noopener">{esc(t["btnRoute2"])}</a>
-                    </div>
-                    <div class="map" id="map">
-                        <p>{esc(t["mapText"])}</p>
-                        <button type="button" class="btn btn-ghost" id="mapBtn">{esc(t["mapBtn"])}</button>
-                    </div>
-                </div>
-            </div>
-        </section>
-{local}{faq}{contact_section}    </main>
+{visit_strip(lang)}    </main>
 
 {site_footer(lang)}
 
@@ -1082,7 +1210,7 @@ def legal_lines(lang):
     return "\n        ".join(imp), "\n        ".join(f"<h2>{esc(h)}</h2>\n        <p>{esc(p)}</p>" for h, p in priv)
 
 
-def render_legal(lang, kind, other_href=None):
+def render_legal(lang, kind, hrefs=None):
     t = I18N[lang]
     r = rel_root(lang)
     imp, priv = legal_lines(lang)
@@ -1100,7 +1228,7 @@ def render_legal(lang, kind, other_href=None):
 {head_common(lang, 0)}</head>
 <body>
     <a class="skip-link" href="#main">{esc(t["skip"])}</a>
-{subpage_header(lang, path, kind, other_href)}
+{subpage_header(lang, path, kind, hrefs)}
     <main class="container legal" id="main">
         {back_link(lang, path)}
         <h1>{esc(title)}</h1>
@@ -1130,7 +1258,7 @@ def fmt_match_time(lang, start):
     t = I18N[lang]
     d = start.astimezone(TZ)
     wd = t["dayShort"][(d.weekday() + 1) % 7]  # dayShort index 0 = Sunday
-    if lang == "de":
+    if lang in NUMERIC_DATES:
         day = f"{wd}., {d.day:02d}.{d.month:02d}.{d.year}"
     else:
         day = f"{wd} {d.day} {t['months'][d.month - 1]} {d.year}"
@@ -1223,12 +1351,13 @@ def nearby_html(lang, home="", uid="near"):
 def link_list(lang, home, keys):
     """Internal follow-up links (other pages, home sections), drawn as underlined plate links."""
     t = I18N[lang]
+    contact = home + PAGES["contact"][lang]  # opening hours, directions and the area live on the contact page
     target = {
         "schedule": (home + PAGES["schedule"][lang], "localLinkSchedule"),
         "eintracht": (home + PAGES["eintracht"][lang], "localLinkEintracht"),
         "drinks": (home + "#drinks", "localLinkDrinks"),
-        "visit": (home + "#visit", "localLinkVisit"),
-        "local": (home + "#local", "localLinkArea"),
+        "visit": (contact + "#visit", "localLinkVisit"),
+        "local": (contact + "#local", "localLinkArea"),
     }
     lis = "".join(f'<li class="more-link"><a href="{attr(target[k][0])}">{esc(t[target[k][1]])}'
                   f'<span aria-hidden="true">&nbsp;→</span></a></li>' for k in keys)
@@ -1236,20 +1365,22 @@ def link_list(lang, home, keys):
 
 
 def local_block(lang, home="", links=("visit", "schedule", "eintracht")):
-    """Body of 'Directions & area' (home page and schedule page): text column + nearby list."""
+    """Body of 'Directions & area' (contact page and schedule page): text column + nearby list."""
     paras = "".join(f"<p>{esc(x)}</p>" for x in local_paragraphs(lang))
     near = nearby_html(lang, home)
     return (f'<div class="local-grid"><div class="local">{paras}{link_list(lang, home, links)}</div>'
             f'{near}</div>')
 
 
-def local_section(lang):
+def local_section(lang, home="", cls="section"):
+    """Contact page: 'Directions & area'. Its follow-up links point to the other pages (hours and route
+    are right above it on the same page)."""
     t = I18N[lang]
     return f'''
-        <section class="section" id="local">
+        <section class="{cls}" id="local">
             <div class="container">
                 <h2>{esc(t["localTitle"])}</h2>
-                {local_block(lang)}
+                {local_block(lang, home, links=("schedule", "eintracht", "drinks"))}
             </div>
         </section>
 '''
@@ -1281,7 +1412,17 @@ def page_head(lang, path, h1, intro, kicker, extra="", art=False, cls=""):
         </section>'''
 
 
-def render_schedule(lang, other_href):
+def jump_board(lang, items):
+    """Scoreboard tiles in a page head linking to the numbered sections below: [(id, i18n key)].
+    The numbers match the section number plates (same order)."""
+    t = I18N[lang]
+    lis = "".join(
+        f'<li><a href="#{hid}"><span class="jump-n" aria-hidden="true">{n:02d}</span>{esc(t[key])}</a></li>'
+        for n, (hid, key) in enumerate(items, 1))
+    return f'<nav class="jump-board" aria-label="{attr(t["efJumpLabel"])}"><ol>{lis}</ol></nav>'
+
+
+def render_schedule(lang, hrefs):
     t = I18N[lang]
     path = PAGES["schedule"][lang]
     r = "../" * (path.count("/") + (0 if lang == DEFAULT_LANG else 1))
@@ -1313,7 +1454,7 @@ def render_schedule(lang, other_href):
 {head_common(lang, path.count("/"), jsonld_scripts(lang, blocks))}</head>
 <body>
     <a class="skip-link" href="#main">{esc(t["skip"])}</a>
-{subpage_header(lang, path, "schedule", other_href)}
+{subpage_header(lang, path, "schedule", hrefs)}
     <main id="main">
 {page_head(lang, path, t["schedH1"], t["schedIntro"], t["schedKicker"])}
         <div class="container page-body schedule">
@@ -1363,7 +1504,7 @@ def fmt_date(lang, d):
     """Date without time, e.g. 'Sa., 01.11.2026' / 'Sat 1 Nov 2026'."""
     t = I18N[lang]
     wd = t["dayShort"][(d.weekday() + 1) % 7]
-    if lang == "de":
+    if lang in NUMERIC_DATES:
         return f"{wd}., {d.day:02d}.{d.month:02d}.{d.year}"
     return f"{wd} {d.day} {t['months'][d.month - 1]} {d.year}"
 
@@ -1486,7 +1627,7 @@ def reserve_buttons(lang):
     return f'<div class="cta-row">{"".join(out)}</div>' if out else ""
 
 
-def render_eintracht(lang, other_href):
+def render_eintracht(lang, hrefs):
     t = I18N[lang]
     path = PAGES["eintracht"][lang]
     r = "../" * (path.count("/") + (0 if lang == DEFAULT_LANG else 1))
@@ -1528,10 +1669,7 @@ def render_eintracht(lang, other_href):
     jump_items = [("ef-fixtures", "efFixtures"), ("ef-results", "efResults"), ("ef-table", "efTable")]
     if way:
         jump_items.append(("ef-way", "efWay"))
-    jump = "".join(
-        f'<li><a href="#{hid}"><span class="jump-n" aria-hidden="true">{n:02d}</span>{esc(t[key])}</a></li>'
-        for n, (hid, key) in enumerate(jump_items, 1))
-    jump_nav = f'<nav class="ef-jump" aria-label="{attr(t["efJumpLabel"])}"><ol>{jump}</ol></nav>'
+    jump_nav = jump_board(lang, jump_items)
     head = page_head(lang, path, t["efH1"], t["efIntro"], t["efKicker"], extra=cta + jump_nav, art=True, cls="ef-head")
     ticker = ticker_html([EINTRACHT, t["efKicker"], t["efFixtures"], t["efResults"], t["efTable"]], "ticker-alt")
     return f'''<!DOCTYPE html>
@@ -1544,7 +1682,7 @@ def render_eintracht(lang, other_href):
 {head_common(lang, path.count("/"), jsonld_scripts(lang, [bar_schema(lang)]))}</head>
 <body>
     <a class="skip-link" href="#main">{esc(t["skip"])}</a>
-{subpage_header(lang, path, "eintracht", other_href)}
+{subpage_header(lang, path, "eintracht", hrefs)}
     <main id="main" class="eintracht">
 {head}
         {ticker}
@@ -1582,8 +1720,61 @@ def render_eintracht(lang, other_href):
 '''
 
 
+# ---------------------------------------------------------------- "Visit & contact" page
+CONTACT_TITLES = {"visit": "visitTitle", "local": "localTitle", "faq": "faqTitle", "contact": "contactTitle"}
+
+
+def render_contact(lang, hrefs):
+    """Everything for a visit, in the order a visitor needs it: 01 hours + address + route + map,
+    02 directions and nearby places, 03 FAQ, 04 contact cards. Sections without data are left out
+    (the numbers then close up: CSS counts the sections that are there, and so does the jump board).
+    Sections alternate plain / striped starting with striped, which meets the diagonal cut of the page head."""
+    t = I18N[lang]
+    path = PAGES["contact"][lang]
+    home = home_href(path)
+    r = rel_root(lang, path.count("/"))
+    builders = [("visit", lambda c: visit_section(lang, c)), ("local", lambda c: local_section(lang, home, c)),
+                ("faq", lambda c: faq_section(lang, home, c)), ("contact", lambda c: contact_section(lang, c))]
+    parts, ids = [], []
+    for sid, build in builders:
+        html_ = build("section section-alt" if len(parts) % 2 == 0 else "section")
+        if html_:
+            parts.append(html_)
+            ids.append(sid)
+    status = '<p class="status hero-status" data-status></p>' if SITE["hours"]["days"] else ""
+    cta = (f'<div class="cta-row"><a class="btn btn-primary" href="{attr(route_url())}" target="_blank" rel="noopener">'
+           f'{esc(t["btnRoute2"])}</a>{call_link(lang, "btn btn-ghost")}</div>')
+    extra = status + cta + jump_board(lang, [(sid, CONTACT_TITLES[sid]) for sid in ids])
+    head = page_head(lang, path, t["contactH1"], t["contactIntro"], t["contactKicker"], extra=extra, cls="contact-head")
+    desc = t["contactDesc"].replace("{near}", near_phrase(lang))
+    return f'''<!DOCTYPE html>
+<html lang="{lang}">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{esc(t["contactTitlePage"])}</title>
+{meta_block(lang, path, t["contactTitlePage"], desc)}
+{head_common(lang, path.count("/"), jsonld_scripts(lang, [bar_schema(lang), faq_schema(lang)]))}</head>
+<body>
+    <a class="skip-link" href="#main">{esc(t["skip"])}</a>
+{subpage_header(lang, path, "contact", hrefs)}
+    <main id="main" class="contact-page">
+{head}
+{"".join(parts)}
+        <div class="container contact-end">
+            {back_link(lang, path, end=True)}
+        </div>
+    </main>
+{site_footer(lang, home)}
+    <script type="application/json" id="ui-data">{ui_data(lang)}</script>
+    <script src="{r}js/main.js"></script>
+</body>
+</html>
+'''
+
+
 # ---------------------------------------------------------------- robots.txt + sitemap.xml
-INDEXABLE = ["home", "schedule", "eintracht"]  # legal pages are noindex and stay out of the sitemap
+INDEXABLE = ["home", "schedule", "eintracht", "contact"]  # legal pages are noindex and stay out of the sitemap
 
 
 def robots_txt():
@@ -1624,11 +1815,12 @@ def write(rel, content):
 def main():
     for lang in LANGS:
         pre = lang_prefix(lang)
-        write(pre + "index.html", render_home(lang, switch_href(lang, "")))
-        write(pre + "impressum.html", render_legal(lang, "impressum", switch_href(lang, "impressum.html")))
-        write(pre + "datenschutz.html", render_legal(lang, "datenschutz", switch_href(lang, "datenschutz.html")))
-        write(pre + PAGES["schedule"][lang] + "index.html", render_schedule(lang, switch_href(lang, PAGES["schedule"][lang])))
-        write(pre + PAGES["eintracht"][lang] + "index.html", render_eintracht(lang, switch_href(lang, PAGES["eintracht"][lang])))
+        write(pre + "index.html", render_home(lang, lang_hrefs(lang, "")))
+        for kind in ("impressum", "datenschutz"):
+            write(pre + PAGES[kind][lang], render_legal(lang, kind, lang_hrefs(lang, PAGES[kind][lang])))
+        for key, render in (("schedule", render_schedule), ("eintracht", render_eintracht), ("contact", render_contact)):
+            path = PAGES[key][lang]
+            write(pre + path + "index.html", render(lang, lang_hrefs(lang, path)))
     write("robots.txt", robots_txt())
     write("sitemap.xml", sitemap_xml())
     if TODOS:

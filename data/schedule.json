@@ -8,7 +8,7 @@
       "home": "Beispiel-Team A",
       "away": "Beispiel-Team B",
       "start": "2027-02-06T15:30:00+01:00",
-      "note": { "de": "", "en": "" }
+      "note": { "de": "", "en": "", "it": "" }
     },
     {
       "id": "beispiel-2",
@@ -17,7 +17,7 @@
       "home": "Beispiel-Team C",
       "away": "Beispiel-Team D",
       "start": "2027-02-13T18:30:00+01:00",
-      "note": { "de": "", "en": "" }
+      "note": { "de": "", "en": "", "it": "" }
     },
     {
       "id": "beispiel-3",
@@ -26,7 +26,7 @@
       "home": "Beispiel-Team E",
       "away": "Beispiel-Team F",
       "start": "2027-02-20T20:45:00+01:00",
-      "note": { "de": "", "en": "" }
+      "note": { "de": "", "en": "", "it": "" }
     }
   ]
 }
