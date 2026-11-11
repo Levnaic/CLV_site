@@ -1,222 +1,317 @@
-# QA report: branch `final-redesign` (commit 8ad0d89)
+# QA report: branch `final-redesign`
 
-Date: 2026-11-11 · Agent: qa · Scope: Italian language, language dropdown, slanted nav indicator,
-"Besuch & Kontakt" page and home visit strip (diff `main...final-redesign`, 27 files).
+Date: 2026-11-11 · Agent: qa
+Scope: Italian language, language dropdown, slanted nav indicator, "Besuch & Kontakt" page and
+home visit strip (diff `main...final-redesign`).
 
-## Important: the browser pass was not run
-
-The browser tool refuses `http://127.0.0.1:8765` (`net::ERR_BLOCKED_BY_CLIENT`). The qa agent may
-only open the local dev and preview servers on ports **5173 and 4173**, and nothing was listening on
-4173. So none of the runtime checks in the test plan ran: no screenshots, no viewport or overflow
-measurements, no keyboard or mouse runs, no console logs, no rendered contrast.
-
-What was done instead: a static review of the generated HTML, `css/style.css`, `js/main.js` and the
-branch diff. Geometry, contrast and JS behaviour were checked by reading the code and calculating
-the values. Every finding below says whether it is **confirmed in code** or **needs a browser
-check**.
-
-To unblock the browser pass, start the preview on an allowed port, for example
-`python3 -m http.server 4173 --bind 127.0.0.1`, then run qa again. The other option is to add
-port 8765 to the qa agent's browser allowlist, which is the user's decision. TODO.md §9 tells
-people to use 8765, which does not match the qa allowlist.
-
-## Summary
-
-| Area | Result (static) | Browser check |
+| Round | Commit | Method |
 |---|---|---|
-| 1. Italian pages (6) present, `lang="it"`, hreflang, og:locale | pass | not run |
-| 2. Language dropdown: markup, links to the same page in each language, no-JS | pass (all 18 pages map correctly) | not run |
-| 2. Language dropdown: keyboard/JS logic | pass, 1 minor (F1) | not run |
-| 3. Nav slant: divider vs hover bar vs current plate, mobile bar | pass (angles identical by calculation) | not run |
-| 4. Contact page content, FAQ JSON-LD = visible text, back links, footer link | pass | not run |
-| 4. Home visit strip, section numbers `data-n` = heading counters | pass | not run |
-| Overflow at 360/768/1200/1440, header fit at 1200 (DE/EN/IT) | cannot be judged statically, risk noted (F5) | **not run** |
-| Console errors | no error path found in `main.js` on any page type | **not run** |
-| Accessibility basics | 1 h1 per page, no new heading skips, 44px targets on new controls, contrast >= 4.5:1 | not run (no axe) |
-| SEO of the new pages | pass, titles a bit long (F7) | n/a |
+| 1 | 8ad0d89 | Static review of the generated HTML, `css/style.css`, `js/main.js` and the diff. The browser was blocked because port 8765 is not allowed. |
+| 2 | 69022ea (fixes F1–F3, F5–F7, F9) | Browser pass on `http://127.0.0.1:4173`: Playwright Chromium, headless, cache-busted with `?v=N` and `fetch(…, {cache:'reload'})`, `.reveal` set to `.visible` before full-page screenshots |
+| 3 | fa9e42f (fixes N1, N2, N5, C1) | Short browser re-check plus a regression check, same setup |
 
-Findings: **0 blocker · 0 major · 7 minor · 4 cosmetic** (plus 3 older minors that were already on `main`).
+Screenshots are in `docs/test-reports/img/`. Round 3 screenshots start with `r3-`.
 
-## Findings
+## Verdict: READY to merge into main (after round 3, commit fa9e42f)
 
-### F1 · minor · confirmed in code: Escape does not close the language menu unless focus is inside it
-- Where: `js/main.js:105` (`langBox.addEventListener('keydown', …)`), all pages, all viewports.
-- Steps: in Safari (and Firefox on macOS), open the menu with a **mouse click** on the summary,
-  then press Escape.
-- Expected: the menu closes. Actual: these browsers do not focus a `<summary>` on mouse click, so
-  the keydown goes to `body`, the listener on `#langBox` never fires and the menu stays open.
-  Chrome and Edge focus the summary, so they behave correctly. **Needs a check in Safari.**
-- Fix (frontend): handle Escape on `document` while `langBox.open`, and keep the
-  `preventDefault()` so the mobile overlay stays open on the first Escape.
+There are no blockers and no majors left. N1 (major), N2 and N5 are fixed and checked in the
+browser, and the regression checks are clean. What is still open is minor or cosmetic and does not
+block the merge:
+- N4: desktop nav targets are 28–30px tall (WCAG 2.5.8 passes).
+- C2: `aria-current="true"` on the language links.
+- C3: phone number unformatted, 2 cards in a 3-column grid.
+- C4: copy details for the native-speaker review.
+- C5: hyphenated jump tile.
+- C6: example-match placeholders (data).
+- C7: the DE and EN home pages have the same title.
 
-### F2 · minor · confirmed in code: the language button's accessible name does not contain its visible label as a word
-- Where: `build.py` `lang_switch`, summary `aria-label="Sprache: Deutsch"` / `"Language: English"` /
-  `"Lingua: Italiano"`. The visible label is `DE` / `EN` / `IT`.
-- Expected (WCAG 2.5.3 Label in Name): the visible text is part of the name, so a speech-input
-  user can say "click DE". Actual: "DE" only appears inside "Deutsch".
-- Fix (frontend): for example `aria-label="Sprache: Deutsch (DE)"`, or drop `aria-label` and add
-  visually hidden text next to the code.
+As before, every push still needs your approval.
 
-### F3 · minor · confirmed in code (old logic, new places): the open/closed chip uses the visitor's device time zone
-- Where: `js/main.js:168` `isOpen(new Date())`. It now shows on the home visit strip and twice on
-  each contact page.
-- Steps: set the device to Europe/London and open `/en/` at 15:30 London time on a Monday
-  (16:30 in Frankfurt).
-- Expected: "Open now · until 01:00". Actual: "Closed right now".
-- Fix (frontend): compute the weekday and hour in `Europe/Berlin`, using
-  `Intl.DateTimeFormat(…, {timeZone:'Europe/Berlin'})`.
+## Round 3: re-check of fa9e42f
 
-### F4 · minor · confirmed in content: German placeholder text on `/it/calendario/`
-- What: the example matches show "Beispiel-Team A … F" and the competition "Beispiel" on the
-  Italian page. The tag correctly says "Esempio – non è una data reale".
-- This goes away when the owner deletes the example matches (TODO.md §1). If the examples stay
-  until launch, the example labels need translating (frontend, `build.py`/`data/schedule.json`).
-  Note: this contradicts the earlier "no German on /it/" check, which probably skipped data-driven
-  fields.
+Setup: style sheets and script reloaded with `{cache:'reload'}` (the new CSS has
+`scroll-margin-top` and the 1399px rule) and `localStorage.theme` cleared.
 
-### F5 · minor · needs a browser check: header fit at 1200px has less spare room than the CSS comment says
-- Where: `css/style.css:895-906`. The comment says there is "about 10px to spare" in German and
-  Italian at 1200px. That was measured in Playwright, and headless Chromium hides scrollbars.
-- Risk: in desktop browsers with classic scrollbars (Windows about 17px, Linux about 15px), a
-  1200px window still matches `min-width:1200px` but the layout is only about 1183px wide. That is
-  about 7px short. Calculated effect: nothing overlaps. The header row spills about 7px into the
-  container's 32px right padding, and the page should not get a horizontal scrollbar.
-- A second risk is the first visit with `font-display: swap`. The nav uses Barlow Condensed 700
-  normal, which is not preloaded (only 800 italic is). Until it loads, a wider fallback font can
-  overflow the header and shift the layout.
-- Check on jupiter or locally: `/` and `/it/` at window widths of 1200 and 1215 with
-  `--hide-scrollbars` off and fonts throttled.
+| Check | Result |
+|---|---|
+| **N1** at 360, 768 and 1100, starting at y = 3000: open the menu, press Escape, click the language button, press Escape | y stays at 3000 at every step. **Fixed** |
+| **N1**: overlay current-section mark after jumping to drinks, events, gallery or sport via the overlay and reopening it | the right section is marked and y does not change (`img/r3-mobile-menu-360-current-drinks.png`) |
+| **N1** at 1440, starting at y = 3000: click the language button, press Escape (focus returns to the button), click the theme button | y stays at 3000 |
+| **N1** at 1440: one Shift+Tab from the first link in `main` into the header (from y = 1500), then 4 more | lands on the language button, y stays at 1500 |
+| Focus not hidden under the header (WCAG 2.4.11), `/kontakt/` 1440: 31 Tab stops through `main` | 0 stops hidden under the sticky header. Tab from the header into `main` lands at top 122 (header bottom 72) |
+| Anchor jumps, 21 cases × 360 and 1440: nav links (including the mobile overlay and `../#drinks` from a sub page), hero "Anfahrt" → `#visit` (DE and IT), beer link → `#drinks-menu`, jump tiles on `/kontakt/` and `/eintracht/`, schedule and Eintracht pages → contact `#visit`/`#local` in DE/EN/IT, FAQ "Alle Orte" → `#local` | every target lands exactly 12px under the header: top 72 with a 60px header, top 84 with a 72px header. The exception is `#visit` at 1440, which is the last section, so the page simply ends there |
+| Scroll-spy at 360 and 1440 | about, sport, drinks, events and gallery are each marked correctly |
+| **N2** sweep from 1200 to 1520px in 10px steps × with and without a 17px scrollbar × `/`, `/en/`, `/it/`, `/kontakt/`, `/en/contact/`, `/it/contatti/` (396 measurements) | 0 problems: the header buttons never go past the content box or the viewport, the nav-to-buttons gap is at least 12px, and the nav is one row with no inner overflow. **Fixed** |
+| **N5** titles | `/` 63, `/en/` 63, `/it/` 65, `/kontakt/` 53, `/en/contact/` 56, `/it/contatti/` 59 characters. og:title and twitter:title match. **Fixed** |
+| Language button name (C1) | `aria-label` and Chrome's accessible name are both "DE, Sprache: Deutsch", "EN, Language: English" and "IT, Lingua: Italiano". `expanded` is exposed. **Fixed** |
+| Regression: 360/768/1200/1440, plus 1600/1920 for the header, × light/dark × `/`, `/it/`, `/kontakt/`, `/en/` (48 loads) | no horizontal overflow, no element outside the viewport, 1 h1, header within its container |
+| Console errors and warnings, page errors, failed requests, HTTP ≥ 400 (all round 3 runs) | none |
 
-### F6 · minor · confirmed in CSS: the new footer link "Besuch & Kontakt" is about 24px tall
-- Where: `.footer-inner a` on every page (inline text, 0.95rem × 1.6 line height).
-- The project goal is 44px touch targets. WCAG 2.5.8 still passes through the "inline" exception.
-  Optional fix (frontend): give the footer links `display:inline-block; padding-block` up to 44px.
+Correction to round 2: the case "Shift+Tab into the header scrolls to the very top" was a flaw in
+my test, not part of N1. The script walked back through every link in `main`, which scrolls the
+page up naturally. The one-step check above is the correct test. The rest of N1 (menu button,
+language button, theme button, Escape refocus) was real and is fixed.
 
-### F7 · minor · confirmed in markup: the contact page titles are 69–71 characters
-- DE "Anfahrt, Öffnungszeiten & Kontakt – C'est la vie Sports Bar Frankfurt" (69),
-  EN (71), IT (69). Search results usually cut off around 60 characters, so "Frankfurt" or
-  "Francoforte" at the end will likely be lost.
-- Meta descriptions are fine: DE 151, EN 153, IT 150 characters.
-- Optional (content/frontend): put the place name earlier or shorten the brand part.
+New cosmetic finding: **C7**, the DE and EN home pages have the same title, "C'est la vie Sports Bar
+Frankfurt | Eintracht & Bundesliga live". hreflang already separates the two versions; an EN wording
+such as "Watch Eintracht & Bundesliga live" is optional.
 
-### F8 · cosmetic: contact cards
-- The phone number shows as `+491744800000` without grouping (contact card and Impressum).
-  `+49 174 4800000` reads better; the `tel:` link stays as it is.
-- `.grid-3` holds 2 cards, so from 900px the third column is empty. This fills itself once
-  `contact.email` is supplied (TODO.md §1).
+## Summary (after round 2, for the record)
 
-### F9 · cosmetic: "Route planen" opens the place page, not a route
-- All "Route planen / Plan route / Calcola il percorso" buttons link to
-  `maps.app.goo.gl/U6kGrxTTeQX3aGoNA`, which is the place card. The button text suggests
-  directions. A link of the form `https://www.google.com/maps/dir/?api=1&destination=…`
-  would open directions straight away. The link also opens a new tab without saying so.
+| Area | Result |
+|---|---|
+| 1. Italian pages: `lang`, hreflang, og:locale, canonical | pass (18 pages) |
+| 2. Language dropdown: mouse, keyboard, no-JS, links to the matching page | pass (54 links on 18 pages; 18 click-throughs land on the right page and language) |
+| 2. Language dropdown inside the mobile overlay (Tab loop, Escape order) | pass |
+| 3. Nav slant: divider = hover bar = current plate = page plates = mobile bar | pass, 12.00° in every case, also mid-animation |
+| 4. Contact page, home strip, FAQ JSON-LD, anchors from other pages, footer link | pass |
+| Scroll-spy | pass while scrolling. **Fails after the mobile menu is opened** (N1) |
+| Horizontal overflow at 360/768/1200/1440, light and dark | pass (92 page loads). One edge case at 1340–1349px with a classic scrollbar (N2) |
+| Header fit at 1200 (DE/EN/IT, with or without a 17px scrollbar) | pass, everything on one row, 12px between nav and buttons |
+| Console errors and warnings, failed requests, HTTP ≥ 400 | none (92 loads plus all interaction runs) |
+| Accessibility basics | pass: 1 h1 and no heading skips on the 6 key pages, visible focus on all new controls, contrast ≥ 4.99:1 (scan), reduced motion honoured. Desktop nav targets 28–30px (N4) |
+| SEO spot-check of the new pages | pass. Contact titles are 53–59 chars; home titles are still 73–82 (N5) |
+| Re-check of the round-1 fixes F1, F2, F3, F5, F6, F7, F9 | all fixed |
 
-### F10 · cosmetic: language links use `aria-current="true"`
-- The link points to the current page in the current language, so `aria-current="page"` is the
-  more precise value. Screen readers announce "current page" instead of just "current".
+Open findings: **0 blocker · 1 major (N1) · 3 minor (N2, N4, N5) · 6 cosmetic**.
 
-### F11 · cosmetic: copy details (already covered by the native-speaker review in TODO.md §7)
-- IT: weekday names are capitalised ("da Lunedì a Giovedì", "Lunedì" in the hours table). Italian
-  writes them in lower case.
-- DE: the hidden text "Freitag bis Samstag" would read better as "Freitag und Samstag", and the same
-  applies to EN "Friday to Saturday".
+## Round 2: browser results
 
-### Already on `main` (not caused by this branch, for the record)
-- P1 · minor: on `/spielplan/`, `/en/schedule/` and `/it/calendario/` the headings go from h1 to h3
-  (match titles) before the first h2.
-- P2 · minor: `.mobile-bar` is a `<div aria-label=…>` without a role. `aria-label` is not supported
-  on generic elements, and axe reports it for review.
-- P3 · minor: without JS, the mobile nav below 1200px cannot be opened. The new language dropdown
-  does work without JS.
+### Open findings
 
-## What passed in the static review (details)
+#### N1 · major · Focusing anything in the sticky header scrolls the page up (mobile menu, language and theme buttons)
+- Pages and viewports: all pages, all viewports. Reproduced in Chromium. Firefox and Safari not checked.
+- Steps (360×780, `/`):
+  1. Scroll to y = 3000.
+  2. Tap the menu button.
+  3. Press Escape.
+- Expected: the page stays at y = 3000. While the overlay is open, the slanted current-section bar
+  marks the section you were reading.
+- Actual: opening scrolls to y = 2602 and Escape scrolls again to y = 2204. Every focus of a header
+  control moves the page up by about half a screen.
+- Same jump in other cases:
+  - At 768px it is 520px.
+  - At 1440px, one mouse click on the **language button** or the theme button goes from 3000 to 2542.
+  - Escape in the language menu refocuses the button, which triggers the same jump.
+  - Shift+Tab from the contact page content back into the header scrolls to the very top (y = 0).
+- Knock-on effect: in the mobile menu, tap "Getränke", wait, then open the menu again. The
+  overlay now marks "02 Live Sport" instead of "03 Getränke", because the page has moved
+  (`img/mobile-menu-360-current-drinks.png`). The new mobile indicator therefore shows the wrong
+  section. Reproduced in 4 of 4 runs.
+- Root cause (verified):
+  - `html { scroll-padding-top: calc(var(--header-h) + 12px) }` (`css/style.css:54`). Header
+    controls sit inside that padding area, so focusing them makes the browser "scroll them into
+    view" and the sticky header comes along.
+  - With `scroll-padding-top: 0` there is no jump. `focus({preventScroll:true})` also avoids it, but
+    only for focus set from JS.
+- Suggested fix (frontend): move the offset from `html` to the scroll targets, for example
+  `main [id], main :is(a,button,summary,[tabindex]) { scroll-margin-top: calc(var(--header-h) + 12px) }`.
+  I tested this in the browser: a theme click no longer scrolls, and `#events` still lands at
+  84px under the 72px header.
+- Note: this line and the menu focus code are unchanged since `main`, so the theme and menu buttons
+  on `main` jump too. This branch adds two more triggers (the language button and the Escape
+  refocus), and the problem directly breaks requirement 3 (the current-section indicator).
 
-- **Language mapping (item 2):** read the language menu of `/`, `/kontakt/`, `/spielplan/`,
-  `/eintracht/`, `/impressum.html`, `/en/`, `/en/contact/`, `/en/schedule/`, `/en/eintracht/`,
-  `/en/datenschutz.html`, `/it/`, `/it/contatti/`, `/it/calendario/`, `/it/eintracht/` and
-  `/it/impressum.html`. Each one offers DE, EN and IT versions of the **same** page type. The
-  current language has `aria-current` and the visible check mark (`.lang-check` shows only when
-  `aria-current` is set). Every link has `hreflang` and `lang`. The globe, caret and check icons
-  are `aria-hidden`.
-- **Dropdown logic (item 2):** native `<details>` toggles on click, Enter and Space without JS.
-  ArrowDown/ArrowUp on the summary open the menu and focus the first/last link. In the menu they
-  wrap (`(i+step+n)%n`), and Home/End jump to the ends. Escape closes, `preventDefault()` keeps
-  the overlay open, and focus returns to the summary. An outside click closes the menu, and so does
-  focus leaving it (`focusout` with `relatedTarget` outside). In the mobile overlay the Tab loop now
-  includes `summary`, and the menu links only while it is open (closed `<details>` content has no
-  boxes). The first Escape closes the language menu and the second closes the overlay. The menu
-  (`z-index:2`, positioned) paints above the fixed overlay (`z-index:auto`).
-- **Nav slant (item 3), calculated:** the divider uses `skewX(-12deg)` on 3px × 1.7rem. The hover
-  bar uses the same size with `skewX(-12deg) scaleY(s)`. Scale is applied before skew, so the
-  edge is x' = x − tan12°·(s·y) and y' = s·y. The slope stays tan 12° throughout the animation,
-  and at the end the matrix is identical to the divider's, `matrix(1,0,-0.2126,1,0,0)`. The
-  current plate uses `skewX(-12deg) scaleX(s)` with origin left. Its edges are x' = s·x − tan12°·y,
-  so they stay at 12° during the whole wipe. The mobile overlay's current indicator is a 5px red bar
-  with `skewX(-12deg)`, no longer the old vertical inset shadow. Hover is suppressed on the current
-  link. At 1200–1339 the bar's top corner (about 5.9px) sits just right of the 5.6px padding, but
-  at cap height it is only about 4.2px, so it does not touch the glyphs.
-- **Section numbers (item 4):** the home nav has `data-n` 01–05 for about, sport, drinks, events and
-  gallery. These match `counter(sec)` on the five `.section` elements. The visit strip is not a
-  `.section`, so it is not counted. On sub pages, Drinks and Events are 03 and 04. On the contact
-  page, `.section` 01–04 match the jump-board tiles 01–04.
-- **Contact page (item 4):** hours table, map (loads only after a click), address, Route and Call,
-  directions with 3 nearby places, 6 FAQs, 2 contact cards, back links at the top and bottom, and
-  a footer link on every page that was read. The JSON-LD has `BarOrPub` (`@id …/#bar`) and a
-  `FAQPage` with `url` set to the page itself and `inLanguage` de/en/it. All 6 × 3 questions and
-  answers match the visible text word for word. Canonical, hreflang de/en/it/x-default (x-default
-  points to DE) and og:locale with 2 alternates are present.
-- **Home visit strip:** `#visit` with an `h2`, a `data-status` chip (hidden while empty without
-  JS), address, three lines of hours that match the `hours` data (Mon–Thu 16–01, Fri–Sat 16–03,
-  Sun 14–00), Route (Google Maps, `rel=noopener`), Call (`tel:+491744800000`) and a link to the
-  contact page. Links from other pages: the schedule page links to `../kontakt/#visit` (IT:
-  `../contatti/#visit`), and the Eintracht page links to `../kontakt/#local` (IT:
-  `../contatti/#local`).
-- **Contrast (calculated from the theme tokens):** white on `#e1000f` is 4.99:1 (visit strip,
-  current plate, open menu button). The language button outline is 48% white on `#0b0b0c`, about
-  5.0:1 (needs 3:1). The menu text is white on `#19181a`. The codes use `#aaa29e` on `#19181a`
-  (about 7.1:1) and the check mark `#ff4d55` (about 5.4:1). Focus rings: `#ff4d55` on the night
-  header is 6.0:1, and white on the red strip is 5.0:1. One gap: if the mouse hovers the
-  keyboard-focused language link, the `#ff4d55` ring sits on red (low contrast). This is an edge
-  case and not filed as a finding.
-- **Touch targets:** the language summary is at least 44×44px, menu links are at least 44px tall,
-  `.more-link` and `.near-link` are at least 44px, buttons are 50px, jump tiles 5rem, and the back
-  link 44px.
-- **Reduced motion:** turns off all transitions and animations (dropdown drop-in, nav wipe and bar,
-  ticker), shows `.reveal` content, sets `scroll-behavior: auto` and hides the ticker toggle.
-- **Console errors (static):** every DOM lookup in `main.js` is guarded (`?.`, `if (lb)`,
-  `if (!spyLinks.length)`, `#mapBtn` only on the contact pages). Scroll-spy only collects `href^="#"`
-  links, so it is empty on sub and legal pages. No unguarded call was found.
+#### N2 · minor · From 1340px, the DE and IT home header is wider than its container
+- The denser 1200–1339 rules stop at 1340. From there the home header row (3 plates and 5 sections)
+  needs 23–36px more than the 1276px content box. The header buttons spill into the container's
+  32px right padding. Measured at 1340–1520 on `/` and `/it/`; `/en/` and the sub pages fit.
+- With a classic 17px scrollbar (simulated with `html { padding-right:17px }`), at window widths of
+  about 1340–1349 the language button ends 6–8px past the visible area, which causes horizontal
+  scrolling of the page.
+- Without a scrollbar, nothing overlaps: the gap between nav and buttons is 20px. The right margin
+  is about 30px narrower than the left one (`img/f12-home-de-1440-header.png`).
+- Fix (frontend): let the dense rules run to about 1380px (scrollbar included), or give the header
+  row more room above 1340.
+
+#### N4 · minor · Desktop nav links are 28–30px tall
+- Page plates and section links at 1200px and wider. WCAG 2.5.8 (24px) passes. The project goal of
+  44px is missed on touch screens that get the desktop nav, such as iPad Pro landscape (1366px)
+  and touch laptops. The brand link is 169×40. The sizes did not change in this branch.
+
+#### N5 · minor · Home titles are still long
+- DE 73, EN 79 and **IT 82 (new)** characters. Search results will likely cut them off. The contact
+  titles were fixed (53/56/59).
+
+#### Cosmetic
+- C1: the language button's accessible name is "DE , Sprache: Deutsch" in Chromium. The visually
+  hidden span is positioned absolutely, which inserts a space before the comma. Screen readers read
+  it correctly; dropping the comma would avoid it.
+- C2 (round-1 F10): language links still use `aria-current="true"`; `"page"` would be more precise.
+- C3 (round-1 F8): the phone number shows unformatted (`+491744800000`), and there are 2 contact
+  cards in a 3-column grid.
+- C4 (round-1 F11): IT weekday names are capitalised; DE "Freitag bis Samstag" (native review,
+  TODO.md §7).
+- C5: the jump tile "ÖFFNUNGSZEI-TEN" is hyphenated at 1440px because the page head keeps 34%
+  free on the right. Readable.
+- C6 (round-1 F4, data): "Beispiel-Team …" on `/it/calendario/`. The coordinator asked to leave
+  this placeholder data alone.
+
+### Re-check of the round-1 fixes
+
+| Finding | Check in the browser | Result |
+|---|---|---|
+| F1 Escape in Safari | Open with the mouse, `blur()` the button (Safari behaviour), press Escape: the menu closes and focus returns to the button. In the mobile overlay the first Escape closes only the language menu and the second closes the overlay, both for keyboard and for mouse with blur | fixed |
+| F2 label in name | Chromium AX tree: role `DisclosureTriangle`, name "EN , LANGUAGE: ENGLISH", `expanded` and `controls=langMenu` exposed, no `aria-label` | fixed (C1 cosmetic) |
+| F3 time zone | Fixed clock with `timezoneId` set to London, New York, Berlin and Tokyo. Mon 16:30 Berlin shows "open until 01:00". Mon 15:30 shows "closed". Sat 02:30 Berlin shows "open until 03:00" (Friday hours). Mon 00:30 Berlin (still Sunday in London) shows "closed", and the "today" row is Monday | fixed |
+| F5 header at 1200 | 1200, 1215 and 1339 windows, each with and without a 17px scrollbar, on DE/EN/IT home and sub pages: one row, nav-to-buttons gap 12px, no overflow, no wrapped labels | fixed (new edge at 1340, see N2) |
+| F6 footer targets | All footer links are 44px tall | fixed |
+| F7 contact titles | 53 / 56 / 59 characters | fixed (home titles: N5) |
+| F9 (coordinator's "F10") route | Every Route button and the mobile bar link to `google.com/maps/dir/?api=1&destination=…` with `target=_blank` | fixed |
+
+### What passed (details)
+
+- **Overflow:**
+  - Dark theme: 18 pages × 4 viewports.
+  - Light theme: home and contact pages in all 3 languages × 4 viewports (92 loads).
+  - Result: `scrollWidth == clientWidth` everywhere, no element outside the viewport, exactly one
+    h1.
+  - The mobile overlay (360/768, DE/EN/IT, home and contact) has no horizontal overflow.
+  - The language menu at 360 sits at x 80–288 with no overflow.
+- **Language dropdown, mouse:** click opens, a second click closes, an outside click closes.
+- **Language dropdown, keyboard:**
+  - Enter and Space toggle; Escape closes and returns focus to the button.
+  - ArrowDown/ArrowUp on the closed button open the menu on the first/last link; in the menu they
+    wrap; Home/End jump to the ends.
+  - Tab from the last link moves on and closes the menu; Shift+Tab from the button closes it too.
+  - Enter on English goes to `/en/contact/`.
+  - Focus ring: 3px `#ff4d55` on the button and an inset ring on the links.
+  - Screenshot: `img/lang-menu-1440-open-kbd.png`.
+- **No-JS** (separate context with `javaScriptEnabled:false`):
+  - The `<details>` opens, links are 44px tall, and clicking or Enter on English from
+    `/it/calendario/` lands on `/en/schedule/` (3 of 3).
+  - FAQ content is visible and the status chips are hidden.
+  - Screenshot: `img/lang-menu-360-nojs.png`.
+  - Harness note: the first no-JS click timed out once (a `waitForNavigation` race in the test
+    script). Rerun 3 of 3 passed. This is not a product issue.
+- **Language mapping:** every page offers DE, EN and IT versions of the same page type, matching
+  its `hreflang` links. The current language is marked, and the code in the button matches
+  `<html lang>`. One click per page lands on the correct canonical and language.
+- **Mobile menu (360):**
+  - Opening focuses the first link; `aria-expanded` and the label update; `main` becomes inert;
+    body overflow is hidden.
+  - The Tab loop runs Spielplan … Galerie, theme, language button, menu button, logo and back to
+    the start. Shift+Tab works in reverse.
+  - With the language menu open, the loop includes its 3 links.
+  - Section links close the overlay and land at 72px (under the 60px header).
+  - Resizing to 1300px closes the overlay.
+  - Screenshot: `img/mobile-menu-360-de.png`.
+- **Nav slant** (computed transforms, 1200 and 1440):
+  - The divider, the hover bar at the end of its animation, the current plate at the end of its
+    animation and the page plates are all `matrix(1,0,-0.212557,1,0,0)`, which is 12.00°.
+  - Mid-animation the hover bar is `matrix(1,0,-0.1065,0.501)` and the current plate is
+    `matrix(0.0054,0,-0.2126,1)`. Both still have 12.00° edges.
+  - The divider and hover bar are both 3×27.19px, colour `#e1000f`.
+  - The mobile current bar is a 5px red `skewX(-12deg)` bar.
+  - Screenshots: `img/nav-hover-1440.png`, `img/nav-current-drinks-1440.png`.
+- **Scroll-spy** (no menu involved), 360 and 1440: about, sport, drinks, events and gallery are each
+  marked when scrolled into view. On the visit strip nothing is marked at 360; at 1440 gallery stays
+  marked while it is still on screen, which is the intended code behaviour.
+- **Home strip:**
+  - Chip filled ("Jetzt geöffnet · bis 01:00").
+  - Address and hours (Mo–Do 16–01, Fr–Sa 16–03, So 14–00).
+  - Route opens Google Maps directions, Call is `tel:+491744800000`, and the link goes to the
+    contact page.
+  - Buttons are 50px tall and the more-link is at least 44px.
+  - Layout at 360, 768 and 1200: `img/visit-strip-360.png`, `img/visit-strip-768.png`,
+    `img/visit-strip-1200.png`.
+  - Focus ring is white on red (`img/visit-strip-focus-1440.png`).
+- **Contact page:**
+  - Hours table with today's row (Wednesday) highlighted.
+  - Map loads only after a click; I did not click it, to avoid an external request.
+  - The 6 FAQs equal the JSON-LD in all 3 languages (0 mismatches); the FAQPage `url` is the page
+    itself.
+  - Jump tiles go to `#visit`, `#local`, `#faq` and `#contact`.
+  - Back links at the top and bottom.
+  - Full page: `img/kontakt-1440-light-full.png`, `img/it-contatti-360-dark-full.png`.
+- **Anchors from other pages:** `/spielplan/`, `/eintracht/`, `/en/schedule/`, `/en/eintracht/`,
+  `/it/calendario/` and `/it/eintracht/` link to the contact page's `#visit` / `#local`. The target
+  lands 12px under the header at 360 and at 1440.
+- **Theme:** the button switches light/dark, the label and icon update, the choice survives a
+  reload, and the system preference is the default.
+- **Contrast scan** (every visible text node, background resolved from colours and skewed
+  pseudo-element plates):
+  - Dark theme, 7 pages: minimum 4.99:1, no failures.
+  - Light theme: the only failures were footer texts, a false positive. The footer background is a
+    gradient that the script cannot read, and it is night `#0b0b0c` (checked in
+    `img/footer-light-kontakt.png`).
+  - axe-core was not run (see "Tests not run").
+- **Reduced motion:** no dropdown animation, nav transitions 0s, no ticker animation and no ticker
+  toggle, `.reveal` visible, `scroll-behavior: auto`, no status pulse.
+- **Visible focus** (keyboard): contact head buttons, jump tiles, map button, FAQ links, contact
+  cards, back link, footer links and strip buttons all show a 3px outline with `:focus-visible`.
+
+## Round 1: static code review (commit 8ad0d89, kept for the record)
+
+Round 1 findings and their status after 69022ea:
+
+| ID | Severity | Finding | Status |
+|---|---|---|---|
+| F1 | minor | Escape did not reach `#langBox` when the summary was not focused (Safari/Firefox macOS mouse open) | fixed |
+| F2 | minor | Summary `aria-label` "Sprache: Deutsch" did not contain the visible "DE" (WCAG 2.5.3) | fixed |
+| F3 | minor | Open/closed chip used the device time zone | fixed |
+| F4 | minor | German "Beispiel…" placeholders on `/it/calendario/` | open, data (C6) |
+| F5 | minor | Header fit at 1200 measured without scrollbar | fixed (new edge N2) |
+| F6 | minor | Footer link about 24px tall | fixed |
+| F7 | minor | Contact titles 69–71 chars | fixed |
+| F8 | cosmetic | Phone unformatted, 2 cards in a 3-column grid | open (C3) |
+| F9 | cosmetic | "Route planen" opened the place page, not directions | fixed |
+| F10 | cosmetic | `aria-current="true"` instead of `"page"` | open (C2) |
+| F11 | cosmetic | Copy details (IT weekday capitals, DE "bis") | open (C4) |
+| P1–P3 | minor | Already on `main`: h1 → h3 skip on schedule pages, `aria-label` on the `.mobile-bar` div, no-JS mobile nav | open, not part of this branch |
+
+Static checks that passed in round 1 and were confirmed in round 2:
+- language link mapping
+- dropdown key logic
+- slant geometry: hover bar `skewX scaleY`, plate `skewX scaleX`, both keep 12° at every animation
+  step
+- section numbers: `data-n` 01–05 match the `counter(sec)` headings, the visit strip is not counted,
+  and the contact sections 01–04 match the jump tiles
+- FAQ JSON-LD text equals the visible text
+- hreflang de/en/it/x-default and og:locale
+- meta descriptions 150–153 characters
+- token contrast: white on `#e1000f` 4.99:1; language button outline about 5:1
+- 44px targets on the new controls
+- reduced motion
+- no unguarded DOM calls in `main.js`
 
 ## Results
 | Level | Command | Passed | Failed | Skipped |
 |---|---|---|---|---|
-| Static review (HTML/CSS/JS) | Read + `git diff main...final-redesign` | 9 plan areas | 0 | 0 |
-| Browser / exploratory | Playwright MCP on `http://127.0.0.1:8765` | 0 | 0 | all (blocked: port not allowed) |
-| Automated tests | none in this repo (no `tests/` or `e2e/`) | – | – | – |
+| Static review (round 1) | file reads + `git diff main...final-redesign` | 9 areas | 0 | 0 |
+| Browser: overflow, header, h1, console | Playwright, 18 pages × 4 viewports × theme (92 loads), plus header sweep 1200–1520 with/without a 17px scrollbar | 92 | 0 | 0 (edge N2 noted) |
+| Browser: language dropdown (mouse, keyboard, no-JS, mapping) | Playwright, 54 links, 18 click-throughs, 3 no-JS runs | all | 0 | 0 |
+| Browser: mobile menu (focus loop, Escape order, links, resize) | Playwright 360 | all | 1 (N1, page jumps / wrong current section, 4 of 4 runs) | 0 |
+| Browser: nav slant, scroll-spy, strip, contact page, anchors, F3 time zones, theme, reduced motion, focus, contrast scan | Playwright | all | 0 | 0 |
+| Automated test suite | none in this repo | – | – | – |
 
 ## Coverage
-No backend business logic and no test suite. Requirement coverage: items 1–4 were checked by
-static review only. Their runtime behaviour has not been tested.
+No backend business logic and no test suite. Requirements 1–4 are covered by this browser pass;
+everything except N1 passes.
 
 ## Tests not run (and why)
-All of these need the browser on an allowed port (4173 or 5173), or the jupiter e2e workflow,
-which does not exist yet:
-- Viewports 360/768/1200/1440 × the 9 pages × light/dark: horizontal overflow, header fit at 1200
-  in DE/EN/IT (see F5), screenshots.
-- Running the language dropdown with mouse and keyboard; no-JS run; outside tap on iOS Safari (a
-  document `click` listener can miss taps on non-clickable elements there, so worth one device
-  check); Safari Escape (F1).
-- Mobile menu: Tab loop, the Escape sequence, links closing the overlay.
-- Scroll-spy on home at the bottom of the page (visit strip in view, so gallery should not be marked).
-- Console errors on every page; axe-core scan (WCAG 2.2 AA); rendered contrast; visible focus.
-- `prefers-reduced-motion` emulation.
+- **axe-core (WCAG 2.2 AA scan):** `@axe-core/playwright` is not installed, and loading axe from a
+  CDN would mean opening another site. A custom contrast and heading scan was used instead. Adding
+  `@axe-core/playwright` as a test dependency needs your approval.
+- **Real browsers other than Chromium:** Safari (F1 behaviour, iOS outside tap) and Firefox (N1).
+  Only Chromium is available here.
+- **Real classic scrollbars:** headless Chromium hides them, so they were simulated with
+  `html { padding-right: 17px }`.
+- **Map iframe loading** (OpenStreetMap, external request) was not clicked.
+- **Automated end-to-end suite on jupiter:** the workflow does not exist yet.
 
-## Verdict: NOT READY to merge into main (verification incomplete, no defect blocks it)
+## Round 2 verdict (replaced by round 3: READY, see the top): NOT READY to merge into main
 
-- The static review found **no blocker and no major**. F1–F11 are minor or cosmetic and can be
-  fixed after merging.
-- The plan's runtime checks (overflow, header fit, keyboard and mouse behaviour, console, axe)
-  **did not run**, so this report cannot confirm them.
-- What it takes to reach READY: run the browser pass (preview on port 4173 or 5173, then rerun qa).
-  If that pass finds no blocker or major, the verdict becomes READY. It is worth fixing F1 and F3
-  before then, because both are small JS changes (frontend agent).
+The only finding that had to be fixed for READY (fixed in fa9e42f):
+
+- **N1 (major):** focusing a header control (menu button, language button, theme button, or Escape
+  refocus) scrolls the page up about half a screen. Opening and closing the mobile menu loses about
+  800px of scroll position, and the new current-section indicator then marks the wrong section.
+  It is a one-rule CSS fix that I tested in the browser (`scroll-margin-top` on the targets instead
+  of `scroll-padding-top` on `html`). Agent: frontend.
+
+Recommended in the same pass, but not blocking: N2 (1340px header edge, frontend) and N5 (home
+titles). Everything else passed in the browser: all 3 languages, the dropdown with mouse, keyboard
+and no JS, the 12° slant, the contact page, the strip, no overflow at 360/768/1200/1440 in either
+theme, and no console errors. After N1 is fixed, a short re-check of the mobile menu and the header
+buttons is enough to move to READY.
