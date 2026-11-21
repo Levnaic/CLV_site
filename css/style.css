@@ -388,23 +388,15 @@ a.contact-card p { color: var(--text-2); }
 }
 
 /* ---------- Drinks: stadium menu board ---------- */
-/* Ten category tabs. Phones / small tablets: one swipeable row that bleeds to the screen edges, snaps to
-   the tabs and fades out on the side that has more (.can-prev / .can-next, set by js/main.js; the active
-   tab is centred by js/main.js with scrollTo, never scrollIntoView, so the page does not jump vertically).
-   >= 900px: wrapped, centred pills. Vertical padding leaves room for the selected tab's hard shadow. */
+/* Category tabs: an equal-size grid (all tabs the same width and height, long labels wrap inside the
+   tab). 2 columns on phones, 4 columns from 640px (8 tabs = 4 x 2). Padding leaves room for the selected
+   tab's hard shadow and the skewed edges. */
 .drink-tabs {
-    --fade-l: 0px; --fade-r: 0px;
-    position: relative; /* offsetParent of the tabs (js/main.js centres the active one) */
-    display: flex; gap: .75rem; margin: 0 calc(var(--gutter) * -1) .5rem; padding: .6rem calc(var(--gutter) + 6px) 1.1rem; /* room for focus ring + shadow: overflow clips both */
-    overflow-x: auto; overscroll-behavior-x: contain; scroll-snap-type: x proximity; scroll-padding-inline: calc(var(--gutter) + 6px);
-    scrollbar-width: none;
-    -webkit-mask-image: linear-gradient(90deg, transparent, #000 var(--fade-l), #000 calc(100% - var(--fade-r)), transparent);
-    mask-image: linear-gradient(90deg, transparent, #000 var(--fade-l), #000 calc(100% - var(--fade-r)), transparent);
+    position: relative; /* offsetParent of the tabs (js/main.js) */
+    display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); grid-auto-rows: 1fr; gap: .75rem 1rem;
+    margin: 0 0 1.5rem; padding: .25rem 8px .75rem; /* room for the skewed edges and the selected tab's shadow */
 }
-.drink-tabs::-webkit-scrollbar { display: none; }
-.drink-tabs.can-prev { --fade-l: 2.25rem; }
-.drink-tabs.can-next { --fade-r: 2.25rem; }
-.drink-tab { position: relative; isolation: isolate; flex: none; scroll-snap-align: center; white-space: nowrap; min-height: 46px; padding: .45rem 1.1rem; background: none; border: 0; color: var(--text); font: 800 1.1rem/1.1 var(--font-head); text-transform: uppercase; letter-spacing: .06em; cursor: pointer; }
+.drink-tab { position: relative; isolation: isolate; display: flex; align-items: center; justify-content: center; min-width: 0; min-height: 52px; padding: .45rem .75rem; background: none; border: 0; color: var(--text); font: 800 1.05rem/1.1 var(--font-head); text-align: center; text-wrap: balance; text-transform: uppercase; letter-spacing: .05em; cursor: pointer; }
 .drink-tab::before { content: ""; position: absolute; inset: 0; z-index: -1; border: 2px solid var(--border-hard); background: var(--bg); transform: skewX(var(--skew)); transition: background .15s, border-color .15s, transform .15s var(--snap); }
 .drink-tab:hover::before { border-color: var(--accent); }
 .drink-tab:active::before { transform: skewX(var(--skew)) scale(.95); }
@@ -450,13 +442,16 @@ a.contact-card p { color: var(--text-2); }
 .drink-legend-title { color: var(--text-2); font: 800 .85rem/1.3 var(--font-head); letter-spacing: .16em; text-transform: uppercase; }
 .drink-legend ul { display: flex; flex-wrap: wrap; gap: .2rem 1.25rem; margin: .3rem 0 0; padding: 0; list-style: none; }
 .drink-legend-n { color: var(--accent-text); font-weight: 700; }
+@media (min-width: 640px) {
+    .drink-tabs { grid-template-columns: repeat(4, minmax(0, 1fr)); }
+}
 @media (min-width: 900px) {
-    .drink-tabs { flex-wrap: wrap; justify-content: center; gap: .75rem 1rem; margin: 0 0 1.5rem; padding: 0 6px .5rem; overflow: visible; scroll-snap-type: none; -webkit-mask-image: none; mask-image: none; }
-    .drink-tab { padding-inline: 1.3rem; }
+    .drink-tabs { gap: 1rem 1.25rem; padding-bottom: 1rem; }
+    .drink-tab { min-height: 56px; font-size: 1.15rem; padding-inline: 1.3rem; }
 }
 @media (min-width: 760px) {
     .drink-panel { grid-template-columns: 1fr 1fr; align-items: start; padding: 2.25rem 2.5rem 2.25rem; }
-    .drink-panel::after { content: ""; position: absolute; inset-block: 5.5rem 2.25rem; left: 50%; width: 2px; background: var(--line); transform: skewX(var(--skew)); }
+    .drink-panel::after { content: ""; position: absolute; inset-block: 5.5rem 2.25rem; left: calc(50% - 1px); width: 2px; background: var(--line); /* straight: a slanted line ran into the first letter of the right column */ }
     .drinks.tabs-on .drink-panel::after { inset-block: 2.25rem; }
     .drinks.tabs-on .drink-panel.has-note::after { inset-block: 5.25rem 2.25rem; }
 }

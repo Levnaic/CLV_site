@@ -35,12 +35,7 @@
               "size": "0,4 l",
               "price": 5.0
             }
-          ],
-          "description": {
-            "de": "vom Fass",
-            "en": "on tap",
-            "it": "alla spina"
-          }
+          ]
         },
         {
           "name": "Beck's Pils",
@@ -96,30 +91,19 @@
           "name": "Coca-Cola",
           "size": "0,2 l",
           "price": 3.5,
-          "additives": [
-            1,
-            2
-          ]
+          "additives": [1, 2]
         },
         {
-          "name": "Coca-Cola Zero Sugar",
+          "name": "Coca-Cola Zero",
           "size": "0,2 l",
           "price": 3.5,
-          "additives": [
-            1,
-            2,
-            8,
-            11
-          ]
+          "additives": [1, 2, 8, 11]
         },
         {
           "name": "Fanta Orange",
           "size": "0,2 l",
           "price": 3.5,
-          "additives": [
-            2,
-            9
-          ]
+          "additives": [2, 9]
         },
         {
           "name": "Sprite",
@@ -130,30 +114,30 @@
           "name": "Bitter Lemon",
           "size": "0,2 l",
           "price": 3.5,
-          "additives": [
-            3,
-            9
-          ]
-        },
-        {
-          "name": "Red Bull",
-          "size": "0,25 l",
-          "price": 4.0,
-          "additives": [
-            2,
-            4,
-            14
-          ],
-          "description": {
-            "de": "Classic, Sugarfree oder Red Edition",
-            "en": "Classic, Sugarfree or Red Edition",
-            "it": "Classic, Sugarfree o Red Edition"
-          }
+          "additives": [3, 9]
         },
         {
           "name": "Orangina",
           "size": "0,25 l",
           "price": 4.0
+        },
+        {
+          "name": {
+            "de": "Tafelwasser",
+            "en": "Table water",
+            "it": "Acqua da tavola"
+          },
+          "size": "0,2 l",
+          "price": 0.7
+        },
+        {
+          "name": {
+            "de": "Mineralwasser",
+            "en": "Mineral water",
+            "it": "Acqua minerale"
+          },
+          "size": "0,25 l",
+          "price": 2.3
         },
         {
           "name": "Richard's Sun Iced Tea",
@@ -166,27 +150,15 @@
           }
         },
         {
-          "name": {
-            "de": "Mineralwasser",
-            "en": "Mineral water",
-            "it": "Acqua minerale"
-          },
+          "name": "Red Bull",
           "size": "0,25 l",
-          "price": 2.3,
+          "price": 4.0,
+          "additives": [2, 4, 14],
           "description": {
-            "de": "Naturelle oder Classic",
-            "en": "Still or sparkling",
-            "it": "Naturale o frizzante"
+            "de": "Classic, Sugarfree oder Red Edition",
+            "en": "Classic, Sugarfree or Red Edition",
+            "it": "Classic, Sugarfree o Red Edition"
           }
-        },
-        {
-          "name": {
-            "de": "Tafelwasser",
-            "en": "Table water",
-            "it": "Acqua da tavola"
-          },
-          "size": "0,2 l",
-          "price": 0.7
         }
       ]
     },
@@ -224,12 +196,7 @@
             "en": "Tea",
             "it": "Tè"
           },
-          "price": 2.4,
-          "description": {
-            "de": "verschiedene Sorten",
-            "en": "various kinds",
-            "it": "vari gusti"
-          }
+          "price": 2.4
         }
       ]
     },
@@ -268,10 +235,7 @@
           "name": "Aperol Spritz",
           "size": "0,2 l",
           "price": 8.0,
-          "additives": [
-            2,
-            3
-          ]
+          "additives": [2, 3]
         },
         {
           "name": "Hugo",
@@ -287,26 +251,19 @@
           "name": "Martini Bianco",
           "size": "0,4 l",
           "price": 5.0,
-          "additives": [
-            5
-          ]
+          "additives": [5]
         },
         {
           "name": "Martini Rosso",
           "size": "0,4 l",
           "price": 5.0,
-          "additives": [
-            2,
-            5
-          ]
+          "additives": [2, 5]
         },
         {
           "name": "Campari Orange",
           "size": "0,4 l",
           "price": 7.0,
-          "additives": [
-            2
-          ]
+          "additives": [2]
         }
       ]
     },
@@ -322,43 +279,27 @@
         {
           "name": "Jacky Cola",
           "price": 8.0,
-          "additives": [
-            1,
-            2
-          ]
+          "additives": [1, 2]
         },
         {
           "name": "Vodka Red Bull",
           "price": 8.0,
-          "additives": [
-            2,
-            4,
-            14
-          ]
+          "additives": [2, 4, 14]
         },
         {
           "name": "Vodka Lemon",
           "price": 8.0,
-          "additives": [
-            3,
-            9
-          ]
+          "additives": [3, 9]
         },
         {
           "name": "Gin Tonic",
           "price": 8.0,
-          "additives": [
-            3
-          ]
+          "additives": [3]
         },
         {
           "name": "Red Gin Melon",
           "price": 8.0,
-          "additives": [
-            2,
-            4,
-            14
-          ],
+          "additives": [2, 4, 14],
           "description": {
             "de": "Red Bull Red Edition, Gin",
             "en": "Red Bull Red Edition, gin",
@@ -384,17 +325,13 @@
           "name": "Chivas Regal",
           "size": "2 cl",
           "price": 7.0,
-          "additives": [
-            2
-          ]
+          "additives": [2]
         },
         {
           "name": "Jameson",
           "size": "2 cl",
           "price": 7.0,
-          "additives": [
-            2
-          ]
+          "additives": [2]
         },
         {
           "name": "Jim Beam",
@@ -405,25 +342,19 @@
           "name": "Tullamore Dew",
           "size": "2 cl",
           "price": 7.0,
-          "additives": [
-            2
-          ]
+          "additives": [2]
         },
         {
           "name": "Carlos",
           "size": "2 cl",
           "price": 7.0,
-          "additives": [
-            2
-          ]
+          "additives": [2]
         },
         {
           "name": "Hennessy",
           "size": "2 cl",
           "price": 10.0,
-          "additives": [
-            2
-          ]
+          "additives": [2]
         }
       ]
     },
@@ -489,9 +420,7 @@
           "name": "Baileys",
           "size": "2 cl",
           "price": 4.0,
-          "additives": [
-            2
-          ]
+          "additives": [2]
         },
         {
           "name": "Grappa",

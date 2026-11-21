@@ -830,6 +830,11 @@ def drinks_html(lang):
             s = s.replace(".", ",")
         return f"{s} {cur}"
 
+    def fsize(s):
+        """Sizes are stored with a decimal comma ('0,25 l'); they follow the language's decimal style like the prices."""
+        s = str(s or "").replace(",", ".")
+        return s.replace(".", ",") if lang in DECIMAL_COMMA else s
+
     def sup(it):
         """Footnote numbers as a superscript, only for numbers the legend explains (none while it is null)."""
         nums = [n for n in it.get("additives") or [] if n in legend]
@@ -852,10 +857,10 @@ def drinks_html(lang):
             sizes = [s for s in sizes if s.get("price") is not None]
             size = ""
             if len(sizes) == 1 and sizes[0].get("size"):
-                size = f'<span class="drink-size">{esc(sizes[0]["size"])}</span>'
+                size = f'<span class="drink-size">{esc(fsize(sizes[0]["size"]))}</span>'
             if len(sizes) > 1:
                 prices = ('<span class="drink-prices">' + "".join(
-                    f'<span class="drink-opt"><span class="drink-size">{esc(s.get("size") or "")}</span>'
+                    f'<span class="drink-opt"><span class="drink-size">{esc(fsize(s.get("size")))}</span>'
                     f'<span class="drink-price">{price(s["price"])}</span></span>' for s in sizes) + "</span>")
             elif sizes:
                 prices = f'<span class="drink-price">{price(sizes[0]["price"])}</span>'
@@ -883,7 +888,7 @@ def drinks_html(lang):
         small += f'<div class="drink-notes">{notes}</div>'
     if small:
         small = f'\n                    <div class="drink-small">{small}</div>'
-    return ('<div class="drink-tabs" role="tablist" id="drinkTabs" hidden>' + "".join(tabs) + "</div>\n                    "
+    return (f'<div class="drink-tabs" role="tablist" id="drinkTabs" aria-label="{attr(t["drinkTabs"])}" hidden>' + "".join(tabs) + "</div>\n                    "
             + "\n                    ".join(panels) + small)
 
 
