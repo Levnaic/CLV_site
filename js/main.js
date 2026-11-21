@@ -233,23 +233,43 @@
         tabsEl.hidden = false;
         menu.classList.add('tabs-on');
         panels.forEach(p => p.setAttribute('role', 'tabpanel'));
-        const select = (tab, focus) => {
+        // On phones the tabs are one swipeable row (css/style.css .drink-tabs): the edge fades show
+        // which side has more, and the active tab is centred with scrollTo on the row itself. Never
+        // scrollIntoView / focus() scrolling: they would also move the page vertically.
+        const updateFades = () => {
+            const max = tabsEl.scrollWidth - tabsEl.clientWidth;
+            tabsEl.classList.toggle('can-prev', max > 1 && tabsEl.scrollLeft > 1);
+            tabsEl.classList.toggle('can-next', max > 1 && tabsEl.scrollLeft < max - 1);
+        };
+        const reveal = (tab, smooth) => {
+            if (tabsEl.scrollWidth <= tabsEl.clientWidth) return;
+            const left = tab.offsetLeft - (tabsEl.clientWidth - tab.offsetWidth) / 2;
+            tabsEl.scrollTo({ left, behavior: smooth && !reduceMq.matches ? 'smooth' : 'auto' });
+        };
+        const select = (tab, focus, smooth = true) => {
             tabs.forEach(b => {
                 const on = b === tab;
                 b.setAttribute('aria-selected', String(on));
                 b.tabIndex = on ? 0 : -1;
             });
             panels.forEach(p => { p.hidden = p.id !== tab.getAttribute('aria-controls'); });
-            if (focus) tab.focus();
+            if (focus) tab.focus({ preventScroll: true });
+            reveal(tab, smooth);
         };
+        tabsEl.addEventListener('scroll', updateFades, { passive: true });
+        window.addEventListener('resize', updateFades);
+        document.fonts?.ready.then(() => { updateFades(); reveal($('.drink-tab[aria-selected="true"]', tabsEl), false); });
         tabs.forEach(b => b.addEventListener('click', () => select(b)));
         tabsEl.addEventListener('keydown', e => {
-            if (e.key !== 'ArrowRight' && e.key !== 'ArrowLeft') return;
             const i = tabs.indexOf(document.activeElement);
             if (i < 0) return;
-            select(tabs[(i + (e.key === 'ArrowRight' ? 1 : -1) + tabs.length) % tabs.length], true);
+            const next = { ArrowRight: i + 1, ArrowLeft: i - 1, Home: 0, End: tabs.length - 1 }[e.key];
+            if (next === undefined) return;
+            e.preventDefault();
+            select(tabs[(next + tabs.length) % tabs.length], true);
         });
-        select(tabs[0]);
+        select(tabs[0], false, false);
+        updateFades();
         // Links like <a href="#drinks-menu" data-drink-tab="tap"> (beer tile) open that category first;
         // the default action then scrolls to the menu. Without JS all panels are visible anyway.
         document.addEventListener('click', e => {

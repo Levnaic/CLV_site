@@ -292,8 +292,9 @@ def fmt_dist(lang, km):
     return f'{I18N[lang]["nearAbout"]} {fmt_km(lang, km)} km'
 
 
-# Beer detection in data/drinks.json (names are matched in German, lower case). drinks.json has no
-# "is beer" flag, so this list decides; anything else (e.g. Apfelwein on tap) is never called a beer.
+# Beer detection in data/drinks.json: every item of a category with id "tap" or "beer": true is a beer
+# (Beck's Gold, Corona, Desperados ... carry no beer word). In other categories the German name is matched
+# against this list as a fallback; anything else is never called a beer.
 BEER_WORDS = ("pils", "weizen", "weißbier", "radler", "bier", "helles", "export", "lager", "kölsch", "bock")
 
 
@@ -303,8 +304,9 @@ def beer_groups(lang):
     out = []
     for c in DRINKS.get("categories", []):
         names = []
+        beer_cat = c["id"] == "tap" or c.get("beer") is True  # every item of these categories is a beer
         for it in c.get("items", []):
-            if not any(w in loc(it["name"], "de").lower() for w in BEER_WORDS):
+            if not beer_cat and not any(w in loc(it["name"], "de").lower() for w in BEER_WORDS):
                 continue
             n = loc(it["name"], lang)
             # Translations are common nouns ("wheat beer", "birra weizen") and go lower case inside a sentence;
@@ -802,15 +804,39 @@ def site_footer(lang, home=""):
     </footer>'''
 
 
+def additives_legend():
+    """The printed menu's footnote numbers (drinks.json additives_legend, {"1": {de, en, it}}).
+    Until the owner supplies the meaning, the numbers are NOT shown (they would be meaningless) and a
+    TODO is reported. Returns {int: localized text} or {}."""
+    legend = DRINKS.get("additives_legend")
+    if not isinstance(legend, dict) or not legend:
+        msg = ("drinks.json additives_legend: ask the owner for the meaning of the additive numbers 1–14 "
+               "printed on the menu (German law requires declaring them)")
+        if msg not in TODOS:
+            TODOS.append(msg)
+        return {}
+    return {int(k): v for k, v in legend.items() if str(k).isdigit()}
+
+
 def drinks_html(lang):
     cats = DRINKS.get("categories", [])
     cur = DRINKS.get("currency", "€")
+    t = I18N[lang]
+    legend = additives_legend()
 
     def price(n):
         s = f"{n:.2f}"
         if lang in DECIMAL_COMMA:
             s = s.replace(".", ",")
         return f"{s} {cur}"
+
+    def sup(it):
+        """Footnote numbers as a superscript, only for numbers the legend explains (none while it is null)."""
+        nums = [n for n in it.get("additives") or [] if n in legend]
+        if not nums:
+            return ""
+        return (f'<sup class="drink-add"><span class="sr-only">{esc(t["drinkAdditives"])} </span>'
+                f'{esc(",".join(str(n) for n in nums))}</sup>')
 
     tabs, panels = [], []
     for i, c in enumerate(cats):
@@ -820,18 +846,45 @@ def drinks_html(lang):
             f'aria-controls="panel-{cid}" tabindex="{0 if i == 0 else -1}">{esc(loc(c["name"], lang))}</button>')
         items = []
         for j, it in enumerate(c.get("items", [])):
-            size = f'<span class="drink-size">{esc(it["size"])}</span>' if it.get("size") else ""
+            # Prices: item.sizes = [{size, price}, ...] (e.g. 2 cl / 4 cl) or the single size + price.
+            # One price: the size sits small next to the name. Several: each price carries its own size.
+            sizes = it.get("sizes") or ([{"size": it.get("size"), "price": it.get("price")}] if it.get("price") is not None else [])
+            sizes = [s for s in sizes if s.get("price") is not None]
+            size = ""
+            if len(sizes) == 1 and sizes[0].get("size"):
+                size = f'<span class="drink-size">{esc(sizes[0]["size"])}</span>'
+            if len(sizes) > 1:
+                prices = ('<span class="drink-prices">' + "".join(
+                    f'<span class="drink-opt"><span class="drink-size">{esc(s.get("size") or "")}</span>'
+                    f'<span class="drink-price">{price(s["price"])}</span></span>' for s in sizes) + "</span>")
+            elif sizes:
+                prices = f'<span class="drink-price">{price(sizes[0]["price"])}</span>'
+            else:
+                prices = ""
             extra = loc(it.get("ingredients"), lang) or loc(it.get("description"), lang)
             desc = f'<p class="drink-desc">{esc(extra)}</p>' if extra else ""
+            # name | tail (dots + prices): a tail that does not fit wraps as a whole under the name
             items.append(
                 f'<div class="drink-item" style="--i:{j}"><div class="drink-head">'
-                f'<span class="drink-name">{esc(loc(it["name"], lang))}{size}</span><span class="drink-dots"></span>'
-                f'<span class="drink-price">{price(it["price"])}</span></div>{desc}</div>')
+                f'<span class="drink-name">{esc(loc(it["name"], lang))}{sup(it)}{size}</span>'
+                f'<span class="drink-tail"><span class="drink-dots"></span>{prices}</span></div>{desc}</div>')
+        note = loc(c.get("note"), lang)
+        note_html = f'<p class="drink-cat-note">{esc(note)}</p>' if note else ""
         panels.append(
-            f'<div class="drink-panel" id="panel-{cid}" aria-labelledby="tab-{cid}" tabindex="0">'
-            f'<h3 class="drink-cat-title">{esc(loc(c["name"], lang))}</h3>' + "".join(items) + "</div>")
+            f'<div class="drink-panel{" has-note" if note else ""}" id="panel-{cid}" aria-labelledby="tab-{cid}" tabindex="0">'
+            f'<h3 class="drink-cat-title">{esc(loc(c["name"], lang))}</h3>{note_html}' + "".join(items) + "</div>")
+    small = ""
+    if legend:
+        used = sorted({n for c in cats for it in c.get("items", []) for n in it.get("additives") or [] if n in legend})
+        lis = "".join(f'<li><span class="drink-legend-n">{n}</span> {esc(loc(legend[n], lang))}</li>' for n in used)
+        small += f'<div class="drink-legend"><p class="drink-legend-title">{esc(t["drinkAdditives"])}</p><ul>{lis}</ul></div>'
+    notes = "".join(f"<p>{esc(loc(n, lang))}</p>" for n in DRINKS.get("notes") or [])
+    if notes:
+        small += f'<div class="drink-notes">{notes}</div>'
+    if small:
+        small = f'\n                    <div class="drink-small">{small}</div>'
     return ('<div class="drink-tabs" role="tablist" id="drinkTabs" hidden>' + "".join(tabs) + "</div>\n                    "
-            + "\n                    ".join(panels))
+            + "\n                    ".join(panels) + small)
 
 
 # Decorative tile icons (currentColor, aria-hidden; the heading next to them carries the meaning)
@@ -850,16 +903,22 @@ def perks_html(lang):
     tiles = []
     if show_beers():
         groups = beer_groups(lang)
+        many = len(groups) > 1
+
+        def beer_link(cid, text):
+            return (f'<p class="more-link"><a href="#drinks-menu" data-drink-tab="{attr(cid)}">{esc(text)}'
+                    f'<span aria-hidden="true">&nbsp;→</span></a></p>')
+        # Beers sit in several menu tabs (on tap, bottled): each group links to its own tab with its prices
         chip_groups = "".join(
             f'<div class="chip-group{" chip-group-main" if i == 0 else ""}">'
             f'<p class="chip-label" id="beer-{cid}">{esc(label)}</p>'
-            f'<ul class="chips" aria-labelledby="beer-{cid}">' + "".join(f"<li>{esc(n)}</li>" for n, _ in names) + "</ul></div>"
+            f'<ul class="chips" aria-labelledby="beer-{cid}">' + "".join(f"<li>{esc(n)}</li>" for n, _ in names) + "</ul>"
+            + (beer_link(cid, t["beerLinkCat"].format(cat=label)) if many else "") + "</div>"
             for i, (cid, label, names) in enumerate(groups))
         tiles.append(
             f'<li class="card perk perk-beer reveal">{BEER_ICON}<h3>{esc(t["beerTitle"])}</h3>'
             f'<p>{esc(t["beerText"])}</p>{chip_groups}'
-            f'<p class="more-link"><a href="#drinks-menu" data-drink-tab="{attr(groups[0][0])}">{esc(t["beerLink"])}'
-            f'<span aria-hidden="true">&nbsp;→</span></a></p></li>')
+            + ("" if many else beer_link(groups[0][0], t["beerLink"])) + '</li>')
     if show_music():
         how = music_how(lang)
         how_html = f'<p>{esc(t["musicHow"].format(how=how))}</p>' if how else ""

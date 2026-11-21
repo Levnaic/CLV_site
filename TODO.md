@@ -34,6 +34,11 @@ Last updated: 2026-11-11.
 - [ ] `sports.confirmed`: check the sports list and set it to `true`
 - [ ] `events.confirmed`: check the event texts and set it to `true` (the detail texts are still missing)
 
+### Drinks menu (`data/drinks.json`)
+
+- [ ] **Additive numbers (`additives_legend`)**: ask the owner what the footnote numbers 1–14 printed on the menu mean (German law requires declaring additives). The numbers are already in `drinks.json` (`additives` per drink) but are **not shown on the site** until `additives_legend` is filled, because the numbers alone mean nothing. Fill it as `{"1": {"de": "...", "en": "...", "it": "..."}, ...}`: the site then shows them as superscripts and adds a legend under the menu. `python3 build.py` lists this until it is done.
+- [ ] Check the prices and the Italian/English drink texts against the printed menu once more.
+
 ## 3. Eintracht page (`/eintracht/`, `/en/eintracht/`, `/it/eintracht/`)
 
 The page shows "to be filled in" boxes until real data is in.

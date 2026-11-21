@@ -388,12 +388,27 @@ a.contact-card p { color: var(--text-2); }
 }
 
 /* ---------- Drinks: stadium menu board ---------- */
-.drink-tabs { display: grid; grid-template-columns: 1fr 1fr; gap: .75rem 1rem; margin-bottom: 1.75rem; padding-inline: 6px; }
-.drink-tab { position: relative; isolation: isolate; min-width: 0; overflow-wrap: anywhere; min-height: 46px; padding: .45rem .9rem; background: none; border: 0; color: var(--text); font: 800 1.1rem/1.1 var(--font-head); text-transform: uppercase; letter-spacing: .06em; cursor: pointer; }
+/* Ten category tabs. Phones / small tablets: one swipeable row that bleeds to the screen edges, snaps to
+   the tabs and fades out on the side that has more (.can-prev / .can-next, set by js/main.js; the active
+   tab is centred by js/main.js with scrollTo, never scrollIntoView, so the page does not jump vertically).
+   >= 900px: wrapped, centred pills. Vertical padding leaves room for the selected tab's hard shadow. */
+.drink-tabs {
+    --fade-l: 0px; --fade-r: 0px;
+    position: relative; /* offsetParent of the tabs (js/main.js centres the active one) */
+    display: flex; gap: .75rem; margin: 0 calc(var(--gutter) * -1) .5rem; padding: .6rem calc(var(--gutter) + 6px) 1.1rem; /* room for focus ring + shadow: overflow clips both */
+    overflow-x: auto; overscroll-behavior-x: contain; scroll-snap-type: x proximity; scroll-padding-inline: calc(var(--gutter) + 6px);
+    scrollbar-width: none;
+    -webkit-mask-image: linear-gradient(90deg, transparent, #000 var(--fade-l), #000 calc(100% - var(--fade-r)), transparent);
+    mask-image: linear-gradient(90deg, transparent, #000 var(--fade-l), #000 calc(100% - var(--fade-r)), transparent);
+}
+.drink-tabs::-webkit-scrollbar { display: none; }
+.drink-tabs.can-prev { --fade-l: 2.25rem; }
+.drink-tabs.can-next { --fade-r: 2.25rem; }
+.drink-tab { position: relative; isolation: isolate; flex: none; scroll-snap-align: center; white-space: nowrap; min-height: 46px; padding: .45rem 1.1rem; background: none; border: 0; color: var(--text); font: 800 1.1rem/1.1 var(--font-head); text-transform: uppercase; letter-spacing: .06em; cursor: pointer; }
 .drink-tab::before { content: ""; position: absolute; inset: 0; z-index: -1; border: 2px solid var(--border-hard); background: var(--bg); transform: skewX(var(--skew)); transition: background .15s, border-color .15s, transform .15s var(--snap); }
 .drink-tab:hover::before { border-color: var(--accent); }
 .drink-tab:active::before { transform: skewX(var(--skew)) scale(.95); }
-.drink-tab:focus-visible { outline-offset: 5px; }
+.drink-tab:focus-visible { outline-offset: 3px; }
 .drink-tab[aria-selected="true"] { color: var(--on-accent); }
 .drink-tab[aria-selected="true"]::before { background: var(--accent); border-color: var(--accent); box-shadow: 4px 4px 0 var(--text); }
 .drink-panel {
@@ -410,18 +425,40 @@ a.contact-card p { color: var(--text-2); }
 .drink-cat-title { grid-column: 1 / -1; margin: 0; color: var(--accent-text); font-size: clamp(1.9rem, 5vw, 2.7rem); font-style: italic; }
 .drinks.tabs-on .drink-cat-title { position: absolute; width: 1px; height: 1px; overflow: hidden; clip-path: inset(50%); white-space: nowrap; }
 .drinks.tabs-on .drink-panel + .drink-panel { margin-top: 0; }
-.drink-head { display: flex; align-items: baseline; gap: .6rem; color: var(--text); }
-.drink-name { font: 800 1.4rem/1.1 var(--font-head); text-transform: uppercase; letter-spacing: .03em; }
-.drink-size { margin-left: .6rem; color: var(--muted); font: 600 .85rem var(--font-body); letter-spacing: .06em; text-transform: none; }
+/* Category note ("mit 4 cl Spirituose"): visible even when the tab already names the category */
+.drink-cat-note { grid-column: 1 / -1; display: flex; align-items: center; gap: .6rem; margin: 0; color: var(--text); font: 800 1.05rem/1.2 var(--font-head); letter-spacing: .14em; text-transform: uppercase; }
+.drink-cat-note::before { content: ""; flex: none; width: .5rem; height: .95rem; background: var(--accent); transform: skewX(var(--skew)); }
+/* Row: name | tail (dots + price[s]). The tail wraps as a whole under a long name (or two prices that do
+   not fit), so a leader line always runs into the price and nothing overflows at 360px. */
+.drink-head { display: flex; flex-wrap: wrap; align-items: baseline; column-gap: .6rem; color: var(--text); }
+.drink-name { flex: 0 1 auto; min-width: 0; overflow-wrap: anywhere; font: 800 1.4rem/1.1 var(--font-head); text-transform: uppercase; letter-spacing: .03em; }
+.drink-tail { flex: 1 1 auto; display: flex; align-items: baseline; gap: .6rem; min-width: 0; }
+.drink-size { margin-left: .6rem; color: var(--muted); font: 600 .85rem var(--font-body); letter-spacing: .06em; text-transform: none; white-space: nowrap; }
 .drink-dots { flex: 1; min-width: 1rem; border-bottom: 2px dashed var(--line); transform: translateY(-.3em); }
 .drink-price { font: italic 800 1.6rem/1 var(--font-head); letter-spacing: .01em; color: var(--accent-text); white-space: nowrap; font-variant-numeric: tabular-nums; }
+/* Several sizes in one row: each price carries its own size */
+.drink-prices { display: flex; flex-wrap: wrap; justify-content: flex-end; gap: .15rem 1.1rem; }
+.drink-opt { display: inline-flex; align-items: baseline; gap: .4rem; white-space: nowrap; }
+.drink-opt .drink-size { margin-left: 0; }
+/* Additive footnote numbers (only rendered once drinks.json has additives_legend) */
+.drink-add { margin-left: .2em; color: var(--accent-text); font: 700 .6em/0 var(--font-body); letter-spacing: .04em; vertical-align: super; }
 .drink-desc { margin: .2rem 0 0; color: var(--muted); font-size: .95rem; max-width: 42ch; }
-@media (min-width: 560px) { .drink-tabs { display: flex; flex-wrap: wrap; } .drink-tab { padding: .45rem 1.3rem; } }
+/* Small print under the board: VAT / allergen notes and the additives legend */
+.drink-small { display: grid; gap: .9rem; max-width: 62ch; margin-top: 2.25rem; color: var(--muted); font-size: .9rem; line-height: 1.5; }
+.drink-small p { margin: 0; }
+.drink-notes { display: grid; gap: .4rem; }
+.drink-legend-title { color: var(--text-2); font: 800 .85rem/1.3 var(--font-head); letter-spacing: .16em; text-transform: uppercase; }
+.drink-legend ul { display: flex; flex-wrap: wrap; gap: .2rem 1.25rem; margin: .3rem 0 0; padding: 0; list-style: none; }
+.drink-legend-n { color: var(--accent-text); font-weight: 700; }
+@media (min-width: 900px) {
+    .drink-tabs { flex-wrap: wrap; justify-content: center; gap: .75rem 1rem; margin: 0 0 1.5rem; padding: 0 6px .5rem; overflow: visible; scroll-snap-type: none; -webkit-mask-image: none; mask-image: none; }
+    .drink-tab { padding-inline: 1.3rem; }
+}
 @media (min-width: 760px) {
-    .drink-tabs { justify-content: center; }
     .drink-panel { grid-template-columns: 1fr 1fr; align-items: start; padding: 2.25rem 2.5rem 2.25rem; }
     .drink-panel::after { content: ""; position: absolute; inset-block: 5.5rem 2.25rem; left: 50%; width: 2px; background: var(--line); transform: skewX(var(--skew)); }
     .drinks.tabs-on .drink-panel::after { inset-block: 2.25rem; }
+    .drinks.tabs-on .drink-panel.has-note::after { inset-block: 5.25rem 2.25rem; }
 }
 /* Drink items slide in when a category is chosen */
 .drink-item { animation: slide-in .3s var(--snap) both; animation-delay: calc(var(--i, 0) * 40ms); }
@@ -435,6 +472,7 @@ a.contact-card p { color: var(--text-2); }
 .perk-icon { position: absolute; top: 1.1rem; right: 1.1rem; width: 2.9rem; height: 2.9rem; fill: none; stroke: var(--accent-text); stroke-width: 3; stroke-linecap: square; stroke-linejoin: miter; }
 .perk-icon .nif { fill: var(--accent-text); stroke: none; }
 .perk .more-link { margin-top: auto; }
+.perk .chip-group .more-link { margin-top: -.35rem; }
 .chip-group { display: grid; gap: .45rem; }
 .card.perk .chip-label { color: var(--muted); font: 700 .78rem/1.3 var(--font-body); letter-spacing: .14em; text-transform: uppercase; }
 .chips { display: flex; flex-wrap: wrap; gap: .6rem .8rem; margin: 0; padding: 0 0 0 4px; list-style: none; }

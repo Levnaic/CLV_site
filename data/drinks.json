@@ -1,44 +1,575 @@
 {
   "currency": "€",
+  "source": "Transcribed from the printed bar menu (photos from the owner, 2026-11-21). Prices are the current handwritten ones. 'additives' are the footnote numbers printed next to a drink; their legend is not in the photos yet (see additives_legend).",
+  "additives_legend": null,
+  "notes": [
+    {
+      "de": "Alle Preise sind in Euro, inkl. gesetzlicher MwSt. und Bedienung.",
+      "en": "All prices are in euros, including VAT and service.",
+      "it": "Tutti i prezzi sono in euro, IVA e servizio inclusi."
+    },
+    {
+      "de": "Alle Weine enthalten Sulfite und können Spuren von Eiweiß und Milchproteinen enthalten. Für Allergiker-Informationen sprechen Sie uns bitte an.",
+      "en": "All wines contain sulphites and may contain traces of egg white and milk proteins. Please ask us for allergen information.",
+      "it": "Tutti i vini contengono solfiti e possono contenere tracce di albume e proteine del latte. Per informazioni sugli allergeni chiedete al personale."
+    }
+  ],
   "categories": [
     {
-      "id": "tap",
-      "name": { "de": "Frisch gezapft", "en": "Fresh on tap", "it": "Alla spina" },
+      "id": "beer",
+      "name": {
+        "de": "Bier",
+        "en": "Beer",
+        "it": "Birra"
+      },
+      "beer": true,
       "items": [
-        { "name": "Pils", "size": "0,3 l", "price": 3.4 },
-        { "name": "Pils", "size": "0,5 l", "price": 4.6 },
-        { "name": { "de": "Weizen", "en": "Wheat beer", "it": "Birra weizen" }, "size": "0,5 l", "price": 4.8 },
-        { "name": { "de": "Radler", "en": "Shandy", "it": "Radler" }, "size": "0,5 l", "price": 4.6 }
-      ]
-    },
-    {
-      "id": "cocktails",
-      "name": "Cocktails",
-      "items": [
-        { "name": "Mojito", "price": 9.5, "ingredients": { "de": "Weißer Rum, Limette, Minze, Rohrzucker, Soda", "en": "White rum, lime, mint, cane sugar, soda", "it": "Rum bianco, lime, menta, zucchero di canna, soda" } },
-        { "name": "Aperol Spritz", "price": 7.5, "ingredients": { "de": "Aperol, Prosecco, Soda, Orange", "en": "Aperol, prosecco, soda, orange", "it": "Aperol, prosecco, soda, arancia" } },
-        { "name": "Gin Tonic", "price": 8.5, "ingredients": { "de": "Gin, Tonic Water, Limette", "en": "Gin, tonic water, lime", "it": "Gin, acqua tonica, lime" } },
-        { "name": "Long Island Iced Tea", "price": 10.5, "ingredients": { "de": "Wodka, Gin, Rum, Tequila, Triple Sec, Zitrone, Cola", "en": "Vodka, gin, rum, tequila, triple sec, lemon, cola", "it": "Vodka, gin, rum, tequila, triple sec, limone, cola" } }
-      ]
-    },
-    {
-      "id": "spirits",
-      "name": { "de": "Spirituosen", "en": "Spirits", "it": "Distillati" },
-      "items": [
-        { "name": "Whisky", "size": "4 cl", "price": 5.5 },
-        { "name": "Gin", "size": "4 cl", "price": 5.0 },
-        { "name": { "de": "Rum", "en": "Rum", "it": "Rum" }, "size": "4 cl", "price": 5.0 },
-        { "name": { "de": "Wodka", "en": "Vodka", "it": "Vodka" }, "size": "4 cl", "price": 4.5 }
+        {
+          "name": "Heineken Extra Cold",
+          "sizes": [
+            {
+              "size": "0,25 l",
+              "price": 4.0
+            },
+            {
+              "size": "0,4 l",
+              "price": 5.0
+            }
+          ],
+          "description": {
+            "de": "vom Fass",
+            "en": "on tap",
+            "it": "alla spina"
+          }
+        },
+        {
+          "name": "Beck's Pils",
+          "size": "0,33 l",
+          "price": 3.5
+        },
+        {
+          "name": "Beck's Gold",
+          "size": "0,33 l",
+          "price": 3.5
+        },
+        {
+          "name": "Binding Römer Pils",
+          "size": "0,5 l",
+          "price": 3.5
+        },
+        {
+          "name": "Krombacher Weizen",
+          "size": "0,5 l",
+          "price": 4.5
+        },
+        {
+          "name": "Corona Extra",
+          "size": "0,355 l",
+          "price": 4.5
+        },
+        {
+          "name": "Desperados",
+          "size": "0,33 l",
+          "price": 4.5
+        },
+        {
+          "name": "Heineken 0.0",
+          "size": "0,33 l",
+          "price": 4.0,
+          "description": {
+            "de": "alkoholfrei",
+            "en": "alcohol-free",
+            "it": "analcolica"
+          }
+        }
       ]
     },
     {
       "id": "soft",
-      "name": { "de": "Alkoholfrei", "en": "Non-alcoholic", "it": "Analcolici" },
+      "name": {
+        "de": "Softdrinks",
+        "en": "Soft drinks",
+        "it": "Bibite"
+      },
       "items": [
-        { "name": "Cola / Fanta / Sprite", "size": "0,33 l", "price": 3.2 },
-        { "name": { "de": "Apfelschorle", "en": "Apple spritzer", "it": "Succo di mela frizzante" }, "size": "0,4 l", "price": 3.5 },
-        { "name": { "de": "Alkoholfreies Bier", "en": "Alcohol-free beer", "it": "Birra analcolica" }, "size": "0,5 l", "price": 4.2 },
-        { "name": { "de": "Wasser", "en": "Water", "it": "Acqua" }, "size": "0,75 l", "price": 6.0 }
+        {
+          "name": "Coca-Cola",
+          "size": "0,2 l",
+          "price": 3.5,
+          "additives": [
+            1,
+            2
+          ]
+        },
+        {
+          "name": "Coca-Cola Zero Sugar",
+          "size": "0,2 l",
+          "price": 3.5,
+          "additives": [
+            1,
+            2,
+            8,
+            11
+          ]
+        },
+        {
+          "name": "Fanta Orange",
+          "size": "0,2 l",
+          "price": 3.5,
+          "additives": [
+            2,
+            9
+          ]
+        },
+        {
+          "name": "Sprite",
+          "size": "0,2 l",
+          "price": 3.5
+        },
+        {
+          "name": "Bitter Lemon",
+          "size": "0,2 l",
+          "price": 3.5,
+          "additives": [
+            3,
+            9
+          ]
+        },
+        {
+          "name": "Red Bull",
+          "size": "0,25 l",
+          "price": 4.0,
+          "additives": [
+            2,
+            4,
+            14
+          ],
+          "description": {
+            "de": "Classic, Sugarfree oder Red Edition",
+            "en": "Classic, Sugarfree or Red Edition",
+            "it": "Classic, Sugarfree o Red Edition"
+          }
+        },
+        {
+          "name": "Orangina",
+          "size": "0,25 l",
+          "price": 4.0
+        },
+        {
+          "name": "Richard's Sun Iced Tea",
+          "size": "0,33 l",
+          "price": 4.0,
+          "description": {
+            "de": "Pfirsich, Zitrone, Blaubeere oder Wassermelone & Ananas",
+            "en": "Peach, lemon, blueberry or watermelon & pineapple",
+            "it": "Pesca, limone, mirtillo o anguria e ananas"
+          }
+        },
+        {
+          "name": {
+            "de": "Mineralwasser",
+            "en": "Mineral water",
+            "it": "Acqua minerale"
+          },
+          "size": "0,25 l",
+          "price": 2.3,
+          "description": {
+            "de": "Naturelle oder Classic",
+            "en": "Still or sparkling",
+            "it": "Naturale o frizzante"
+          }
+        },
+        {
+          "name": {
+            "de": "Tafelwasser",
+            "en": "Table water",
+            "it": "Acqua da tavola"
+          },
+          "size": "0,2 l",
+          "price": 0.7
+        }
+      ]
+    },
+    {
+      "id": "hot",
+      "name": {
+        "de": "Heißgetränke",
+        "en": "Hot drinks",
+        "it": "Bevande calde"
+      },
+      "items": [
+        {
+          "name": {
+            "de": "Kaffee",
+            "en": "Coffee",
+            "it": "Caffè"
+          },
+          "price": 3.0
+        },
+        {
+          "name": "Espresso",
+          "price": 2.5
+        },
+        {
+          "name": "Cappuccino",
+          "price": 3.3
+        },
+        {
+          "name": "Latte Macchiato",
+          "price": 3.9
+        },
+        {
+          "name": {
+            "de": "Tee",
+            "en": "Tea",
+            "it": "Tè"
+          },
+          "price": 2.4,
+          "description": {
+            "de": "verschiedene Sorten",
+            "en": "various kinds",
+            "it": "vari gusti"
+          }
+        }
+      ]
+    },
+    {
+      "id": "aperitif",
+      "name": {
+        "de": "Wein, Prosecco & Aperitif",
+        "en": "Wine, prosecco & aperitifs",
+        "it": "Vino, prosecco e aperitivi"
+      },
+      "items": [
+        {
+          "name": {
+            "de": "Weißwein",
+            "en": "White wine",
+            "it": "Vino bianco"
+          },
+          "size": "0,2 l",
+          "price": 5.0
+        },
+        {
+          "name": {
+            "de": "Weinschorle",
+            "en": "Wine spritzer",
+            "it": "Vino con acqua frizzante"
+          },
+          "size": "0,2 l",
+          "price": 6.0
+        },
+        {
+          "name": "Prosecco",
+          "size": "0,1 l",
+          "price": 4.5
+        },
+        {
+          "name": "Aperol Spritz",
+          "size": "0,2 l",
+          "price": 8.0,
+          "additives": [
+            2,
+            3
+          ]
+        },
+        {
+          "name": "Hugo",
+          "size": "0,2 l",
+          "price": 7.0
+        },
+        {
+          "name": "Sherry",
+          "size": "0,4 l",
+          "price": 6.0
+        },
+        {
+          "name": "Martini Bianco",
+          "size": "0,4 l",
+          "price": 5.0,
+          "additives": [
+            5
+          ]
+        },
+        {
+          "name": "Martini Rosso",
+          "size": "0,4 l",
+          "price": 5.0,
+          "additives": [
+            2,
+            5
+          ]
+        },
+        {
+          "name": "Campari Orange",
+          "size": "0,4 l",
+          "price": 7.0,
+          "additives": [
+            2
+          ]
+        }
+      ]
+    },
+    {
+      "id": "longdrinks",
+      "name": "Longdrinks",
+      "note": {
+        "de": "mit 4 cl Spirituose",
+        "en": "with 4 cl of spirit",
+        "it": "con 4 cl di distillato"
+      },
+      "items": [
+        {
+          "name": "Jacky Cola",
+          "price": 8.0,
+          "additives": [
+            1,
+            2
+          ]
+        },
+        {
+          "name": "Vodka Red Bull",
+          "price": 8.0,
+          "additives": [
+            2,
+            4,
+            14
+          ]
+        },
+        {
+          "name": "Vodka Lemon",
+          "price": 8.0,
+          "additives": [
+            3,
+            9
+          ]
+        },
+        {
+          "name": "Gin Tonic",
+          "price": 8.0,
+          "additives": [
+            3
+          ]
+        },
+        {
+          "name": "Red Gin Melon",
+          "price": 8.0,
+          "additives": [
+            2,
+            4,
+            14
+          ],
+          "description": {
+            "de": "Red Bull Red Edition, Gin",
+            "en": "Red Bull Red Edition, gin",
+            "it": "Red Bull Red Edition, gin"
+          }
+        }
+      ]
+    },
+    {
+      "id": "whiskey",
+      "name": {
+        "de": "Whiskey & Cognac",
+        "en": "Whiskey & cognac",
+        "it": "Whiskey e cognac"
+      },
+      "items": [
+        {
+          "name": "Jack Daniel's",
+          "size": "2 cl",
+          "price": 5.5
+        },
+        {
+          "name": "Chivas Regal",
+          "size": "2 cl",
+          "price": 7.0,
+          "additives": [
+            2
+          ]
+        },
+        {
+          "name": "Jameson",
+          "size": "2 cl",
+          "price": 7.0,
+          "additives": [
+            2
+          ]
+        },
+        {
+          "name": "Jim Beam",
+          "size": "2 cl",
+          "price": 7.0
+        },
+        {
+          "name": "Tullamore Dew",
+          "size": "2 cl",
+          "price": 7.0,
+          "additives": [
+            2
+          ]
+        },
+        {
+          "name": "Carlos",
+          "size": "2 cl",
+          "price": 7.0,
+          "additives": [
+            2
+          ]
+        },
+        {
+          "name": "Hennessy",
+          "size": "2 cl",
+          "price": 10.0,
+          "additives": [
+            2
+          ]
+        }
+      ]
+    },
+    {
+      "id": "shots",
+      "name": "Shots",
+      "items": [
+        {
+          "name": "Vodka",
+          "sizes": [
+            {
+              "size": "2 cl",
+              "price": 3.5
+            },
+            {
+              "size": "4 cl",
+              "price": 5.0
+            }
+          ]
+        },
+        {
+          "name": "Tequila",
+          "sizes": [
+            {
+              "size": "2 cl",
+              "price": 3.5
+            },
+            {
+              "size": "4 cl",
+              "price": 5.0
+            }
+          ]
+        },
+        {
+          "name": "Slivovitz",
+          "sizes": [
+            {
+              "size": "2 cl",
+              "price": 3.5
+            },
+            {
+              "size": "4 cl",
+              "price": 5.0
+            }
+          ]
+        },
+        {
+          "name": "Raki",
+          "size": "2 cl",
+          "price": 3.5
+        },
+        {
+          "name": "Fernet Branca",
+          "size": "2 cl",
+          "price": 3.5
+        },
+        {
+          "name": "Sambuca",
+          "size": "2 cl",
+          "price": 3.5
+        },
+        {
+          "name": "Baileys",
+          "size": "2 cl",
+          "price": 4.0,
+          "additives": [
+            2
+          ]
+        },
+        {
+          "name": "Grappa",
+          "size": "2 cl",
+          "price": 4.0
+        },
+        {
+          "name": "Gin",
+          "size": "2 cl",
+          "price": 4.0
+        },
+        {
+          "name": "Erdbeer-Limes",
+          "size": "2 cl",
+          "price": 4.0
+        }
+      ]
+    },
+    {
+      "id": "bottles",
+      "name": {
+        "de": "Flaschen",
+        "en": "Bottles",
+        "it": "Bottiglie"
+      },
+      "items": [
+        {
+          "name": {
+            "de": "Rotwein",
+            "en": "Red wine",
+            "it": "Vino rosso"
+          },
+          "size": "0,75 l",
+          "price": 20.0
+        },
+        {
+          "name": {
+            "de": "Weißwein",
+            "en": "White wine",
+            "it": "Vino bianco"
+          },
+          "size": "0,75 l",
+          "price": 20.0
+        },
+        {
+          "name": "Prosecco",
+          "size": "0,75 l",
+          "price": 20.0
+        },
+        {
+          "name": "Absolut Vodka",
+          "size": "0,7 l",
+          "price": 90.0
+        },
+        {
+          "name": "Jägermeister",
+          "size": "0,7 l",
+          "price": 90.0
+        },
+        {
+          "name": "Jack Daniel's",
+          "size": "0,7 l",
+          "price": 110.0
+        },
+        {
+          "name": "Belvedere Vodka",
+          "size": "0,7 l",
+          "price": 130.0
+        },
+        {
+          "name": {
+            "de": "Champagner Grand Siècle",
+            "en": "Champagne Grand Siècle",
+            "it": "Champagne Grand Siècle"
+          },
+          "size": "0,75 l",
+          "price": 160.0
+        }
       ]
     }
   ]
