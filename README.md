@@ -1,4 +1,4 @@
-# C'est la vie Sports Bar – Website
+# C'est la Vie Café & Sportsbar – Website
 
 Static site (HTML/CSS/vanilla JS). All HTML pages are **generated** by `build.py`
 (Python 3, standard library only). Do not edit the generated HTML by hand.
@@ -9,9 +9,9 @@ Static site (HTML/CSS/vanilla JS). All HTML pages are **generated** by `build.py
 |---|---|
 | `data/site.json` | All business facts (address, phone, hours, venue facts, social links, legal data). Values starting with `TODO` are missing and are left out of the output. |
 | `data/drinks.json` | Drinks menu (DE/EN names, sizes, prices). |
-| `data/i18n.json` | All page texts in German and English. |
+| `data/i18n.json` | All page texts in German, English and Italian. |
 | `data/schedule.json` | Match schedule (see below). |
-| `build.py` | Generates `index.html`, `impressum.html`, `datenschutz.html`, `spielplan/`, and the same under `en/` (`en/schedule/`). |
+| `build.py` | Generates `index.html`, `impressum.html`, `datenschutz.html`, `spielplan/`, `kontakt/`, `robots.txt`, `sitemap.xml`, and the same pages under `en/` and `it/`. |
 | `css/`, `js/`, `assets/` | Design, small progressive-enhancement script, images. |
 
 ## Build
@@ -24,16 +24,20 @@ python3 -m http.server 8000      # preview at http://localhost:8000
 `build.py` prints a TODO report: every fact still missing in `data/site.json`.
 The domain is set in one place: `SITE_URL` at the top of `build.py`.
 
+## Deployment
+
+See `docs/deployment.md` (setup, switches, going live) and `docs/runbooks/rollback.md`.
+
 ## Updating the match schedule
 
 1. Open `data/schedule.json` and add one object per match the bar shows:
 
    ```json
    {
-     "id": "sge-bvb-2027-03-06",
+     "id": "bvb-fcb-2027-03-06",
      "competition": "Bundesliga",
-     "home": "Eintracht Frankfurt",
-     "away": "Borussia Dortmund",
+     "home": "Borussia Dortmund",
+     "away": "Bayern München",
      "start": "2027-03-06T15:30:00+01:00",
      "note": { "de": "Ton an, Reservierung empfohlen", "en": "Sound on, booking recommended" }
    }
@@ -43,10 +47,11 @@ The domain is set in one place: `SITE_URL` at the top of `build.py`.
    URL-safe. `note` is optional.
 2. Delete the entries with `"example": true` (they are clearly marked examples and get no
    `SportsEvent` schema).
-3. Run `python3 build.py`, check the result, then commit and deploy.
+3. Run `python3 build.py`, check the result, then commit and merge to `main` (this deploys once
+   uploads are switched on, see `docs/deployment.md`).
 
-Past matches disappear automatically **at build time** (3 hours after kick-off), so rebuild at
-least once per matchday – or after every schedule change.
+Past matches are hidden **at build time** (3 hours after kick-off). Once uploads are switched on,
+the deploy workflow rebuilds the site every day and on every change to `main`.
 
 ## Before launch
 
@@ -54,14 +59,15 @@ least once per matchday – or after every schedule change.
   (`hours.confirmed: true`), sports and events.
 - Replace the placeholder images in `assets/img/` with real photos and set
   `images.photos_are_real` to `true` (this switches on the descriptive alt texts).
-- Set the real domain in `SITE_URL` in `build.py`.
+- The gallery and "About us" photo are off (`images.show_gallery`, `images.show_about_photo`).
+- Set `NOINDEX = False` in `build.py`, then go live as described in `docs/deployment.md` (step 6).
 
 ## Prompt for the AI follow-up (run after all TODOs are filled)
 
 Copy everything in the block below into a new AI session started in this repository.
 
 ```text
-You are working in the static website repository for "C'est la vie Sports Bar"
+You are working in the static website repository for "C'est la Vie Café & Sportsbar"
 (Frankfurt-Niederrad). The owner has now filled in the missing business facts and replaced
 placeholders. Your job is to finish the SEO / AEO / GEO work, verify it, and report honestly.
 The codebase may have changed since this prompt was written: read README.md, build.py,
@@ -86,7 +92,8 @@ What to do
    owner really confirmed the data. Sanity-check values (phone format, coordinates in
    Frankfurt-Niederrad, postal code matches the street, URLs well-formed). Report anything
    that is inconsistent.
-2. Domain: set the single SITE_URL constant in build.py to the real domain. Rebuild so that
+2. Domain: confirm the single SITE_URL constant in build.py is the real domain, and that
+   NOINDEX is False at launch. Rebuild so that
    canonical, hreflang, og:url, sitemap, robots.txt Sitemap line and JSON-LD all use it, and
    make sure no "DOMAIN" placeholder is left anywhere in the output.
 3. Content and schema: confirm the generated output now contains the real data: contact
@@ -113,7 +120,7 @@ Final report (short, honest)
 - What changed, what was verified and how, and what could not be verified.
 - Remaining TODOs or inconsistent data the owner must fix.
 - Off-site tasks still open: Google Business Profile, Apple Business Connect, Bing Places,
-  directories (Yelp, TripAdvisor, local Frankfurt), review requests, local mentions (Eintracht
+  directories (Yelp, TripAdvisor, local Frankfurt), review requests, local mentions (sports
   fan clubs, hotels, city guides), consistent name/address/phone everywhere.
 - When to run a first ai-visibility-monitor baseline (about 3-4 weeks after launch, then
   monthly) and the query list to use.

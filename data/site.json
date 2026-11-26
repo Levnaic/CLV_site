@@ -42,68 +42,65 @@
   },
   "hours": {
     "confirmed": false,
-    "note": "Diese Zeiten stammen aus dem bisherigen Platzhalter in js/main.js. Bitte prüfen. Solange confirmed=false, kommen die Zeiten NICHT ins Schema (openingHoursSpecification).",
+    "note": "Vorläufige Zeiten laut Interview vom 2026-11-26, noch zu bestätigen. Solange confirmed=false, kommen die Zeiten NICHT ins Schema (openingHoursSpecification).",
     "days": {
       "Monday": {
-        "open": "16:00",
-        "close": "01:00"
+        "open": "11:00",
+        "close": "03:00"
       },
       "Tuesday": {
-        "open": "16:00",
-        "close": "01:00"
+        "open": "11:00",
+        "close": "03:00"
       },
       "Wednesday": {
-        "open": "16:00",
-        "close": "01:00"
+        "open": "11:00",
+        "close": "03:00"
       },
       "Thursday": {
-        "open": "16:00",
-        "close": "01:00"
+        "open": "11:00",
+        "close": "03:00"
       },
       "Friday": {
-        "open": "16:00",
+        "open": "11:00",
         "close": "03:00"
       },
       "Saturday": {
-        "open": "16:00",
+        "open": "11:00",
         "close": "03:00"
       },
       "Sunday": {
-        "open": "14:00",
-        "close": "00:00"
+        "open": "11:00",
+        "close": "03:00"
       }
     }
   },
   "venue": {
     "music_choice": true,
     "music_choice_how": {
-      "de": "TODO: Wie wünschen sich Gäste Musik? (z. B. Zuruf an der Theke, Playlist, Jukebox)",
-      "en": "TODO: How do guests choose the music?",
-      "it": "TODO: Come scelgono la musica i clienti?"
+      "de": "Wünsche einfach an der Theke sagen.",
+      "en": "Just ask at the bar.",
+      "it": "Basta chiedere al bancone."
     },
     "beer_variety": true,
-    "screens": "TODO: Anzahl Bildschirme",
-    "seats": "TODO: Anzahl Sitzplätze",
-    "sound_on_for_eintracht": "TODO: true/false – Ton bei Eintracht-Spielen an?",
-    "shows_all_eintracht_matches": "TODO: true/false – alle Eintracht-Spiele (Heim und Auswärts)?",
-    "subscriptions": "TODO: Liste, z. B. [\"Sky\", \"DAZN\"]",
-    "accepts_reservations": "TODO: true/false",
+    "screens": 2,
+    "seats": 30,
+    "subscriptions": ["DAZN"],
+    "accepts_reservations": true,
     "reservation_how": {
-      "de": "TODO: Wie reserviert man? (Telefon / WhatsApp / E-Mail)",
-      "en": "TODO: How to reserve",
-      "it": "TODO: Come si prenota"
+      "de": "Per Telefon.",
+      "en": "By phone.",
+      "it": "Per telefono."
     },
-    "price_range": "TODO: €, €€ oder €€€"
+    "price_range": "€"
   },
   "sports": {
-    "confirmed": false,
-    "note": "Aus dem bisherigen Seitentext übernommen, vom Inhaber noch nicht bestätigt.",
+    "confirmed": true,
+    "note": "Bestätigt im Interview vom 2026-11-26.",
     "items": [
-      "Bundesliga",
-      "Eintracht Frankfurt",
+      "Fußball",
+      "Basketball",
       "Champions League",
-      "Formel 1",
-      "Darts",
+      "Bundesliga",
       "Länderspiele und große Turniere"
     ]
   },
@@ -121,7 +118,7 @@
     "nearby_places": [
       {
         "name": "Deutsche Bank Park",
-        "kind": {"de": "Stadion, Heimspiele von Eintracht Frankfurt und Konzerte", "en": "Stadium, Eintracht Frankfurt home games and concerts", "it": "Stadio, partite in casa dell'Eintracht Frankfurt e concerti"},
+        "kind": {"de": "Stadion und Konzerte", "en": "Stadium and concerts", "it": "Stadio e concerti"},
         "distance_km": 2.0,
         "lat": 50.0686,
         "lng": 8.6455
@@ -157,9 +154,9 @@
       {
         "id": "matchday",
         "tag": {
-          "de": "Jeden Spieltag",
-          "en": "Every matchday",
-          "it": "Ogni giornata"
+          "de": "Auf Anfrage",
+          "en": "On request",
+          "it": "Su richiesta"
         },
         "title": {
           "de": "Match Day",
@@ -167,18 +164,18 @@
           "it": "Match Day"
         },
         "short": {
-          "de": "Anstoß, Stimmung, Getränkeangebote. Kommt früh, die Plätze sind begehrt.",
-          "en": "Kick-off, atmosphere, drink specials. Come early, seats go fast.",
-          "it": "Calcio d'inizio, atmosfera, offerte sulle bevande. Venite presto, i posti vanno a ruba."
+          "de": "Anstoß, Stimmung, kühle Drinks. Kommt früh, die Plätze sind begehrt.",
+          "en": "Kick-off, atmosphere, cold drinks. Come early, seats go fast.",
+          "it": "Calcio d'inizio, atmosfera, drink freschi. Venite presto, i posti vanno a ruba."
         },
         "more": null
       },
       {
         "id": "party",
         "tag": {
-          "de": "Regelmäßig",
-          "en": "Regularly",
-          "it": "Regolarmente"
+          "de": "Auf Anfrage",
+          "en": "On request",
+          "it": "Su richiesta"
         },
         "title": {
           "de": "Partyabende",
@@ -214,9 +211,9 @@
       {
         "id": "quiz",
         "tag": {
-          "de": "Wöchentlich",
-          "en": "Weekly",
-          "it": "Ogni settimana"
+          "de": "Auf Anfrage",
+          "en": "On request",
+          "it": "Su richiesta"
         },
         "title": {
           "de": "Quizabend",
@@ -224,26 +221,28 @@
           "it": "Serata quiz"
         },
         "short": {
-          "de": "Teste dein Wissen im Team und gewinne Getränke.",
-          "en": "Test your knowledge as a team and win drinks.",
-          "it": "Metti alla prova le tue conoscenze in squadra e vinci da bere."
+          "de": "Teste dein Wissen im Team.",
+          "en": "Test your knowledge as a team.",
+          "it": "Metti alla prova le tue conoscenze in squadra."
         },
         "more": null
       }
     ]
   },
   "legal": {
-    "owner_name": "TODO: Name des Inhabers / der Betreibergesellschaft",
+    "owner_name": "Antonio Petrilo",
     "trade_register": "TODO: Handelsregister (falls vorhanden)",
     "vat_id": "TODO: USt-IdNr. (falls vorhanden)",
-    "hosting_provider": "TODO: Hosting-Anbieter (für Datenschutzerklärung)"
+    "hosting_provider": "Hetzner Online GmbH"
   },
   "images": {
     "og_image": "TODO: echtes Foto 1200×630 als assets/img/og-image.jpg (bis dahin wird es aus hero.svg erzeugt)",
-    "photos_are_real": false
+    "photos_are_real": false,
+    "show_about_photo": false,
+    "show_gallery": false
   },
   "site": {
-    "domain": "TODO: Domain wählen; in build.py SITE_URL anpassen",
+    "domain": "https://cestlavie-frankfurt.de",
     "launch_note": "robots.txt erlaubt alles. Vor Livegang Platzhalter-Bilder durch echte Fotos ersetzen."
   }
 }

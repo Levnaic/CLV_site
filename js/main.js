@@ -233,6 +233,8 @@
         tabsEl.hidden = false;
         menu.classList.add('tabs-on');
         panels.forEach(p => p.setAttribute('role', 'tabpanel'));
+        // The tabs are an equal-size grid (css/style.css .drink-tabs), nothing scrolls. focus() uses
+        // preventScroll so choosing a tab never moves the page.
         const select = (tab, focus) => {
             tabs.forEach(b => {
                 const on = b === tab;
@@ -240,16 +242,18 @@
                 b.tabIndex = on ? 0 : -1;
             });
             panels.forEach(p => { p.hidden = p.id !== tab.getAttribute('aria-controls'); });
-            if (focus) tab.focus();
+            if (focus) tab.focus({ preventScroll: true });
         };
         tabs.forEach(b => b.addEventListener('click', () => select(b)));
         tabsEl.addEventListener('keydown', e => {
-            if (e.key !== 'ArrowRight' && e.key !== 'ArrowLeft') return;
             const i = tabs.indexOf(document.activeElement);
             if (i < 0) return;
-            select(tabs[(i + (e.key === 'ArrowRight' ? 1 : -1) + tabs.length) % tabs.length], true);
+            const next = { ArrowRight: i + 1, ArrowLeft: i - 1, Home: 0, End: tabs.length - 1 }[e.key];
+            if (next === undefined) return;
+            e.preventDefault();
+            select(tabs[(next + tabs.length) % tabs.length], true);
         });
-        select(tabs[0]);
+        select(tabs[0], false);
         // Links like <a href="#drinks-menu" data-drink-tab="tap"> (beer tile) open that category first;
         // the default action then scrolls to the menu. Without JS all panels are visible anyway.
         document.addEventListener('click', e => {

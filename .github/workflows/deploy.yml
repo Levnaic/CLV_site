@@ -1,0 +1,170 @@
+# Build the website and, only when it is switched on, upload it to the web server over SSH.
+# Setup, switches, safe test and rollback: docs/deployment.md
+#
+# Upload happens only when ALL of these are true:
+#   - the run is for branch main (push to main, manual run on main, or the daily run)
+#   - the repository variable DEPLOY_ENABLED is exactly: true
+# With nothing configured, the workflow only builds and checks the site, and succeeds.
+name: Deploy
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+  schedule:
+    # Daily rebuild: build.py hides past matches only when it runs.
+    # 03:41 UTC = 04:41 (winter) / 05:41 (summer) in Frankfurt. GitHub may start it late.
+    - cron: "41 3 * * *"
+
+permissions:
+  contents: read
+
+concurrency:
+  group: deploy-site
+  cancel-in-progress: false # never stop an upload halfway
+
+env:
+  # Top-level files and folders that build.py writes. The build must produce exactly these.
+  # If you add a page folder in build.py, add it here too (the run fails until you do).
+  GENERATED: "index.html impressum.html datenschutz.html robots.txt sitemap.xml en it kontakt spielplan"
+  # Static folders copied from the repository as they are.
+  STATIC: "css js assets"
+  # Minimum number of HTML pages. Protects the server from an empty or broken build.
+  MIN_PAGES: "15"
+
+jobs:
+  deploy:
+    name: Build and upload
+    runs-on: ubuntu-24.04
+    timeout-minutes: 10
+    steps:
+      - name: Check out
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+
+      - name: Build into a clean folder
+        run: |
+          mkdir "$RUNNER_TEMP/site"
+          CLV_OUT_DIR="$RUNNER_TEMP/site" python3 build.py
+
+      - name: Check the build and add static files (allowlist)
+        run: |
+          export LC_ALL=C
+          site="$RUNNER_TEMP/site"
+          found=$(ls -A "$site" | sort | tr '\n' ' ')
+          expected=$(printf '%s\n' $GENERATED | sort | tr '\n' ' ')
+          if [ "$found" != "$expected" ]; then
+            echo "::error::build.py wrote other files than expected. Expected: $expected Found: $found (update GENERATED in .github/workflows/deploy.yml)"
+            exit 1
+          fi
+          for d in $STATIC; do cp -R "$d" "$site/"; done
+          bad=$(find "$site" \( -name '.*' -o -name '*.py' -o -name '*.md' -o -type l \) -print)
+          if [ -n "$bad" ]; then
+            echo "::error::These must not be published: $bad"
+            exit 1
+          fi
+          pages=$(find "$site" -type f -name '*.html' | wc -l)
+          if [ "$pages" -lt "$MIN_PAGES" ]; then
+            echo "::error::Only $pages HTML pages were built (at least $MIN_PAGES expected)"
+            exit 1
+          fi
+          for f in index.html en/index.html it/index.html robots.txt sitemap.xml css/style.css js/main.js; do
+            if [ ! -s "$site/$f" ]; then
+              echo "::error::Missing or empty: $f"
+              exit 1
+            fi
+          done
+          echo "Ready to publish: $(find "$site" -type f | wc -l) files, $pages HTML pages."
+
+      - name: Decide whether to upload
+        id: gate
+        env:
+          DEPLOY_ENABLED: ${{ vars.DEPLOY_ENABLED }}
+        run: |
+          if [ "$GITHUB_REF" != "refs/heads/main" ]; then
+            echo "::notice::Build only: uploads happen only from main (this run is for $GITHUB_REF)."
+            echo "upload=false" >> "$GITHUB_OUTPUT"
+          elif [ "$DEPLOY_ENABLED" != "true" ]; then
+            echo "::notice::Build only: the repository variable DEPLOY_ENABLED is not 'true'."
+            echo "upload=false" >> "$GITHUB_OUTPUT"
+          else
+            echo "upload=true" >> "$GITHUB_OUTPUT"
+          fi
+
+      - name: Upload to the server
+        if: steps.gate.outputs.upload == 'true'
+        env:
+          SSH_KEY: ${{ secrets.DEPLOY_SSH_KEY }}
+          KNOWN_HOSTS: ${{ secrets.DEPLOY_KNOWN_HOSTS }}
+          DEPLOY_HOST: ${{ vars.DEPLOY_HOST }}
+          DEPLOY_USER: ${{ vars.DEPLOY_USER }}
+          DEPLOY_PORT: ${{ vars.DEPLOY_PORT || '22' }}
+        run: |
+          missing=""
+          [ -n "$SSH_KEY" ] || missing="$missing secret DEPLOY_SSH_KEY,"
+          [ -n "$KNOWN_HOSTS" ] || missing="$missing secret DEPLOY_KNOWN_HOSTS,"
+          [ -n "$DEPLOY_HOST" ] || missing="$missing variable DEPLOY_HOST,"
+          [ -n "$DEPLOY_USER" ] || missing="$missing variable DEPLOY_USER,"
+          if [ -n "$missing" ]; then
+            echo "::error::DEPLOY_ENABLED is true, but these are not set:$missing see docs/deployment.md"
+            exit 1
+          fi
+          case "$DEPLOY_PORT" in
+            ''|*[!0-9]*) echo "::error::DEPLOY_PORT must be a number"; exit 1 ;;
+          esac
+          umask 077
+          key="$RUNNER_TEMP/deploy_key"
+          known="$RUNNER_TEMP/known_hosts"
+          printf '%s\n' "$SSH_KEY" > "$key"
+          printf '%s\n' "$KNOWN_HOSTS" > "$known"
+          if ! command -v rsync > /dev/null; then
+            sudo apt-get update -q
+            sudo apt-get install -y -q rsync
+          fi
+          # Target "./" is the site folder that rrsync fixes in the server's authorized_keys line.
+          # --delete removes files on the server that are not in this build (the folder is only for this site).
+          rsync --recursive --perms --chmod=D755,F644 --checksum \
+            --delete-after --delay-updates --itemize-changes --stats \
+            -e "ssh -p $DEPLOY_PORT -i $key -o IdentitiesOnly=yes -o BatchMode=yes -o StrictHostKeyChecking=yes -o UserKnownHostsFile=$known" \
+            "$RUNNER_TEMP/site/" "$DEPLOY_USER@$DEPLOY_HOST:./"
+
+      - name: Check the live site
+        id: check
+        if: steps.gate.outputs.upload == 'true' && vars.DEPLOY_CHECK_URL != ''
+        env:
+          CHECK_URL: ${{ vars.DEPLOY_CHECK_URL }}
+        run: |
+          curl --fail --silent --show-error --location --retry 3 --retry-all-errors --max-time 20 \
+            --output "$RUNNER_TEMP/live.html" "$CHECK_URL"
+          if cmp -s "$RUNNER_TEMP/live.html" "$RUNNER_TEMP/site/index.html"; then
+            echo "The live home page is exactly this build."
+          else
+            echo "::error::$CHECK_URL does not show this build's home page (check the root folder in the Caddy site block)."
+            exit 1
+          fi
+
+      - name: Remove the key from the runner
+        if: always()
+        run: rm -f "$RUNNER_TEMP/deploy_key" "$RUNNER_TEMP/known_hosts"
+
+      - name: Deploy record
+        if: always()
+        env:
+          UPLOAD: ${{ steps.gate.outputs.upload }}
+          CHECK: ${{ steps.check.outcome }}
+          RESULT: ${{ job.status }}
+        run: |
+          {
+            echo "### Deploy record"
+            echo ""
+            echo "| | |"
+            echo "|---|---|"
+            echo "| Time (UTC) | $(date -u '+%Y-%m-%d %H:%M:%S') |"
+            echo "| Trigger | $GITHUB_EVENT_NAME |"
+            echo "| Branch | $GITHUB_REF_NAME |"
+            echo "| Commit | $GITHUB_SHA |"
+            echo "| Uploaded | ${UPLOAD:-false} |"
+            echo "| Live check | ${CHECK:-skipped} |"
+            echo "| Result | $RESULT |"
+          } >> "$GITHUB_STEP_SUMMARY"

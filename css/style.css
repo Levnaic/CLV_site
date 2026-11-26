@@ -183,7 +183,7 @@ p { margin: 0 0 1em; }
 .menu-btn[aria-expanded="true"] span:nth-child(3) { transform: translateY(-9px) rotate(-45deg); }
 
 /* Nav, two groups (same markup on every page, built by site_nav() in build.py):
-   .nav-pages     standalone pages (Home on sub pages, Schedule, Eintracht): plate + icon + corner arrow
+   .nav-pages     standalone pages (Home on sub pages, Schedule, Contact): plate + icon + corner arrow
    .nav-sections  jumps to sections of the home page: plain text, numbered like the section headings
    So "plate with an arrow" = opens another page, "plain numbered text" = jumps within the home page. */
 
@@ -309,8 +309,6 @@ p { margin: 0 0 1em; }
 .ticker-toggle { position: absolute; inset-block: 0; right: 0; z-index: 1; width: 64px; display: grid; place-items: center; padding: 0; border: 0; color: inherit; cursor: pointer; background: linear-gradient(to right, transparent, var(--tk-bg) 45%); }
 .ticker-toggle::before { content: ""; width: 12px; height: 14px; border-inline: 4px solid currentColor; }
 .ticker.is-paused .ticker-toggle::before { width: 0; height: 0; border-inline: 0; border-block: 8px solid transparent; border-left: 13px solid currentColor; }
-/* White variant (Eintracht page): a tilted banner across the bottom of the page head */
-.ticker-alt { --tk-bg: var(--night-text); --tk-fg: var(--night); --tk-sep: var(--night-accent); margin: -1.6rem -3vw 0; rotate: -2deg; border-block-width: 4px; border-color: var(--night-accent); box-shadow: 0 6px 0 var(--night); }
 @keyframes marquee { to { transform: translateX(-25%); } }
 @media (prefers-reduced-motion: no-preference) {
     .js .ticker-track { width: max-content; justify-content: flex-start; animation: marquee 36s linear infinite; }
@@ -338,6 +336,12 @@ p { margin: 0 0 1em; }
 .lead { color: var(--text-2); font-size: 1.2rem; max-width: 52ch; margin-bottom: 2.5rem; }
 .split > * { min-width: 0; }
 .split { display: grid; gap: 2.5rem; align-items: center; }
+/* About without a photo (build.py about_html): the first paragraph is set as a lead. From 900px the
+   heading takes the left column and the text the right one (same 5:7 split as .local-grid), so the
+   section fills the row instead of leaving the space beside it empty. */
+.about-body { max-width: 60ch; }
+.about-body > p:first-child { color: var(--text); font-size: 1.25rem; line-height: 1.5; }
+.about-body > p:last-child { margin-bottom: 0; }
 .media { width: calc(100% - 12px); border: 3px solid var(--border-hard); box-shadow: 12px 12px 0 var(--accent); }
 .grid { display: grid; gap: 1.5rem; }
 
@@ -388,12 +392,19 @@ a.contact-card p { color: var(--text-2); }
 }
 
 /* ---------- Drinks: stadium menu board ---------- */
-.drink-tabs { display: grid; grid-template-columns: 1fr 1fr; gap: .75rem 1rem; margin-bottom: 1.75rem; padding-inline: 6px; }
-.drink-tab { position: relative; isolation: isolate; min-width: 0; overflow-wrap: anywhere; min-height: 46px; padding: .45rem .9rem; background: none; border: 0; color: var(--text); font: 800 1.1rem/1.1 var(--font-head); text-transform: uppercase; letter-spacing: .06em; cursor: pointer; }
+/* Category tabs: an equal-size grid (all tabs the same width and height, long labels wrap inside the
+   tab). 2 columns on phones, 4 columns from 640px (8 tabs = 4 x 2). Padding leaves room for the selected
+   tab's hard shadow and the skewed edges. */
+.drink-tabs {
+    position: relative; /* offsetParent of the tabs (js/main.js) */
+    display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); grid-auto-rows: 1fr; gap: .75rem 1rem;
+    margin: 0 0 1.5rem; padding: .25rem 8px .75rem; /* room for the skewed edges and the selected tab's shadow */
+}
+.drink-tab { position: relative; isolation: isolate; display: flex; align-items: center; justify-content: center; min-width: 0; min-height: 52px; padding: .45rem .75rem; background: none; border: 0; color: var(--text); font: 800 1.05rem/1.1 var(--font-head); text-align: center; text-wrap: balance; text-transform: uppercase; letter-spacing: .05em; cursor: pointer; }
 .drink-tab::before { content: ""; position: absolute; inset: 0; z-index: -1; border: 2px solid var(--border-hard); background: var(--bg); transform: skewX(var(--skew)); transition: background .15s, border-color .15s, transform .15s var(--snap); }
 .drink-tab:hover::before { border-color: var(--accent); }
 .drink-tab:active::before { transform: skewX(var(--skew)) scale(.95); }
-.drink-tab:focus-visible { outline-offset: 5px; }
+.drink-tab:focus-visible { outline-offset: 3px; }
 .drink-tab[aria-selected="true"] { color: var(--on-accent); }
 .drink-tab[aria-selected="true"]::before { background: var(--accent); border-color: var(--accent); box-shadow: 4px 4px 0 var(--text); }
 .drink-panel {
@@ -410,18 +421,79 @@ a.contact-card p { color: var(--text-2); }
 .drink-cat-title { grid-column: 1 / -1; margin: 0; color: var(--accent-text); font-size: clamp(1.9rem, 5vw, 2.7rem); font-style: italic; }
 .drinks.tabs-on .drink-cat-title { position: absolute; width: 1px; height: 1px; overflow: hidden; clip-path: inset(50%); white-space: nowrap; }
 .drinks.tabs-on .drink-panel + .drink-panel { margin-top: 0; }
-.drink-head { display: flex; align-items: baseline; gap: .6rem; color: var(--text); }
-.drink-name { font: 800 1.4rem/1.1 var(--font-head); text-transform: uppercase; letter-spacing: .03em; }
-.drink-size { margin-left: .6rem; color: var(--muted); font: 600 .85rem var(--font-body); letter-spacing: .06em; text-transform: none; }
+/* Category note ("mit 4 cl Spirituose"): visible even when the tab already names the category */
+.drink-cat-note { grid-column: 1 / -1; display: flex; align-items: center; gap: .6rem; margin: 0; color: var(--text); font: 800 1.05rem/1.2 var(--font-head); letter-spacing: .14em; text-transform: uppercase; }
+.drink-cat-note::before { content: ""; flex: none; width: .5rem; height: .95rem; background: var(--accent); transform: skewX(var(--skew)); }
+/* Row: name | tail (dots + price[s]). The tail wraps as a whole under a long name (or two prices that do
+   not fit), so a leader line always runs into the price and nothing overflows at 360px. */
+.drink-head { display: flex; flex-wrap: wrap; align-items: baseline; column-gap: .6rem; color: var(--text); }
+.drink-name { flex: 0 1 auto; min-width: 0; overflow-wrap: anywhere; font: 800 1.4rem/1.1 var(--font-head); text-transform: uppercase; letter-spacing: .03em; }
+.drink-tail { flex: 1 1 auto; display: flex; align-items: baseline; gap: .6rem; min-width: 0; }
+.drink-size { margin-left: .6rem; color: var(--muted); font: 600 .85rem var(--font-body); letter-spacing: .06em; text-transform: none; white-space: nowrap; }
 .drink-dots { flex: 1; min-width: 1rem; border-bottom: 2px dashed var(--line); transform: translateY(-.3em); }
 .drink-price { font: italic 800 1.6rem/1 var(--font-head); letter-spacing: .01em; color: var(--accent-text); white-space: nowrap; font-variant-numeric: tabular-nums; }
+/* Several sizes in one row: each price carries its own size */
+.drink-prices { display: flex; flex-wrap: wrap; justify-content: flex-end; gap: .15rem 1.1rem; }
+.drink-opt { display: inline-flex; align-items: baseline; gap: .4rem; white-space: nowrap; }
+.drink-opt .drink-size { margin-left: 0; }
+/* Additive footnote numbers (only rendered once drinks.json has additives_legend) */
+.drink-add { margin-left: .2em; color: var(--accent-text); font: 700 .6em/0 var(--font-body); letter-spacing: .04em; vertical-align: super; }
 .drink-desc { margin: .2rem 0 0; color: var(--muted); font-size: .95rem; max-width: 42ch; }
-@media (min-width: 560px) { .drink-tabs { display: flex; flex-wrap: wrap; } .drink-tab { padding: .45rem 1.3rem; } }
+/* Small print under the board: VAT / allergen notes and the additives legend */
+.drink-small { display: grid; gap: .9rem; max-width: 62ch; margin-top: 2.25rem; color: var(--muted); font-size: .9rem; line-height: 1.5; }
+.drink-small p { margin: 0; }
+.drink-notes { display: grid; gap: .4rem; }
+.drink-legend-title { color: var(--text-2); font: 800 .85rem/1.3 var(--font-head); letter-spacing: .16em; text-transform: uppercase; }
+.drink-legend ul { display: flex; flex-wrap: wrap; gap: .2rem 1.25rem; margin: .3rem 0 0; padding: 0; list-style: none; }
+.drink-legend-n { color: var(--accent-text); font-weight: 700; }
+@media (min-width: 640px) {
+    .drink-tabs { grid-template-columns: repeat(4, minmax(0, 1fr)); }
+}
+@media (min-width: 900px) {
+    .drink-tabs { gap: 1rem 1.25rem; padding-bottom: 1rem; }
+    .drink-tab { min-height: 56px; font-size: 1.15rem; padding-inline: 1.3rem; }
+}
 @media (min-width: 760px) {
-    .drink-tabs { justify-content: center; }
     .drink-panel { grid-template-columns: 1fr 1fr; align-items: start; padding: 2.25rem 2.5rem 2.25rem; }
-    .drink-panel::after { content: ""; position: absolute; inset-block: 5.5rem 2.25rem; left: 50%; width: 2px; background: var(--line); transform: skewX(var(--skew)); }
+    .drink-panel::after { content: ""; position: absolute; inset-block: 5.5rem 2.25rem; left: calc(50% - 1px); width: 2px; background: var(--line); /* straight: a slanted line ran into the first letter of the right column */ }
     .drinks.tabs-on .drink-panel::after { inset-block: 2.25rem; }
+    .drinks.tabs-on .drink-panel.has-note::after { inset-block: 5.25rem 2.25rem; }
+}
+/* Phones and small tablets (single column): grid of name | price. The leader is drawn inside the name
+   (::after of the size, or of the name when it has no size), so it starts right after the LAST line of
+   a wrapped name and runs to the price, which sits on that same last line (last-baseline alignment).
+   The leader counts only 2rem for line breaking (padding-right and margin-right cancel out; dashes start
+   after a .45rem gap) and cannot be split from the word or size before it, so a name that cannot fit
+   the minimum leader wraps earlier instead; the long rest is clipped at the name column.
+   Several sizes: the first price sits on the name's line, every further size + price gets its own row
+   with its own leader. The flex .drink-dots leader is not used here. */
+@media (max-width: 759px) {
+    .drink-head {
+        --leader: repeating-linear-gradient(to right, var(--line) 0 6px, transparent 6px 11px);
+        display: grid; grid-template-columns: minmax(0, 1fr) auto; column-gap: .5rem; row-gap: .1rem;
+        align-items: end; align-items: last baseline;
+    }
+    /* overflow-wrap normal: "anywhere" would split the leader off a single long word (Slivovitz next to
+       two prices at 320px); there the leader is shortened by the clip instead of moving to a new line */
+    .drink-name { font-size: 1.3rem; overflow-wrap: normal; overflow-x: clip; overflow-y: visible; }
+    /* Atomic size: a regular wrap point before it, and its own ::after leader travels with it */
+    .drink-name .drink-size { display: inline-block; }
+    .drink-name .drink-size::after,
+    .drink-name:not(:has(.drink-size))::after,
+    .drink-opt + .drink-opt::before {
+        content: "\2060"; /* word joiner: no break before the leader */
+        font: 800 1.3rem/0 var(--font-head); /* same box in every context; line-height 0 adds no height */
+        background: var(--leader) .45rem calc(100% - .55rem) / 100% 2px no-repeat;
+    }
+    .drink-name .drink-size::after,
+    .drink-name:not(:has(.drink-size))::after { padding: 0 100vw 0 2rem; margin-right: -100vw; }
+    .drink-tail, .drink-prices { display: contents; }
+    .drink-dots { display: none; }
+    .drink-price { font-size: 1.3rem; }
+    .drink-opt { justify-content: flex-end; gap: .5rem; }
+    .drink-opt .drink-size { min-width: 2.6rem; text-align: right; }
+    .drink-opt + .drink-opt { grid-column: 1 / -1; display: flex; }
+    .drink-opt + .drink-opt::before { flex: 1; align-self: baseline; margin-left: 1.5rem; line-height: 1; background-position-x: 0; }
 }
 /* Drink items slide in when a category is chosen */
 .drink-item { animation: slide-in .3s var(--snap) both; animation-delay: calc(var(--i, 0) * 40ms); }
@@ -435,6 +507,7 @@ a.contact-card p { color: var(--text-2); }
 .perk-icon { position: absolute; top: 1.1rem; right: 1.1rem; width: 2.9rem; height: 2.9rem; fill: none; stroke: var(--accent-text); stroke-width: 3; stroke-linecap: square; stroke-linejoin: miter; }
 .perk-icon .nif { fill: var(--accent-text); stroke: none; }
 .perk .more-link { margin-top: auto; }
+.perk .chip-group .more-link { margin-top: -.35rem; }
 .chip-group { display: grid; gap: .45rem; }
 .card.perk .chip-label { color: var(--muted); font: 700 .78rem/1.3 var(--font-body); letter-spacing: .14em; text-transform: uppercase; }
 .chips { display: flex; flex-wrap: wrap; gap: .6rem .8rem; margin: 0; padding: 0 0 0 4px; list-style: none; }
@@ -564,9 +637,6 @@ address strong { color: var(--text); font: 800 1.35rem/1.2 var(--font-head); tex
 .near-name { margin: 0 0 .2rem; color: var(--text); font-family: var(--font-head); font-size: clamp(1.35rem, 4.4vw, 1.75rem); font-weight: 800; font-style: italic; line-height: 1.02; letter-spacing: .01em; text-transform: uppercase; overflow-wrap: break-word; hyphens: manual; }
 .near-kind { margin: 0 0 .5rem; color: var(--accent-text); font: 700 .78rem/1.35 var(--font-body); letter-spacing: .1em; text-transform: uppercase; }
 .near-text { margin: 0; color: var(--text-2); font-size: 1rem; line-height: 1.5; }
-.near-link { margin: .3rem 0 0; }
-.near-link a { display: inline-flex; align-items: center; min-height: 44px; color: var(--accent-text); font: 800 1rem var(--font-head); letter-spacing: .06em; text-transform: uppercase; text-decoration: underline; text-decoration-thickness: 2px; text-underline-offset: .3em; }
-.near-link a:hover { color: var(--text); text-decoration-color: var(--accent); }
 .near-note { margin: 0; max-width: 56ch; color: var(--muted); font-size: .92rem; }
 @media (min-width: 600px) {
     .near { --near-w: 6.75rem; }
@@ -633,7 +703,7 @@ address strong { color: var(--text); font: 800 1.35rem/1.2 var(--font-head); tex
 .legal p { color: var(--text-2); }
 .legal a:not(.btn, .back-link) { color: var(--accent-text); text-underline-offset: .2em; }
 
-/* ---------- Sub-page head: dark matchday band (schedule, Eintracht) ---------- */
+/* ---------- Sub-page head: dark matchday band (schedule, contact) ---------- */
 .page-head { position: relative; overflow: hidden; background: var(--bg); color: var(--text-2); padding-block: 1.75rem calc(1.5rem + var(--cut)); clip-path: polygon(0 0, 100% 0, 100% calc(100% - var(--cut)), 0 100%); }
 .page-head-stripes { position: absolute; top: 0; right: 0; width: 46%; height: 70%; background: repeating-linear-gradient(-60deg, var(--accent) 0 16px, transparent 16px 40px); -webkit-mask-image: linear-gradient(225deg, #000 20%, transparent 75%); mask-image: linear-gradient(225deg, #000 20%, transparent 75%); pointer-events: none; }
 /* Red kit edge along the diagonal cut, so the cut also reads when the page below is black (dark mode) */
@@ -641,7 +711,6 @@ address strong { color: var(--text); font: 800 1.35rem/1.2 var(--font-head); tex
 .page-head-inner { position: relative; z-index: 1; }
 .page-head h1 { font-size: clamp(3.2rem, 13vw, 8rem); margin-bottom: .3em; }
 .page-head .lead { color: var(--text); max-width: 46ch; margin-bottom: 1.75rem; }
-.page-wing { position: absolute; z-index: 0; right: calc(var(--gutter) * -.5); top: 4.5rem; width: clamp(140px, 42vw, 520px); height: auto; color: var(--night-text); opacity: .95; pointer-events: none; }
 .page-body { padding-block: 3rem 3rem; }
 .page-sec + .page-sec, .schedule > .page-sec { margin-top: 3.5rem; }
 /* Sub-page section heading: number plate + italic title + hatched rule */
@@ -655,7 +724,7 @@ address strong { color: var(--text); font: 800 1.35rem/1.2 var(--font-head); tex
 .more-link a:hover { color: var(--text); text-decoration-color: var(--accent); }
 /* Text links with a trailing arrow: inline-block (not flex), so the arrow keeps its space and wraps
    with the last word; the padding keeps the 44px touch height */
-.more-link a, .near-link a { display: inline-block; min-height: 44px; padding-block: .62rem; line-height: 1.25; }
+.more-link a { display: inline-block; min-height: 44px; padding-block: .62rem; line-height: 1.25; }
 
 /* ---------- Fixtures and results: ticket card + scoreboard date block ---------- */
 .match-list { list-style: none; margin: 1.5rem 0; padding: 0; display: grid; gap: 1.25rem; }
@@ -668,78 +737,29 @@ address strong { color: var(--text); font: 800 1.35rem/1.2 var(--font-head); tex
 .ko-year { display: block; margin-top: .25rem; font: 600 .72rem var(--font-body); font-style: normal; letter-spacing: .22em; color: var(--muted); }
 .ko-time { display: block; margin-top: .35rem; padding: .05rem .5rem; background: var(--accent); color: var(--on-accent); font-weight: 800; font-size: 1.3rem; line-height: 1.2; font-variant-numeric: tabular-nums; letter-spacing: .04em; }
 .ko-suffix { font-size: .7em; letter-spacing: .06em; }
-.kickoff-tbd .ko-date { font-style: normal; font-size: 1rem; letter-spacing: .08em; white-space: normal; max-width: 6em; }
-.kickoff-tbd .ko-time { background: var(--surface); color: var(--muted); border: 1px dashed var(--muted); }
 .match-body { min-width: 0; padding: 1rem 1.25rem 1.1rem; align-self: center; }
 .match-title { display: flex; flex-wrap: wrap; align-items: baseline; gap: .1rem .55rem; margin: 0 0 .35rem; font-size: clamp(1.4rem, 4.2vw, 1.95rem); font-style: italic; line-height: 1.02; hyphens: manual; }
 .vs { color: var(--accent-text); }
-/* Score: two digits on a black board with a red kit line */
-.score { display: inline-block; min-width: 3.4ch; padding: .02em .4em; background: var(--night); color: var(--night-text); border-bottom: 4px solid var(--night-accent); text-align: center; font-style: normal; font-variant-numeric: tabular-nums; }
 .match-meta { display: flex; flex-wrap: wrap; align-items: center; gap: .35rem .9rem; margin: 0; color: var(--muted); font-size: .95rem; }
 .match-comp { font-weight: 600; }
-.match-venue { color: var(--text-2); font-weight: 700; text-transform: uppercase; letter-spacing: .08em; font-size: .85rem; }
 .match .tag { margin: 0; }
-.outcome-win { background: var(--accent); border-color: var(--accent); color: var(--on-accent); }
 .match-note { color: var(--muted); font-size: .95rem; }
-.match-flag { position: relative; isolation: isolate; display: inline-block; margin: 0 0 .55rem 4px; padding: .05rem .6rem; color: var(--on-accent); font: 800 .9rem/1.35 var(--font-head); letter-spacing: .16em; text-transform: uppercase; }
-.match-flag::before { content: ""; position: absolute; inset: 0; z-index: -1; background: var(--accent); transform: skewX(var(--skew)); }
-/* Featured next match: bigger board, red shadow, kit stripes on the right edge */
-.match.is-next { border-width: 3px; box-shadow: 10px 10px 0 var(--accent); padding-right: 1.6rem; }
-.match.is-next::after { content: ""; position: absolute; top: 0; bottom: 0; right: 0; width: 1.6rem; background: linear-gradient(90deg, var(--accent) 0 33%, var(--surface) 33% 50%, var(--text) 50% 83%, var(--surface) 83%); }
-.match.is-next .kickoff { min-width: 7.6rem; padding-block: 1.25rem; }
-.match.is-next .ko-date { font-size: 2.4rem; }
-.match.is-next .kickoff-tbd .ko-date { font-size: 1.2rem; }
-/* Phones: slimmer scoreboard; the featured match puts its scoreboard in a strip on top */
+/* Phones: slimmer scoreboard */
 @media (max-width: 599px) {
     .kickoff { min-width: 5.4rem; padding-inline: .45rem; }
     .ko-date { font-size: 1.55rem; }
     .match-body { padding: .85rem 1rem .95rem; }
-    .match.is-next { grid-template-columns: minmax(0, 1fr); }
-    .match.is-next .kickoff { flex-direction: row; flex-wrap: wrap; justify-content: flex-start; align-items: baseline; gap: .35rem .75rem; min-width: 0; padding: .75rem 1rem; border-right: 0; border-bottom: 2px dashed var(--accent); }
-    .match.is-next .ko-date { font-size: 1.9rem; }
-    .match.is-next .ko-year { display: inline; margin-left: .35rem; }
-    .match.is-next .ko-time { margin-top: 0; }
-    .match.is-next .kickoff-tbd .ko-date { max-width: none; }
 }
-.match.is-next .match-title { font-size: clamp(1.7rem, 5.2vw, 2.6rem); }
 
-/* Not filled in yet: dashed outline and muted text, labelled with a "to be filled in" chip (never colour alone) */
-.pending-note { display: flex; flex-wrap: wrap; align-items: center; gap: .5rem .75rem; margin: 0 0 1rem; color: var(--muted); }
-.tag-pending { margin: 0; border-style: dashed; color: var(--text-2); }
-.match.is-pending, .standing.is-pending { border-style: dashed; box-shadow: var(--off) var(--off) 0 var(--line); }
-.match.is-pending.is-next { box-shadow: 10px 10px 0 color-mix(in srgb, var(--accent) 45%, var(--line)); }
-.is-pending .match-title, .is-pending .standing-n { color: var(--muted); }
-.is-pending .vs { color: var(--muted); }
-.is-pending .score { background: var(--line); color: var(--text); border-bottom-color: var(--muted); }
-
-/* League position: shirt number on a striped jersey panel */
-.standing { position: relative; overflow: hidden; display: grid; gap: 1.25rem; margin-top: 1.25rem; padding: 1.5rem; background: var(--surface); border: 2px solid var(--border-hard); box-shadow: var(--off) var(--off) 0 var(--shadow-hard); }
-.standing::before { content: ""; position: absolute; top: 0; right: 0; bottom: 0; width: 45%; background: repeating-linear-gradient(90deg, var(--accent) 0 16px, transparent 16px 34px); opacity: .14; -webkit-mask-image: linear-gradient(to left, #000, transparent); mask-image: linear-gradient(to left, #000, transparent); pointer-events: none; }
-.standing-pos { position: relative; display: flex; align-items: baseline; flex-wrap: wrap; gap: .25rem 1rem; margin: 0; }
-.standing-n { font: italic 800 clamp(5rem, 18vw, 7.5rem)/.85 var(--font-head); color: var(--text); font-variant-numeric: tabular-nums; text-shadow: .05em .05em 0 var(--accent); }
-.standing-label { color: var(--accent-text); font: 800 1rem var(--font-head); text-transform: uppercase; letter-spacing: .14em; }
-.standing-stats { position: relative; display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 1rem; margin: 0; }
-.standing-stats div { border-top: 3px solid var(--border-hard); padding-top: .5rem; }
-.standing-stats dt { color: var(--muted); font-size: .78rem; font-weight: 700; text-transform: uppercase; letter-spacing: .06em; hyphens: auto; overflow-wrap: break-word; }
-.standing-stats dd { margin: 0; font: italic 800 2.2rem/1.05 var(--font-head); color: var(--text); font-variant-numeric: tabular-nums; }
-.standing .match-note { position: relative; margin: 0; }
-
-/* ---------- Eintracht page (showpiece) ---------- */
-.ef-head { padding-bottom: calc(4.5rem + var(--cut)); }
+/* ---------- Page-head buttons and jump board ---------- */
 .page-head .cta-row { padding-left: 6px; }
 .cta-row { display: flex; flex-wrap: wrap; gap: 1rem 1.25rem; }
-/* Jump board (Eintracht and contact page heads): scoreboard tiles linking to the numbered sections below */
+/* Jump board (contact page head): scoreboard tiles linking to the numbered sections below */
 .jump-board ol { list-style: none; display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: .5rem; margin: 2.25rem 0 0; padding: 0; max-width: 40rem; }
 .jump-board a { display: flex; flex-direction: column; justify-content: space-between; gap: .3rem; min-height: 5rem; height: 100%; padding: .65rem .75rem; background: var(--surface); border: 2px solid var(--line); color: var(--text); font: 800 .98rem/1.05 var(--font-head); text-transform: uppercase; letter-spacing: .02em; text-decoration: none; hyphens: auto; overflow-wrap: break-word; transition: background .15s, border-color .15s, translate .15s var(--snap); }
 .jump-n { color: var(--accent-text); font-style: italic; font-size: 1.7rem; line-height: 1; transition: color .15s; }
 .jump-board a:hover { background: var(--accent); border-color: var(--accent); translate: 0 -3px; }
 .jump-board a:hover .jump-n { color: var(--on-accent); }
-.ef-body { padding-top: 3.5rem; }
-.ef-grid { display: grid; gap: 3.5rem; }
-.ef-side { display: grid; gap: 3.5rem; align-content: start; }
-.ef-main > .page-sec + .page-sec { margin-top: 3.5rem; }
-.ef-side > .page-sec + .page-sec { margin-top: 0; } /* the grid gap already spaces them */
-.ef-way .near-list { margin-top: .5rem; }
 /* Four jump tiles: 2 x 2 on phones, one row from 600px */
 .jump-board ol:has(> li:nth-child(4)) { grid-template-columns: repeat(2, minmax(0, 1fr)); }
 @media (min-width: 600px) {
@@ -754,23 +774,11 @@ address strong { color: var(--text); font: 800 1.35rem/1.2 var(--font-head); tex
 .section-alt + .contact-end { padding-top: calc(var(--cut) + 1.5rem); }
 .contact-end .back-row-end { margin-top: 0; }
 
-/* Reservation ticket: red, with a black stub, perforation and notches */
-.ticket { --notch: var(--bg); position: relative; display: grid; grid-template-columns: 3rem minmax(0, 1fr); background: var(--accent); color: var(--on-accent); border: 2px solid var(--border-hard); box-shadow: var(--off) var(--off) 0 var(--text); }
-.ticket::before { content: ""; position: absolute; z-index: 1; top: -2px; bottom: -2px; left: calc(3rem - 10px); width: 20px; pointer-events: none;
-    background:
-        radial-gradient(circle at 50% 0, var(--notch) 0 8px, var(--border-hard) 8px 10px, transparent 10.5px),
-        radial-gradient(circle at 50% 100%, var(--notch) 0 8px, var(--border-hard) 8px 10px, transparent 10.5px); }
-.ticket-stub { display: grid; place-items: center; margin: 0; background: var(--night); color: var(--night-text); border-right: 2px dashed var(--night-text); font: 800 .95rem var(--font-head); letter-spacing: .3em; text-transform: uppercase; }
-.ticket-stub span { writing-mode: vertical-rl; rotate: 180deg; white-space: nowrap; }
-.ticket-main { padding: 1.5rem 1.5rem 1.75rem 1.4rem; }
-.ticket h2 { margin: 0 0 .4em; color: var(--on-accent); font-size: clamp(1.9rem, 5vw, 2.5rem); line-height: .95; }
-.ticket p { max-width: 46ch; color: var(--on-accent); font-weight: 600; }
-/* Buttons on red (reservation ticket, home visit strip): black plate with a white shadow, white outline */
-:is(.ticket, .visit-strip) .btn.btn-primary { --btn-bg: var(--night); --btn-line: var(--night); --btn-fg: var(--night-text); --btn-shadow: var(--night-text); }
-:is(.ticket, .visit-strip) .btn.btn-primary:hover { --btn-bg: var(--night-text); --btn-line: var(--night-text); --btn-fg: var(--night); --btn-shadow: var(--night); }
-:is(.ticket, .visit-strip) .btn.btn-ghost { --btn-fg: var(--on-accent); --btn-line: var(--on-accent); --btn-shadow: var(--night); }
-:is(.ticket, .visit-strip) .btn.btn-ghost:hover { --btn-bg: var(--on-accent); --btn-fg: var(--night-accent); }
-.ticket :focus-visible { outline-color: var(--on-accent); }
+/* Buttons on red (home visit strip): black plate with a white shadow, white outline */
+.visit-strip .btn.btn-primary { --btn-bg: var(--night); --btn-line: var(--night); --btn-fg: var(--night-text); --btn-shadow: var(--night-text); }
+.visit-strip .btn.btn-primary:hover { --btn-bg: var(--night-text); --btn-line: var(--night-text); --btn-fg: var(--night); --btn-shadow: var(--night); }
+.visit-strip .btn.btn-ghost { --btn-fg: var(--on-accent); --btn-line: var(--on-accent); --btn-shadow: var(--night); }
+.visit-strip .btn.btn-ghost:hover { --btn-bg: var(--on-accent); --btn-fg: var(--night-accent); }
 
 /* ---------- Motion ---------- */
 @keyframes slide-in { from { opacity: 0; transform: translateX(-18px); } to { opacity: 1; transform: none; } }
@@ -821,8 +829,6 @@ address strong { color: var(--text); font: 800 1.35rem/1.2 var(--font-head); tex
     .grid-3, .grid-4 { grid-template-columns: repeat(2, 1fr); }
     .footer-inner { grid-template-columns: 1fr auto; align-items: center; }
     .jump-board a { font-size: 1.2rem; padding: .75rem 1rem; }
-    .ticket { grid-template-columns: 3.5rem minmax(0, 1fr); }
-    .ticket::before { left: calc(3.5rem - 10px); }
 }
 @media (min-width: 900px) {
     :root { --header-h: 72px; --gutter: 2rem; --off: 8px; }
@@ -834,17 +840,17 @@ address strong { color: var(--text); font: 800 1.35rem/1.2 var(--font-head); tex
     .hero-wing { top: 50%; right: 4%; translate: 0 -50%; width: clamp(260px, 30vw, 440px); }
     .tagline { font-size: 1.3rem; }
     .split { grid-template-columns: 1fr 1fr; gap: 4rem; }
+    .about-solo { display: grid; grid-template-columns: minmax(0, 5fr) minmax(0, 7fr); column-gap: 4rem; align-items: start; }
+    .about-solo h2 { margin-bottom: 0; }
+    /* 2.5rem = the number plate above the title (line + padding + margin): text starts level with the title */
+    .about-body { padding-top: 2.5rem; }
     .grid-3 { grid-template-columns: repeat(3, 1fr); }
     .grid-4 { grid-template-columns: repeat(4, 1fr); }
     #events .grid-3 { grid-template-columns: repeat(2, 1fr); }
     .page-head { padding-top: 2.25rem; }
     .page-head-stripes { width: 40%; height: 100%; }
-    .page-wing { top: 50%; right: 5%; translate: 0 -55%; width: clamp(280px, 32vw, 460px); }
     .page-head-inner { padding-right: 34%; }
     .jump-board ol { max-width: none; }
-}
-@media (min-width: 1000px) {
-    .ef-grid { grid-template-columns: minmax(0, 1.55fr) minmax(0, 1fr); align-items: start; gap: 3rem; }
 }
 @media (min-width: 1200px) {
     .card:not(.event) { padding: 2rem; }
@@ -856,10 +862,9 @@ address strong { color: var(--text); font: 800 1.35rem/1.2 var(--font-head); tex
    Layout: [page plates]  [section links], separated by a gap (no divider bar); the group
    headings are visually hidden here (they still name the groups for screen readers). */
 @media (min-width: 1200px) {
-    /* Home (5 section links) and sub pages (4 page plates) get a wider header row than the page content:
-       at full nav spacing the German home row needs about 1310px of content width (swept 1200-1920px
-       with a 17px scrollbar in de/en/it) */
-    .site-header .container:has(.nav-sections li:nth-child(5), .nav-pages li:nth-child(4)) { max-width: 1400px; }
+    /* The header row is wider than the page content on every page, so the logo and nav stay in the same
+       place from page to page, however many links a nav has (the gallery link is optional) */
+    .site-header .container { max-width: 1400px; }
     .menu-btn { display: none; }
     .nav { position: static; display: flex; align-items: center; transform: none; visibility: visible; padding: 0; overflow: visible; background: none; order: 2; transition: none; }
     .nav::after { display: none; }
