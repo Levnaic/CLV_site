@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Static site generator for C'est la vie Sports Bar (Python 3 standard library only).
+"""Static site generator for C'est la Vie Café & Sportsbar (Python 3 standard library only).
 
 Reads  data/site.json, data/drinks.json, data/i18n.json
 Writes index.html, impressum.html, datenschutz.html (and language/other pages)
@@ -16,7 +16,10 @@ from pathlib import Path
 from urllib.parse import quote
 
 ROOT = Path(__file__).resolve().parent
-SITE_URL = "https://DOMAIN"  # the ONE place to set the domain (no trailing slash)
+SITE_URL = "https://cestlavie-frankfurt.de"  # the ONE place to set the domain (no trailing slash)
+# True while the site is unfinished: every page asks search engines not to index it. Set to False at launch
+# (the legal pages stay noindex). robots.txt must keep allowing crawlers, or they never see the noindex.
+NOINDEX = True
 LANGS = ["de", "en", "it"]
 DEFAULT_LANG = "de"  # served at the root, also the hreflang x-default
 # Native language names for the language menu (always shown in their own language, never translated)
@@ -110,6 +113,66 @@ def img_alt(text):
     return ""
 
 
+def shows(flag):
+    """Optional photo blocks, switched on in data/site.json under "images"."""
+    return SITE.get("images", {}).get(flag) is True
+
+
+def about_html(lang, r):
+    """With the photo: text beside the image. Without it: heading beside the text (.about-solo)."""
+    t = I18N[lang]
+    heading = f'<h2>{esc(t["aboutTitle"])}</h2>'
+    paras = [f'<p>{esc(t["aboutP1"])}</p>', f'<p>{esc(t["aboutP2"])}</p>']
+    if shows("show_about_photo"):
+        text = "\n                    ".join([heading] + paras)
+        return f'''<section class="section" id="about">
+            <div class="container split">
+                <div class="reveal">
+                    {text}
+                </div>
+                <img class="reveal media" src="{r}assets/img/about.svg" width="1200" height="900" loading="lazy" decoding="async" alt="{img_alt(t["aboutAlt"])}">
+            </div>
+        </section>'''
+    body = "\n                    ".join(paras)
+    return f'''<section class="section" id="about">
+            <div class="container about-solo">
+                {heading}
+                <div class="about-body reveal">
+                    {body}
+                </div>
+            </div>
+        </section>'''
+
+
+def gallery_html(lang, r):
+    """(gallery section, lightbox dialog), both empty while the gallery is switched off."""
+    if not shows("show_gallery"):
+        return "", ""
+    t = I18N[lang]
+    items = "\n                    ".join(
+        f'<button type="button" class="gallery-item" aria-label="{attr(t["zoom"])}"><img src="{r}assets/img/gallery-{n}.svg" width="800" height="800" loading="lazy" decoding="async" alt="{img_alt(t["galleryItemAlt"].format(n=n))}"></button>'
+        for n in range(1, 7))
+    section = f'''        <section class="section" id="gallery">
+            <div class="container">
+                <h2>{esc(t["galleryTitle"])}</h2>
+                <div class="gallery" id="gallery-grid">
+                    {items}
+                </div>
+            </div>
+        </section>
+
+'''
+    dialog = f'''    <dialog class="lightbox" id="lightbox" aria-label="{attr(t["lbLabel"])}">
+        <button type="button" class="lb-close" id="lbClose" aria-label="{attr(t["lbClose"])}">×</button>
+        <button type="button" class="lb-nav lb-prev" id="lbPrev" aria-label="{attr(t["lbPrev"])}">‹</button>
+        <img id="lbImg" src="" alt="">
+        <button type="button" class="lb-nav lb-next" id="lbNext" aria-label="{attr(t["lbNext"])}">›</button>
+    </dialog>
+
+'''
+    return section, dialog
+
+
 def digits(s):
     return "".join(ch for ch in str(s) if ch.isdigit())
 
@@ -172,7 +235,6 @@ PAGES = {
     "impressum": {"de": "impressum.html", "en": "impressum.html", "it": "impressum.html"},
     "datenschutz": {"de": "datenschutz.html", "en": "datenschutz.html", "it": "datenschutz.html"},
     "schedule": {"de": "spielplan/", "en": "schedule/", "it": "calendario/"},
-    "eintracht": {"de": "eintracht/", "en": "eintracht/", "it": "eintracht/"},
     "contact": {"de": "kontakt/", "en": "contact/", "it": "contatti/"},
 }
 
@@ -255,8 +317,6 @@ def venue_facts(lang):
     n = get("venue.seats")
     if n:
         out.append(t["factSeats"].format(n=n))
-    if get("venue.sound_on_for_eintracht") is True:
-        out.append(t["factSound"])
     subs = get("venue.subscriptions")
     if subs:
         out.append(t["factSubs"].format(subs=", ".join(subs) if isinstance(subs, list) else subs))
@@ -387,9 +447,6 @@ def faq_items(lang, home=""):
     has the #local section; home = relative link from there to this language's home page."""
     t = I18N[lang]
     items = []
-    if get("venue.shows_all_eintracht_matches") is True:
-        a = t["faqA1"] + (t["faqA1sound"] if get("venue.sound_on_for_eintracht") is True else "")
-        items.append((t["faqQ1"], a, None))
     acc = get("venue.accepts_reservations")
     how = loc(get("venue.reservation_how"), lang)
     if acc is True and how and not missing(how):
@@ -403,7 +460,7 @@ def faq_items(lang, home=""):
         pt = loc(get("local.public_transport"), lang)
         if pt and not missing(pt):
             a += t["faqA3pt"].format(pt=pt)
-        items.append((t["faqQ3"].format(stadium=stadium), a, (home + PAGES["eintracht"][lang], t["faqMoreEintracht"])))
+        items.append((t["faqQ3"].format(stadium=stadium), a, ("#local", t["faqMoreLocal"])))
     # Places near the bar (rounded straight-line distances, always worded as "about")
     for name, key in (("Festhalle Frankfurt", "Festhalle"), ("Frankfurt Hauptbahnhof", "Hbf")):
         p = nearby_place(name)
@@ -460,11 +517,11 @@ def faq_section(lang, home="", cls="section"):
 BAR_ID = SITE_URL + "/#bar"  # one stable entity id for all languages
 SCHEMA_DAYS = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"]
 AMENITY = {
-    "de": {"screens": "Bildschirme", "seats": "Sitzplätze", "sound": "Ton bei Spielen von Eintracht Frankfurt",
+    "de": {"screens": "Bildschirme", "seats": "Sitzplätze",
            "music": "Gäste bestimmen die Musik"},
-    "en": {"screens": "Screens", "seats": "Seats", "sound": "Sound on for Eintracht Frankfurt matches",
+    "en": {"screens": "Screens", "seats": "Seats",
            "music": "Guests choose the music"},
-    "it": {"screens": "Schermi", "seats": "Posti a sedere", "sound": "Audio acceso durante le partite dell'Eintracht Frankfurt",
+    "it": {"screens": "Schermi", "seats": "Posti a sedere",
            "music": "La musica la scelgono i clienti"},
 }
 BAD_VALUES = ("TODO", "Muster", "example.com", "000000", "Platzhalter")
@@ -524,8 +581,6 @@ def bar_schema(lang):
     n = get("venue.seats", report=False)
     if n:
         feats.append({"@type": "LocationFeatureSpecification", "name": am["seats"], "value": n})
-    if get("venue.sound_on_for_eintracht", report=False) is True:
-        feats.append({"@type": "LocationFeatureSpecification", "name": am["sound"], "value": True})
     if get("venue.music_choice", report=False) is True:  # visible: drinks section tile + FAQ
         feats.append({"@type": "LocationFeatureSpecification", "name": am["music"], "value": True})
     if feats:
@@ -593,7 +648,8 @@ def head_common(lang, depth, extra=""):
     elif "assets/fonts" not in " ".join(TODOS):
         TODOS.append("assets/fonts: self-hosted Barlow / Barlow Condensed files missing (local font fallbacks in use), see FONT_FILES in build.py")
     # theme-color: static fallback for the active palette; js/main.js replaces it with the live background
-    return f'''    <meta name="theme-color" content="{THEME_COLOR["dark"]}" media="(prefers-color-scheme: dark)">
+    robots = '    <meta name="robots" content="noindex">\n' if NOINDEX else ""
+    return f'''{robots}    <meta name="theme-color" content="{THEME_COLOR["dark"]}" media="(prefers-color-scheme: dark)">
     <meta name="theme-color" content="{THEME_COLOR["light"]}" media="(prefers-color-scheme: light)">
     <link rel="icon" href="{r}assets/icons/favicon.svg" type="image/svg+xml">
     <script>try{{var t=localStorage.getItem("theme");if(t==="light"||t==="dark")document.documentElement.dataset.theme=t}}catch(e){{}}</script>
@@ -684,31 +740,20 @@ def kickoff_html(lang, start, with_time=True):
             f'<span class="ko-date">{esc(date)}<span class="ko-year">{esc(year)}</span></span>{when}</time>')
 
 
-def kickoff_tbd(lang, with_time=True):
-    """Scoreboard block for a date that is not known yet."""
-    t = I18N[lang]
-    clock = '<span class="ko-time" aria-hidden="true">--:--</span>' if with_time else ""
-    return (f'<p class="kickoff kickoff-tbd"><span class="ko-day" aria-hidden="true">–</span> '
-            f'<span class="ko-date">{esc(t["efDateTbd"])}</span>{clock}</p>')
-
-
 # Decorative nav icons (24x24, drawn in currentColor; the text label is always next to them).
-# "eintracht" is the site's own generic wing motif (three slanted feather bars), not a club crest.
 NAV_ICONS = {
     "home": '<path d="M3 11.5 12 4l9 7.5M5.5 9.5V20h5v-6h3v6h5V9.5"/>',
     "schedule": '<path d="M3.5 6h17v14.5h-17zM3.5 10.5h17M8 3v5M16 3v5"/><path class="nif" d="M12.5 13.5H17V18h-4.5z"/>',
-    "eintracht": ('<path class="nif" d="M4 2.5h19l-3 5H1z"/><path class="nif" d="M8 9.5h13.5l-3 5H5z"/>'
-                  '<path class="nif" d="M12 16.5h8l-3 5H9z"/>'),
     # map pin with a slanted plate inside (same drawing as PIN_ICON in the "Nearby" heading)
     "contact": '<path d="M12 22s7-7.2 7-12.5A7 7 0 0 0 5 9.5C5 14.8 12 22 12 22z"/><path class="nif" d="M9.5 7.5h5l-1 4h-5z"/>',
 }
 # "Opens another page" cue (arrow out of the corner), shown after every standalone page link
 GO_ICON = ('<svg class="nav-go" viewBox="0 0 24 24" aria-hidden="true" focusable="false">'
            '<path d="M6 18 17.5 6.5M8.5 6H18v9.5"/></svg>')
-NAV_PAGE_KEYS = {"home": "navHome", "schedule": "navSchedule", "eintracht": "navEintracht", "contact": "navContactPage"}
+NAV_PAGE_KEYS = {"home": "navHome", "schedule": "navSchedule", "contact": "navContactPage"}
 NAV_SECTION_KEYS = {"about": "navAbout", "sport": "navSport", "drinks": "navDrinks", "events": "navEvents",
                     "gallery": "navGallery"}
-HOME_NAV_PAGES = ["schedule", "eintracht", "contact"]
+HOME_NAV_PAGES = ["schedule", "contact"]
 SUB_NAV_PAGES = ["home"] + HOME_NAV_PAGES
 SUB_NAV_SECTIONS = ["drinks", "events"]  # the home sections a visitor of a sub page most likely wants
 
@@ -720,7 +765,7 @@ def nav_icon(key):
 def home_sections(lang):
     """Ids of the home page's .section blocks in page order (CSS numbers them 01, 02, … in this order).
     The visit strip at the end of the home page is a band, not a numbered .section."""
-    return ["about", "sport", "drinks", "events", "gallery"]
+    return ["about", "sport", "drinks", "events"] + (["gallery"] if shows("show_gallery") else [])
 
 
 def site_nav(lang, pages, sections, home="", current=None):
@@ -1113,13 +1158,11 @@ def render_home(lang, hrefs=None):
     route = route_url()
     mobile_cls = "mobile-bar" + ("" if phone else " single")
     call = f'<a href="tel:+{digits(phone)}">{esc(t["call"])}</a>' if phone else ""
-    gallery = "\n                    ".join(
-        f'<button type="button" class="gallery-item" aria-label="{attr(t["zoom"])}"><img src="{r}assets/img/gallery-{n}.svg" width="800" height="800" loading="lazy" decoding="async" alt="{img_alt(t["galleryItemAlt"].format(n=n))}"></button>'
-        for n in range(1, 7))
+    gallery_section, lightbox = gallery_html(lang, r)
     nav = site_nav(lang, HOME_NAV_PAGES, home_sections(lang), current="home")
     has_hours = bool(SITE["hours"]["days"])
     hero_chip = '<p class="status hero-status" data-status></p>\n                ' if has_hours else ""
-    ticker_items = [p.strip() for p in t["tagline"].split("·") if p.strip()] + ["Bundesliga", "Eintracht Frankfurt", "Champions League"]
+    ticker_items = [p.strip() for p in t["tagline"].split("·") if p.strip()] + ["Bundesliga", "Basketball", "Champions League"]
     # Decorative: the same words are in the hero and the sport section
     ticker = ticker_html(ticker_items)
     head = head_common(lang, 0, jsonld_scripts(lang))
@@ -1159,7 +1202,7 @@ def render_home(lang, hrefs=None):
             {wing_svg("wing hero-wing")}
             <div class="container hero-content">
                 {hero_chip}<p class="eyebrow">Frankfurt · Niederrad</p>
-                <h1><span class="h1-line">C'est la vie</span> <span class="h1-line h1-flag">Sports Bar</span></h1>
+                <h1><span class="h1-line">C'est la Vie</span> <span class="h1-line h1-flag">Café &amp; Sportsbar</span></h1>
                 <p class="tagline">{esc(t["tagline"])}</p>
                 <div class="hero-buttons">
                     <a class="btn btn-primary" href="{sched_href}">{esc(t["btnLive"])}</a>
@@ -1169,16 +1212,7 @@ def render_home(lang, hrefs=None):
         </section>
         {ticker}
 
-        <section class="section" id="about">
-            <div class="container split">
-                <div class="reveal">
-                    <h2>{esc(t["aboutTitle"])}</h2>
-                    <p>{esc(t["aboutP1"])}</p>
-                    <p>{esc(t["aboutP2"])}</p>
-                </div>
-                <img class="reveal media" src="{r}assets/img/about.svg" width="1200" height="900" loading="lazy" decoding="async" alt="{img_alt(t["aboutAlt"])}">
-            </div>
-        </section>
+        {about_html(lang, r)}
 
         <section class="section section-alt" id="sport">
             <div class="container">
@@ -1187,7 +1221,7 @@ def render_home(lang, hrefs=None):
                 {facts_html}
                 <div class="bento">
                     <article class="card bento-card bento-a reveal"><span class="bento-n" aria-hidden="true">01</span><h3>Bundesliga</h3><p>{esc(t["sport1"])}</p></article>
-                    <article class="card bento-card bento-b reveal"><span class="bento-n" aria-hidden="true">02</span><h3>Eintracht Frankfurt</h3><p>{esc(t["sport2"])}</p></article>
+                    <article class="card bento-card bento-b reveal"><span class="bento-n" aria-hidden="true">02</span><h3>{esc(t["sport2Title"])}</h3><p>{esc(t["sport2"])}</p></article>
                     <article class="card bento-card bento-c reveal"><span class="bento-n" aria-hidden="true">03</span><h3>Champions League</h3><p>{esc(t["sport3"])}</p></article>
                     <article class="card bento-card bento-d reveal"><span class="bento-n" aria-hidden="true">04</span><h3>{esc(t["sport4Title"])}</h3><p>{esc(t["sport4"])}</p></article>
                     <article class="card bento-card bento-e reveal"><span class="bento-n" aria-hidden="true">05</span><h3>{esc(t["sport5Title"])}</h3><p>{esc(sport5)}</p></article>
@@ -1215,16 +1249,7 @@ def render_home(lang, hrefs=None):
             </div>
         </section>
 
-        <section class="section" id="gallery">
-            <div class="container">
-                <h2>{esc(t["galleryTitle"])}</h2>
-                <div class="gallery" id="gallery-grid">
-                    {gallery}
-                </div>
-            </div>
-        </section>
-
-{visit_strip(lang)}    </main>
+{gallery_section}{visit_strip(lang)}    </main>
 
 {site_footer(lang)}
 
@@ -1233,14 +1258,7 @@ def render_home(lang, hrefs=None):
         <a href="{attr(route)}" target="_blank" rel="noopener">{esc(t["route"])}</a>
     </div>
 
-    <dialog class="lightbox" id="lightbox" aria-label="{attr(t["lbLabel"])}">
-        <button type="button" class="lb-close" id="lbClose" aria-label="{attr(t["lbClose"])}">×</button>
-        <button type="button" class="lb-nav lb-prev" id="lbPrev" aria-label="{attr(t["lbPrev"])}">‹</button>
-        <img id="lbImg" src="" alt="">
-        <button type="button" class="lb-nav lb-next" id="lbNext" aria-label="{attr(t["lbNext"])}">›</button>
-    </dialog>
-
-    <script type="application/json" id="ui-data">{ui_data(lang)}</script>
+{lightbox}    <script type="application/json" id="ui-data">{ui_data(lang)}</script>
     <script src="{r}js/main.js"></script>
 </body>
 </html>
@@ -1288,8 +1306,7 @@ def render_legal(lang, kind, hrefs=None):
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>{esc(title)} – {esc(SITE["name"])}</title>
 {meta_block(lang, kind + ".html", title + " – " + SITE["name"], t["legalDescription"] if kind == "impressum" else t["privacyDescription"], social=False)}
-    <meta name="robots" content="noindex">
-{head_common(lang, 0)}</head>
+{"" if NOINDEX else '    <meta name="robots" content="noindex">' + chr(10)}{head_common(lang, 0)}</head>
 <body>
     <a class="skip-link" href="#main">{esc(t["skip"])}</a>
 {subpage_header(lang, path, kind, hrefs)}
@@ -1372,9 +1389,9 @@ PIN_ICON = ('<svg class="near-pin" viewBox="0 0 24 24" aria-hidden="true" focusa
             '<path d="M12 22s7-7.2 7-12.5A7 7 0 0 0 5 9.5C5 14.8 12 22 12 22z"/><path class="nif" d="M9.5 7.5h5l-1 4h-5z"/></svg>')
 
 
-def near_item(lang, p, home="", link_eintracht=True, hl=4):
+def near_item(lang, p, hl=4):
     """One nearby place as a ticket: name, kind, a sentence for people, and a scoreboard distance chip.
-    hl: heading level of the place name (4 under the 'Nearby' h3, 3 directly under a page h2)."""
+    hl: heading level of the place name (4 under the 'Nearby' h3)."""
     t = I18N[lang]
     km = p["distance_km"]
     key = NEAR_COPY.get(p["name"])
@@ -1386,25 +1403,21 @@ def near_item(lang, p, home="", link_eintracht=True, hl=4):
     elif key:
         text = t[f"near{key}"]
     kind = loc(p.get("kind"), lang)
-    link = ""
-    if key == "Stadium" and link_eintracht:
-        link = (f'<p class="near-link"><a href="{attr(home + PAGES["eintracht"][lang])}">{esc(t["nearLinkEintracht"])}'
-                f'<span aria-hidden="true">&nbsp;→</span></a></p>')
     return (f'<li class="near"><div class="near-body"><h{hl} class="near-name">{esc(p["name"])}</h{hl}>'
             + (f'<p class="near-kind">{esc(kind)}</p>' if kind else "")
-            + (f'<p class="near-text">{esc(text)}</p>' if text else "") + link
+            + (f'<p class="near-text">{esc(text)}</p>' if text else "")
             + f'</div><p class="near-dist"><span class="near-ca">{esc(t["nearAbout"])}</span> '
             f'<span class="near-km">{fmt_km(lang, km)}<span class="near-unit"> km</span></span> '
             f'<span class="near-line">{esc(t["nearLine"])}</span></p></li>')
 
 
-def nearby_html(lang, home="", uid="near"):
+def nearby_html(lang, uid="near"):
     """'Nearby' block: heading, intro, ticket list (nearest first), distance note. '' without confirmed places."""
     t = I18N[lang]
     places = nearby_places()
     if not places:
         return ""
-    items = "".join(near_item(lang, p, home) for p in places)
+    items = "".join(near_item(lang, p) for p in places)
     return (f'<div class="nearby" role="group" aria-labelledby="{uid}-h">'
             f'<h3 class="nearby-title" id="{uid}-h">{PIN_ICON}{esc(t["nearTitle"])}</h3>'
             f'<p class="near-intro">{esc(t["nearIntro"])}</p>'
@@ -1418,7 +1431,6 @@ def link_list(lang, home, keys):
     contact = home + PAGES["contact"][lang]  # opening hours, directions and the area live on the contact page
     target = {
         "schedule": (home + PAGES["schedule"][lang], "localLinkSchedule"),
-        "eintracht": (home + PAGES["eintracht"][lang], "localLinkEintracht"),
         "drinks": (home + "#drinks", "localLinkDrinks"),
         "visit": (contact + "#visit", "localLinkVisit"),
         "local": (contact + "#local", "localLinkArea"),
@@ -1428,10 +1440,10 @@ def link_list(lang, home, keys):
     return f'<ul class="link-list">{lis}</ul>'
 
 
-def local_block(lang, home="", links=("visit", "schedule", "eintracht")):
+def local_block(lang, home="", links=("visit", "schedule", "drinks")):
     """Body of 'Directions & area' (contact page and schedule page): text column + nearby list."""
     paras = "".join(f"<p>{esc(x)}</p>" for x in local_paragraphs(lang))
-    near = nearby_html(lang, home)
+    near = nearby_html(lang)
     return (f'<div class="local-grid"><div class="local">{paras}{link_list(lang, home, links)}</div>'
             f'{near}</div>')
 
@@ -1444,7 +1456,7 @@ def local_section(lang, home="", cls="section"):
         <section class="{cls}" id="local">
             <div class="container">
                 <h2>{esc(t["localTitle"])}</h2>
-                {local_block(lang, home, links=("schedule", "eintracht", "drinks"))}
+                {local_block(lang, home, links=("schedule", "drinks"))}
             </div>
         </section>
 '''
@@ -1457,15 +1469,13 @@ def match_title(home, away, score=None):
             f'<span class="team team-away">{esc(away)}</span></h3>')
 
 
-def page_head(lang, path, h1, intro, kicker, extra="", art=False, cls=""):
-    """Dark matchday band at the top of the schedule and Eintracht pages."""
+def page_head(lang, path, h1, intro, kicker, extra="", cls=""):
+    """Dark matchday band at the top of the schedule and contact pages."""
     parts = h1.split(" ", 1)
     title = (f'<span class="h1-line">{esc(parts[0])}</span> <span class="h1-line h1-flag">{esc(parts[1])}</span>'
              if len(parts) == 2 else esc(h1))
-    wing = wing_svg("wing page-wing") if art else ""
     return f'''        <section class="page-head{" " + cls if cls else ""}" aria-labelledby="page-h1">
             <div class="page-head-stripes" aria-hidden="true"></div>
-            {wing}
             <div class="container page-head-inner">
                 {back_link(lang, path)}
                 <p class="kicker">{esc(kicker)}</p>
@@ -1507,7 +1517,7 @@ def render_schedule(lang, hrefs):
             blocks.append(sports_event_schema(lang, start, m))
     body = ('<ul class="match-list">' + "".join(items) + "</ul>") if items else f'<p>{esc(t["schedEmpty"])}</p>'
     example_note = f'<p class="match-note">{esc(t["exampleNote"])}</p>' if any_example else ""
-    local = local_block(lang, home_href(path), links=("eintracht", "drinks", "visit"))
+    local = local_block(lang, home_href(path), links=("drinks", "visit"))
     return f'''<!DOCTYPE html>
 <html lang="{lang}">
 <head>
@@ -1528,251 +1538,6 @@ def render_schedule(lang, hrefs):
                 <h2 class="sec-head" id="sched-local">{esc(t["localTitle"])}</h2>
                 {local}
             </section>
-            {back_link(lang, path, end=True)}
-        </div>
-    </main>
-{site_footer(lang, home_href(path))}
-    <script type="application/json" id="ui-data">{ui_data(lang)}</script>
-    <script src="{r}js/main.js"></script>
-</body>
-</html>
-'''
-
-
-# ---------------------------------------------------------------- Eintracht Frankfurt page
-EINTRACHT = "Eintracht Frankfurt"  # team name exactly as written in data/schedule.json
-
-# TODO(owner): PLACEHOLDER data. There is no data source yet for Eintracht results or the league table,
-# and data/schedule.json has no Eintracht match yet. Until real data is entered here, the page shows each
-# entry below in a visible "to be filled in" state. Never put invented results or standings here.
-#
-# Upcoming fixtures: add them to data/schedule.json with "Eintracht Frankfurt" as "home" or "away".
-#   They then appear on /spielplan/ AND here, and the "fixtures" list below is ignored.
-#   (Entries in "fixtures" below use: {"start": "2027-02-06T15:30:00+01:00", "opponent": "…",
-#    "competition": "Bundesliga", "home": true}; finished matches are hidden 3 h after kick-off.)
-# Past results, newest first:
-#   {"date": "2026-11-01", "opponent": "…", "competition": "Bundesliga", "home": true,
-#    "goals_for": 2, "goals_against": 1}
-# Table standing (one entry):
-#   {"competition": "Bundesliga", "season": "2026/27", "position": 4, "played": 10,
-#    "points": 19, "goal_diff": 6, "as_of": "2026-11-08"}
-# Replace a {"placeholder": True} entry with a real one; an empty list hides the rows of that section.
-EINTRACHT_DATA = {
-    "fixtures": [{"placeholder": True}, {"placeholder": True}, {"placeholder": True}],
-    "results": [{"placeholder": True}, {"placeholder": True}, {"placeholder": True}],
-    "standing": {"placeholder": True},
-}
-
-
-def fmt_date(lang, d):
-    """Date without time, e.g. 'Sa., 01.11.2026' / 'Sat 1 Nov 2026'."""
-    t = I18N[lang]
-    wd = t["dayShort"][(d.weekday() + 1) % 7]
-    if lang in NUMERIC_DATES:
-        return f"{wd}., {d.day:02d}.{d.month:02d}.{d.year}"
-    return f"{wd} {d.day} {t['months'][d.month - 1]} {d.year}"
-
-
-def tbd_html(lang):
-    """A visible dash for a value that is not filled in yet; screen readers hear 'to be filled in'."""
-    return f'<span aria-hidden="true">–</span><span class="sr-only">{esc(I18N[lang]["efTbd"])}</span>'
-
-
-def pending_note(lang, text_key):
-    t = I18N[lang]
-    return f'<p class="pending-note"><span class="tag tag-pending">{esc(t["efPending"])}</span>{esc(t[text_key])}</p>'
-
-
-def teams(e, opponent):
-    """(home team, away team) for an Eintracht match."""
-    return (EINTRACHT, opponent) if e.get("home", True) else (opponent, EINTRACHT)
-
-
-def eintracht_fixtures():
-    """[(start | None, entry)]: upcoming Eintracht matches from schedule.json, else the EINTRACHT_DATA list."""
-    out = []
-    for start, m in upcoming_matches():
-        if EINTRACHT in (m.get("home"), m.get("away")):
-            home = m["home"] == EINTRACHT
-            out.append((start, {"opponent": m["away"] if home else m["home"], "home": home,
-                                "competition": m.get("competition"), "example": bool(m.get("example")), "id": m["id"]}))
-    if out:
-        return out
-    for e in EINTRACHT_DATA["fixtures"]:
-        if e.get("placeholder"):
-            out.append((None, e))
-            continue
-        start = datetime.fromisoformat(e["start"])
-        if start + timedelta(hours=3) > NOW:
-            out.append((start, e))
-    return out
-
-
-def venue_tag(lang, e):
-    t = I18N[lang]
-    return f'<span class="match-venue">{esc(t["efHome"] if e.get("home", True) else t["efAway"])}</span>'
-
-
-def match_flag(lang, key):
-    """Small label above the first card of a list ('Next match' / 'Last match')."""
-    return f'<p class="match-flag">{esc(I18N[lang][key])}</p>'
-
-
-def fixture_item(lang, start, e, first=False):
-    t = I18N[lang]
-    flag = match_flag(lang, "efNext") if first else ""
-    cls = "match fixture" + (" is-next" if first else "")
-    if e.get("placeholder"):
-        return (f'<li class="{cls} is-pending">{kickoff_tbd(lang)}<div class="match-body">{flag}'
-                f'{match_title(EINTRACHT, t["efOpponentTbd"])}'
-                f'<p class="match-meta"><span class="match-comp">{esc(t["efCompTbd"])}</span></p></div></li>')
-    home, away = teams(e, e["opponent"])
-    comp = f'<span class="match-comp">{esc(e["competition"])}</span>' if e.get("competition") else ""
-    badge = f'<span class="tag">{esc(t["exampleBadge"])}</span>' if e.get("example") else ""
-    return (f'<li class="{cls}">{kickoff_html(lang, start)}<div class="match-body">{flag}'
-            f'{match_title(home, away)}<p class="match-meta">{comp}{venue_tag(lang, e)}{badge}</p></div></li>')
-
-
-def result_item(lang, e, first=False):
-    t = I18N[lang]
-    flag = match_flag(lang, "efLast") if first else ""
-    if e.get("placeholder"):
-        return (f'<li class="match result is-pending">{kickoff_tbd(lang, with_time=False)}<div class="match-body">{flag}'
-                f'{match_title(EINTRACHT, t["efOpponentTbd"], tbd_html(lang))}'
-                f'<p class="match-meta"><span class="match-comp">{esc(t["efCompTbd"])}</span></p></div></li>')
-    home, away = teams(e, e["opponent"])
-    gf, ga = int(e["goals_for"]), int(e["goals_against"])
-    hg, ag = (gf, ga) if e.get("home", True) else (ga, gf)
-    outcome, ocls = (t["efWin"], "win") if gf > ga else (t["efDraw"], "draw") if gf == ga else (t["efLoss"], "loss")
-    d = datetime.fromisoformat(e["date"])
-    comp = f'<span class="match-comp">{esc(e["competition"])}</span>' if e.get("competition") else ""
-    return (f'<li class="match result">{kickoff_html(lang, d.replace(tzinfo=d.tzinfo or TZ), with_time=False)}'
-            f'<div class="match-body">{flag}{match_title(home, away, f"{hg}:{ag}")}'
-            f'<p class="match-meta">{comp}{venue_tag(lang, e)}<span class="tag outcome outcome-{ocls}">{esc(outcome)}</span></p></div></li>')
-
-
-def standing_html(lang):
-    t = I18N[lang]
-    s = EINTRACHT_DATA.get("standing")
-    if not s:
-        return f'<p>{esc(t["efTableEmpty"])}</p>'
-    pend = bool(s.get("placeholder"))
-
-    def val(k, fmt=str):
-        return tbd_html(lang) if pend or s.get(k) is None else esc(fmt(s[k]))
-
-    league = " ".join(str(s[k]) for k in ("competition", "season") if s.get(k))
-    label = esc(t["efPosition"]) + (f' · {esc(league)}' if league else "")
-    pos = tbd_html(lang) if pend or s.get("position") is None else f'{int(s["position"])}.'
-    as_of = ""
-    if not pend and s.get("as_of"):
-        d = datetime.fromisoformat(s["as_of"]).date()
-        as_of = f'<p class="match-note">{esc(t["efAsOf"].format(date=fmt_date(lang, d)))}</p>'
-    stats = "".join(f'<div><dt>{esc(t[label_key])}</dt><dd>{val(k, fmt)}</dd></div>' for label_key, k, fmt in (
-        ("efPlayed", "played", str), ("efPoints", "points", str), ("efGoalDiff", "goal_diff", lambda n: f"{int(n):+d}")))
-    return (f'<div class="standing{" is-pending" if pend else ""}">'
-            f'<p class="standing-pos"><span class="standing-n">{pos}</span><span class="standing-label">{label}</span></p>'
-            f'<dl class="standing-stats">{stats}</dl>{as_of}</div>')
-
-
-def reserve_buttons(lang):
-    """'Reserve a table' reuses the existing contact links (phone, else WhatsApp). Hidden if the bar takes no reservations."""
-    t = I18N[lang]
-    if get("venue.accepts_reservations", report=False) is False:
-        return ""
-    phone, wa = get("contact.phone", report=False), get("contact.whatsapp", report=False)
-    out = []
-    if phone:
-        out.append(f'<a class="btn btn-primary" href="tel:+{digits(phone)}">{esc(t["efReserve"])}</a>')
-    if wa:
-        cls = "btn btn-ghost" if out else "btn btn-primary"
-        label = t["efReserveWa"] if out else t["efReserve"]
-        out.append(f'<a class="{cls}" href="https://wa.me/{digits(wa)}" target="_blank" rel="noopener">{esc(label)}</a>')
-    return f'<div class="cta-row">{"".join(out)}</div>' if out else ""
-
-
-def render_eintracht(lang, hrefs):
-    t = I18N[lang]
-    path = PAGES["eintracht"][lang]
-    r = "../" * (path.count("/") + (0 if lang == DEFAULT_LANG else 1))
-    fixtures = eintracht_fixtures()
-    results = EINTRACHT_DATA.get("results", [])
-    for key, pend in (("fixtures", any(e.get("placeholder") for _, e in fixtures)),
-                      ("results", any(e.get("placeholder") for e in results)),
-                      ("standing", bool((EINTRACHT_DATA.get("standing") or {}).get("placeholder")))):
-        msg = f"EINTRACHT_DATA['{key}'] in build.py (placeholder shown on /{path})"
-        if pend and msg not in TODOS:
-            TODOS.append(msg)
-    fx = ("".join(fixture_item(lang, s, e, first=(i == 0)) for i, (s, e) in enumerate(fixtures)))
-    fx_html = (f'<ol class="match-list fixtures">{fx}</ol>' if fx else f'<p>{esc(t["efFixturesEmpty"])}</p>')
-    fx_note = pending_note(lang, "efPendingFixtures") if any(e.get("placeholder") for _, e in fixtures) else ""
-    rs = "".join(result_item(lang, e, first=(i == 0)) for i, e in enumerate(results))
-    rs_html = (f'<ol class="match-list results">{rs}</ol>' if rs else f'<p>{esc(t["efResultsEmpty"])}</p>')
-    rs_note = pending_note(lang, "efPendingResults") if any(e.get("placeholder") for e in results) else ""
-    tb_note = pending_note(lang, "efPendingTable") if (EINTRACHT_DATA.get("standing") or {}).get("placeholder") else ""
-    cta = reserve_buttons(lang)
-    cta_band = f'''
-                <section class="cta-band ticket" aria-labelledby="ef-reserve">
-                    <p class="ticket-stub" aria-hidden="true"><span>{esc(t["efTicketStub"])}</span></p>
-                    <div class="ticket-main">
-                        <h2 id="ef-reserve">{esc(t["efCtaTitle"])}</h2>
-                        <p>{esc(t["efCtaText"])}</p>
-                        {cta}
-                    </div>
-                </section>''' if cta else ""
-    sched = home_href(path) + PAGES["schedule"][lang]
-    # 04: from the stadium to the bar (only with a confirmed stadium entry in local.nearby_places)
-    stadium = nearby_place(SITE["local"]["stadium_name"])
-    way = f'''
-                <section class="page-sec ef-way" aria-labelledby="ef-way">
-                    <h2 class="sec-head" id="ef-way"><span class="sec-n" aria-hidden="true">04</span>{esc(t["efWay"])}</h2>
-                    <ul class="near-list">{near_item(lang, stadium, link_eintracht=False, hl=3)}</ul>
-                    <p class="near-note">{esc(t["nearNote"])}</p>
-                    {link_list(lang, home_href(path), ("local", "drinks"))}
-                </section>''' if stadium else ""
-    jump_items = [("ef-fixtures", "efFixtures"), ("ef-results", "efResults"), ("ef-table", "efTable")]
-    if way:
-        jump_items.append(("ef-way", "efWay"))
-    jump_nav = jump_board(lang, jump_items)
-    head = page_head(lang, path, t["efH1"], t["efIntro"], t["efKicker"], extra=cta + jump_nav, art=True, cls="ef-head")
-    ticker = ticker_html([EINTRACHT, t["efKicker"], t["efFixtures"], t["efResults"], t["efTable"]], "ticker-alt")
-    return f'''<!DOCTYPE html>
-<html lang="{lang}">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>{esc(t["efTitle"])}</title>
-{meta_block(lang, path, t["efTitle"], t["efDesc"])}
-{head_common(lang, path.count("/"), jsonld_scripts(lang, [bar_schema(lang)]))}</head>
-<body>
-    <a class="skip-link" href="#main">{esc(t["skip"])}</a>
-{subpage_header(lang, path, "eintracht", hrefs)}
-    <main id="main" class="eintracht">
-{head}
-        {ticker}
-        <div class="container page-body ef-body">
-            <div class="ef-grid">
-                <div class="ef-main">
-                <section class="page-sec ef-fixtures" aria-labelledby="ef-fixtures">
-                    <h2 class="sec-head" id="ef-fixtures"><span class="sec-n" aria-hidden="true">01</span>{esc(t["efFixtures"])}</h2>
-                    {fx_note}
-                    {fx_html}
-                    <p class="more-link"><a href="{sched}">{esc(t["efAllMatches"])}<span aria-hidden="true">&nbsp;→</span></a></p>
-                </section>
-                <section class="page-sec ef-results" aria-labelledby="ef-results">
-                    <h2 class="sec-head" id="ef-results"><span class="sec-n" aria-hidden="true">02</span>{esc(t["efResults"])}</h2>
-                    {rs_note}
-                    {rs_html}
-                </section>
-                </div>
-                <div class="ef-side">
-                <section class="page-sec ef-table" aria-labelledby="ef-table">
-                    <h2 class="sec-head" id="ef-table"><span class="sec-n" aria-hidden="true">03</span>{esc(t["efTable"])}</h2>
-                    {tb_note}
-                    {standing_html(lang)}
-                </section>{cta_band}{way}
-                </div>
-            </div>
             {back_link(lang, path, end=True)}
         </div>
     </main>
@@ -1838,7 +1603,7 @@ def render_contact(lang, hrefs):
 
 
 # ---------------------------------------------------------------- robots.txt + sitemap.xml
-INDEXABLE = ["home", "schedule", "eintracht", "contact"]  # legal pages are noindex and stay out of the sitemap
+INDEXABLE = ["home", "schedule", "contact"]  # legal pages are noindex and stay out of the sitemap
 
 
 def robots_txt():
@@ -1882,7 +1647,7 @@ def main():
         write(pre + "index.html", render_home(lang, lang_hrefs(lang, "")))
         for kind in ("impressum", "datenschutz"):
             write(pre + PAGES[kind][lang], render_legal(lang, kind, lang_hrefs(lang, PAGES[kind][lang])))
-        for key, render in (("schedule", render_schedule), ("eintracht", render_eintracht), ("contact", render_contact)):
+        for key, render in (("schedule", render_schedule), ("contact", render_contact)):
             path = PAGES[key][lang]
             write(pre + path + "index.html", render(lang, lang_hrefs(lang, path)))
     write("robots.txt", robots_txt())
