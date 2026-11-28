@@ -1,7 +1,6 @@
 {
   "currency": "€",
-  "source": "Transcribed from the printed bar menu (photos from the owner, 2026-11-21). Prices are the current handwritten ones. 'additives' are the footnote numbers printed next to a drink; their legend is not in the photos yet (see additives_legend).",
-  "additives_legend": null,
+  "source": "Transcribed from the printed bar menu (photos from the owner, 2026-11-21). Prices are the current handwritten ones.",
   "notes": [
     {
       "de": "Alle Preise sind in Euro, inkl. gesetzlicher MwSt. und Bedienung.",
@@ -90,20 +89,17 @@
         {
           "name": "Coca-Cola",
           "size": "0,2 l",
-          "price": 3.5,
-          "additives": [1, 2]
+          "price": 3.5
         },
         {
           "name": "Coca-Cola Zero",
           "size": "0,2 l",
-          "price": 3.5,
-          "additives": [1, 2, 8, 11]
+          "price": 3.5
         },
         {
           "name": "Fanta Orange",
           "size": "0,2 l",
-          "price": 3.5,
-          "additives": [2, 9]
+          "price": 3.5
         },
         {
           "name": "Sprite",
@@ -113,8 +109,7 @@
         {
           "name": "Bitter Lemon",
           "size": "0,2 l",
-          "price": 3.5,
-          "additives": [3, 9]
+          "price": 3.5
         },
         {
           "name": "Orangina",
@@ -153,7 +148,6 @@
           "name": "Red Bull",
           "size": "0,25 l",
           "price": 4.0,
-          "additives": [2, 4, 14],
           "description": {
             "de": "Classic, Sugarfree oder Red Edition",
             "en": "Classic, Sugarfree or Red Edition",
@@ -234,8 +228,7 @@
         {
           "name": "Aperol Spritz",
           "size": "0,2 l",
-          "price": 8.0,
-          "additives": [2, 3]
+          "price": 8.0
         },
         {
           "name": "Hugo",
@@ -250,20 +243,17 @@
         {
           "name": "Martini Bianco",
           "size": "0,4 l",
-          "price": 5.0,
-          "additives": [5]
+          "price": 5.0
         },
         {
           "name": "Martini Rosso",
           "size": "0,4 l",
-          "price": 5.0,
-          "additives": [2, 5]
+          "price": 5.0
         },
         {
           "name": "Campari Orange",
           "size": "0,4 l",
-          "price": 7.0,
-          "additives": [2]
+          "price": 7.0
         }
       ]
     },
@@ -278,28 +268,23 @@
       "items": [
         {
           "name": "Jacky Cola",
-          "price": 8.0,
-          "additives": [1, 2]
+          "price": 8.0
         },
         {
           "name": "Vodka Red Bull",
-          "price": 8.0,
-          "additives": [2, 4, 14]
+          "price": 8.0
         },
         {
           "name": "Vodka Lemon",
-          "price": 8.0,
-          "additives": [3, 9]
+          "price": 8.0
         },
         {
           "name": "Gin Tonic",
-          "price": 8.0,
-          "additives": [3]
+          "price": 8.0
         },
         {
           "name": "Red Gin Melon",
           "price": 8.0,
-          "additives": [2, 4, 14],
           "description": {
             "de": "Red Bull Red Edition, Gin",
             "en": "Red Bull Red Edition, gin",
@@ -324,14 +309,12 @@
         {
           "name": "Chivas Regal",
           "size": "2 cl",
-          "price": 7.0,
-          "additives": [2]
+          "price": 7.0
         },
         {
           "name": "Jameson",
           "size": "2 cl",
-          "price": 7.0,
-          "additives": [2]
+          "price": 7.0
         },
         {
           "name": "Jim Beam",
@@ -341,20 +324,17 @@
         {
           "name": "Tullamore Dew",
           "size": "2 cl",
-          "price": 7.0,
-          "additives": [2]
+          "price": 7.0
         },
         {
           "name": "Carlos",
           "size": "2 cl",
-          "price": 7.0,
-          "additives": [2]
+          "price": 7.0
         },
         {
           "name": "Hennessy",
           "size": "2 cl",
-          "price": 10.0,
-          "additives": [2]
+          "price": 10.0
         }
       ]
     },
@@ -419,8 +399,7 @@
         {
           "name": "Baileys",
           "size": "2 cl",
-          "price": 4.0,
-          "additives": [2]
+          "price": 4.0
         },
         {
           "name": "Grappa",

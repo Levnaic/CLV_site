@@ -62,4 +62,12 @@
     --night-bad:         #ff6b70;
     --night-ink:         #5a5354;
     --night-hard:        #e1000f;
+
+    /* Colour grade of the home hero photo: a red soft-light wash pulls the bar's purple and pink
+       lights towards the club red. It stays gentle because a person is in the picture.
+       Stronger or weaker: --hero-tint-opacity (0 to 1). Original photo: delete these four lines. */
+    --hero-filter:       saturate(.98) contrast(1.08) brightness(.96);
+    --hero-tint:         var(--night-accent);
+    --hero-tint-blend:   soft-light;
+    --hero-tint-opacity: .55;
 }
