@@ -63,11 +63,17 @@
     --night-ink:         #5a5354;
     --night-hard:        #e1000f;
 
-    /* Colour grade of the home hero photo: a red soft-light wash pulls the bar's purple and pink
-       lights towards the club red. It stays gentle because a person is in the picture.
-       Stronger or weaker: --hero-tint-opacity (0 to 1). Original photo: delete these four lines. */
-    --hero-filter:       saturate(.98) contrast(1.08) brightness(.96);
-    --hero-tint:         var(--night-accent);
-    --hero-tint-blend:   soft-light;
-    --hero-tint-opacity: .55;
+    /* Colour grade of the home hero photo (matchday look: black, white, club red).
+       filter: less saturation and a little darker with more contrast, so the lilac stone wall and grey
+         counter turn charcoal and sink into the page black instead of glowing purple.
+       tint: a "hue" blend recolours only the hue: the magenta/violet bar lights become club red, while
+         greys stay neutral and brightness is untouched. Full strength at the top (shelf lights) and
+         bottom (counter, wall); only 35% in the band where the bartender's face sits, so skin stays natural.
+       Strength: --hero-tint-opacity (0 to 1); face band: the 35%; darker/lighter: brightness().
+       Original photo: delete these four lines. */
+    --hero-filter:       saturate(.78) contrast(1.15) brightness(.82);
+    --hero-tint:         linear-gradient(to bottom, var(--night-accent),
+                             color-mix(in srgb, var(--night-accent) 35%, transparent) 38% 55%, var(--night-accent));
+    --hero-tint-blend:   hue;
+    --hero-tint-opacity: 1;
 }

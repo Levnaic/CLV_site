@@ -285,7 +285,9 @@ p { margin: 0 0 1em; }
    the header and the text (about 29rem), so the buttons stay on the first screen; never under 12rem. */
 .hero-media { --fade: linear-gradient(to bottom, rgb(0 0 0 / .65), #000 12%, #000 62%, rgb(0 0 0 / .55) 82%, transparent); -webkit-mask-image: var(--fade); mask-image: var(--fade); position: relative; flex: none; isolation: isolate; overflow: hidden; height: max(12rem, min(88vw, 100svh - 29rem, 34rem)); }
 .hero-img { width: 100%; height: 100%; object-fit: cover; object-position: var(--hero-focus); transform: scale(var(--hero-zoom)); transform-origin: var(--hero-focus); filter: var(--hero-filter, none); }
-.hero-media::after { content: ""; position: absolute; inset: 0; z-index: 1; background: var(--hero-tint, transparent); mix-blend-mode: var(--hero-tint-blend, normal); opacity: var(--hero-tint-opacity, 0); pointer-events: none; }
+.hero-media::after { content: ""; position: absolute; inset: 0; z-index: 1; background: var(--hero-tint, transparent); mix-blend-mode: var(--hero-tint-blend, normal); opacity: 0; pointer-events: none; }
+/* Only where blend modes work: without them the tint would cover the photo as a solid red layer */
+@supports (mix-blend-mode: hue) { .hero-media::after { opacity: var(--hero-tint-opacity, 0); } }
 .hero-content { position: relative; z-index: 3; margin-block: auto; padding-block: .85rem 1.5rem; }
 .hero .eyebrow, .hero .hero-status { margin-bottom: .7rem; }
 .hero h1 { margin-bottom: .28em; font-size: clamp(3.25rem, 15vw, 7rem); }
@@ -847,8 +849,9 @@ address strong { color: var(--text); font: 800 1.35rem/1.2 var(--font-head); tex
    photo starts where it ends. (build.py: the img "sizes" attribute assumes this layout.) */
 @media (min-width: 900px) and (min-aspect-ratio: 1/1), (min-width: 560px) and (max-height: 560px) and (orientation: landscape) {
     .hero { --hero-col: clamp(19rem, 40vw, 37.5rem); --hero-focus: 46% 40%; --hero-zoom: 1; flex-direction: row; align-items: center; }
-    /* Two masks, intersected: a long fade on the text side, short ones on the other three */
-    .hero-media { --fade-x: linear-gradient(to right, transparent, rgb(0 0 0 / .45) 12%, #000 34%, #000 86%, rgb(0 0 0 / .5)); --fade-y: linear-gradient(to bottom, rgb(0 0 0 / .55), #000 14%, #000 74%, transparent); -webkit-mask-image: var(--fade-x), var(--fade-y); -webkit-mask-composite: source-in; mask-image: var(--fade-x), var(--fade-y); mask-composite: intersect; position: absolute; inset: 0 0 0 calc(max(var(--gutter), (100% - 1180px) / 2 + var(--gutter)) + var(--hero-col)); height: auto; }
+    /* Two masks, intersected: a long fade on the text side, short ones on the other three.
+       The text-side fade is eased (slow start, slow end): a straight ramp left a visible vertical seam. */
+    .hero-media { --fade-x: linear-gradient(to right, transparent, rgb(0 0 0 / .03) 5%, rgb(0 0 0 / .12) 10%, rgb(0 0 0 / .28) 15%, rgb(0 0 0 / .5) 21%, rgb(0 0 0 / .74) 27%, rgb(0 0 0 / .92) 33%, #000 39%, #000 86%, rgb(0 0 0 / .5)); --fade-y: linear-gradient(to bottom, rgb(0 0 0 / .55), #000 14%, #000 74%, transparent); -webkit-mask-image: var(--fade-x), var(--fade-y); -webkit-mask-composite: source-in; mask-image: var(--fade-x), var(--fade-y); mask-composite: intersect; position: absolute; inset: 0 0 0 calc(max(var(--gutter), (100% - 1180px) / 2 + var(--gutter)) + var(--hero-col)); height: auto; }
     .hero-content { padding-block: clamp(1.25rem, 6svh, 4rem); }
     /* The whole text block ends before the photo starts */
     .hero-content { max-width: calc(var(--gutter) + var(--hero-col) - .75rem); margin-inline: max(0px, (100% - 1180px) / 2) auto; padding-right: 0; }
