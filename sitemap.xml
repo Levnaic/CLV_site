@@ -23,27 +23,6 @@
     <xhtml:link rel="alternate" hreflang="x-default" href="https://cestlavie-frankfurt.de/"/>
   </url>
   <url>
-    <loc>https://cestlavie-frankfurt.de/spielplan/</loc>
-    <xhtml:link rel="alternate" hreflang="de" href="https://cestlavie-frankfurt.de/spielplan/"/>
-    <xhtml:link rel="alternate" hreflang="en" href="https://cestlavie-frankfurt.de/en/schedule/"/>
-    <xhtml:link rel="alternate" hreflang="it" href="https://cestlavie-frankfurt.de/it/calendario/"/>
-    <xhtml:link rel="alternate" hreflang="x-default" href="https://cestlavie-frankfurt.de/spielplan/"/>
-  </url>
-  <url>
-    <loc>https://cestlavie-frankfurt.de/en/schedule/</loc>
-    <xhtml:link rel="alternate" hreflang="de" href="https://cestlavie-frankfurt.de/spielplan/"/>
-    <xhtml:link rel="alternate" hreflang="en" href="https://cestlavie-frankfurt.de/en/schedule/"/>
-    <xhtml:link rel="alternate" hreflang="it" href="https://cestlavie-frankfurt.de/it/calendario/"/>
-    <xhtml:link rel="alternate" hreflang="x-default" href="https://cestlavie-frankfurt.de/spielplan/"/>
-  </url>
-  <url>
-    <loc>https://cestlavie-frankfurt.de/it/calendario/</loc>
-    <xhtml:link rel="alternate" hreflang="de" href="https://cestlavie-frankfurt.de/spielplan/"/>
-    <xhtml:link rel="alternate" hreflang="en" href="https://cestlavie-frankfurt.de/en/schedule/"/>
-    <xhtml:link rel="alternate" hreflang="it" href="https://cestlavie-frankfurt.de/it/calendario/"/>
-    <xhtml:link rel="alternate" hreflang="x-default" href="https://cestlavie-frankfurt.de/spielplan/"/>
-  </url>
-  <url>
     <loc>https://cestlavie-frankfurt.de/kontakt/</loc>
     <xhtml:link rel="alternate" hreflang="de" href="https://cestlavie-frankfurt.de/kontakt/"/>
     <xhtml:link rel="alternate" hreflang="en" href="https://cestlavie-frankfurt.de/en/contact/"/>

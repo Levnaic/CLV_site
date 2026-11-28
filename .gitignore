@@ -58,3 +58,6 @@ npm-debug.log*
 # Logs and temp files
 *.log
 *.tmp
+
+# Original photo: kept on this computer only, never committed
+/assets/shank.jpeg

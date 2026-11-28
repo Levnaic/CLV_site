@@ -30,6 +30,8 @@ See `docs/deployment.md` (setup, switches, going live) and `docs/runbooks/rollba
 
 ## Updating the match schedule
 
+**The schedule is hidden for now** (`SHOW_SCHEDULE = False` in `build.py`). The code and data are kept. To bring it back: set it to `True`, and in `.github/workflows/deploy.yml` add `spielplan` to `GENERATED` and set `MIN_PAGES` to `15`.
+
 1. Open `data/schedule.json` and add one object per match the bar shows:
 
    ```json

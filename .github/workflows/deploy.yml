@@ -26,11 +26,11 @@ concurrency:
 env:
   # Top-level files and folders that build.py writes. The build must produce exactly these.
   # If you add a page folder in build.py, add it here too (the run fails until you do).
-  GENERATED: "index.html impressum.html datenschutz.html robots.txt sitemap.xml en it kontakt spielplan"
+  GENERATED: "index.html impressum.html datenschutz.html robots.txt sitemap.xml en it kontakt"
   # Static folders copied from the repository as they are.
   STATIC: "css js assets"
   # Minimum number of HTML pages. Protects the server from an empty or broken build.
-  MIN_PAGES: "15"
+  MIN_PAGES: "12"
 
 jobs:
   deploy:

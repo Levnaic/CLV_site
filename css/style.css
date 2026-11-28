@@ -274,29 +274,34 @@ p { margin: 0 0 1em; }
 .eyebrow::before, .kicker::before { content: ""; position: absolute; inset: 0; z-index: -1; background: var(--accent); transform: skewX(var(--skew)); }
 .tag { display: inline-block; margin-bottom: 1rem; padding: .15rem .6rem; border: 2px solid currentColor; color: var(--accent-text); font: 700 .75rem/1.4 var(--font-body); text-transform: uppercase; letter-spacing: .14em; }
 
-/* ---------- Home hero: matchday poster (always dark) ---------- */
-.hero { position: relative; display: flex; align-items: flex-end; overflow: hidden; background: var(--bg); color: var(--text-2); min-height: min(calc(100svh - var(--header-h) - var(--ticker-h)), 60rem); }
-.hero-img { position: absolute; inset: 0; z-index: 0; width: 100%; height: 100%; object-fit: cover; }
-.hero-overlay { position: absolute; inset: 0; z-index: 1; background: linear-gradient(to top, var(--bg) 18%, color-mix(in srgb, var(--bg) 78%, transparent) 60%, color-mix(in srgb, var(--bg) 55%, transparent)); }
-/* Red corner flag with dark kit stripes (mobile), a full diagonal sash on wide screens */
-.hero-slab {
-    position: absolute; z-index: 2; inset: 0;
-    background: var(--accent) repeating-linear-gradient(-60deg, color-mix(in srgb, var(--night) 18%, transparent) 0 12px, transparent 12px 28px);
-    clip-path: polygon(48% 0, 100% 0, 100% 44%);
-    pointer-events: none;
-}
-.wing { display: block; fill: currentColor; overflow: visible; }
-/* Feathers alternate white / red; a black outline keeps them readable over red stripes */
-.wing polygon { stroke: var(--night); stroke-width: 8; stroke-linejoin: miter; paint-order: stroke; }
-.wing .wing-f1, .wing .wing-f3, .wing .wing-f5 { fill: var(--night-accent); }
-.hero-wing { position: absolute; z-index: 2; top: 1.25rem; right: var(--gutter); width: clamp(120px, 34vw, 440px); height: auto; color: var(--night-text); pointer-events: none; }
-.hero-content { position: relative; z-index: 3; padding-block: 3rem 3.25rem; }
-.hero h1 { margin-bottom: .35em; }
+/* ---------- Home hero: matchday poster (always dark) ----------
+   Photo and text never overlap, so text contrast does not depend on the photo.
+   Stacked (phones, upright tablets): photo on top, fading into the black behind the text below.
+   Split (wide and landscape screens, see "Breakpoints"): text left, photo right, fading in from the left.
+   Crop: --hero-focus (which part stays) and --hero-zoom. Colour grade: the --hero-filter and
+   --hero-tint* tokens in the palette file; without them the photo is shown unchanged. */
+.hero { --hero-focus: 50% 32%; --hero-zoom: 1.38; position: relative; display: flex; flex-direction: column; overflow: hidden; background: var(--bg); color: var(--text-2); min-height: min(calc(100svh - var(--header-h) - var(--ticker-h)), 60rem); }
+/* isolation: the tint blends with the photo only. Stacked height: whatever the screen has left after
+   the header and the text (about 29rem), so the buttons stay on the first screen; never under 12rem. */
+.hero-media { --fade: linear-gradient(to bottom, rgb(0 0 0 / .65), #000 12%, #000 62%, rgb(0 0 0 / .55) 82%, transparent); -webkit-mask-image: var(--fade); mask-image: var(--fade); position: relative; flex: none; isolation: isolate; overflow: hidden; height: max(12rem, min(88vw, 100svh - 29rem, 34rem)); }
+.hero-img { width: 100%; height: 100%; object-fit: cover; object-position: var(--hero-focus); transform: scale(var(--hero-zoom)); transform-origin: var(--hero-focus); filter: var(--hero-filter, none); }
+.hero-media::after { content: ""; position: absolute; inset: 0; z-index: 1; background: var(--hero-tint, transparent); mix-blend-mode: var(--hero-tint-blend, normal); opacity: 0; pointer-events: none; }
+/* Only where blend modes work: without them the tint would cover the photo as a solid red layer */
+@supports (mix-blend-mode: hue) { .hero-media::after { opacity: var(--hero-tint-opacity, 0); } }
+.hero-content { position: relative; z-index: 3; margin-block: auto; padding-block: .85rem 1.5rem; }
+.hero .eyebrow, .hero .hero-status { margin-bottom: .7rem; }
+.hero h1 { margin-bottom: .28em; font-size: clamp(3.25rem, 15vw, 7rem); }
 .h1-line { display: block; }
+.h1-keep { white-space: nowrap; }
 /* Second headline line on a red banner with a hard white shadow */
 .h1-flag { display: inline-block; margin-top: .06em; padding: .02em .16em .06em .1em; background: var(--accent); color: var(--on-accent); box-shadow: .06em .06em 0 var(--text); }
-.tagline { font-size: 1.1rem; font-weight: 700; letter-spacing: .1em; text-transform: uppercase; color: var(--text); max-width: 26ch; }
-.hero-buttons { display: flex; flex-wrap: wrap; gap: 1rem 1.25rem; margin-top: 1.75rem; padding-left: 6px; }
+.tagline { font-size: 1.1rem; font-weight: 700; letter-spacing: .1em; text-transform: uppercase; color: var(--text); text-wrap: balance; }
+.hero-buttons { display: flex; flex-wrap: wrap; gap: 1rem 1.25rem; margin-top: 1.5rem; padding-left: 6px; }
+@media (max-width: 599px) {
+    .hero .tagline { font-size: .875rem; letter-spacing: .03em; margin-bottom: 0; }
+    .hero-buttons { gap: .75rem 1rem; margin-top: 1.1rem; }
+    .hero-buttons .btn { flex: 1 1 auto; padding-inline: .8rem; font-size: 1.1rem; letter-spacing: .04em; }
+}
 
 /* ---------- Ticker: red stadium band (scrolls only with JS and motion allowed) ---------- */
 .ticker { --tk-bg: var(--night-accent); --tk-fg: var(--night-on-accent); --tk-sep: var(--night-on-accent); position: relative; z-index: 2; overflow: hidden; background: var(--tk-bg); color: var(--tk-fg); border-block: 3px solid var(--night); font-family: var(--font-head); font-size: 1.45rem; font-weight: 800; font-style: italic; font-synthesis-weight: none; text-transform: uppercase; letter-spacing: .05em; }
@@ -436,16 +441,11 @@ a.contact-card p { color: var(--text-2); }
 .drink-prices { display: flex; flex-wrap: wrap; justify-content: flex-end; gap: .15rem 1.1rem; }
 .drink-opt { display: inline-flex; align-items: baseline; gap: .4rem; white-space: nowrap; }
 .drink-opt .drink-size { margin-left: 0; }
-/* Additive footnote numbers (only rendered once drinks.json has additives_legend) */
-.drink-add { margin-left: .2em; color: var(--accent-text); font: 700 .6em/0 var(--font-body); letter-spacing: .04em; vertical-align: super; }
 .drink-desc { margin: .2rem 0 0; color: var(--muted); font-size: .95rem; max-width: 42ch; }
-/* Small print under the board: VAT / allergen notes and the additives legend */
+/* Small print under the board: VAT / allergen notes */
 .drink-small { display: grid; gap: .9rem; max-width: 62ch; margin-top: 2.25rem; color: var(--muted); font-size: .9rem; line-height: 1.5; }
 .drink-small p { margin: 0; }
 .drink-notes { display: grid; gap: .4rem; }
-.drink-legend-title { color: var(--text-2); font: 800 .85rem/1.3 var(--font-head); letter-spacing: .16em; text-transform: uppercase; }
-.drink-legend ul { display: flex; flex-wrap: wrap; gap: .2rem 1.25rem; margin: .3rem 0 0; padding: 0; list-style: none; }
-.drink-legend-n { color: var(--accent-text); font-weight: 700; }
 @media (min-width: 640px) {
     .drink-tabs { grid-template-columns: repeat(4, minmax(0, 1fr)); }
 }
@@ -786,15 +786,9 @@ address strong { color: var(--text); font: 800 1.35rem/1.2 var(--font-head); tex
 @keyframes wipe-in { from { clip-path: inset(0 100% 0 0); } to { clip-path: inset(-1em); } }
 @keyframes rise { from { opacity: 0; transform: translateY(24px) skewY(-2deg); } to { opacity: 1; transform: none; } }
 @keyframes pulse { 0%, 100% { opacity: 1; } 50% { opacity: .35; } }
-@keyframes sash-in { from { clip-path: polygon(100% 0, 100% 0, 100% 0); } }
-@keyframes sash-in-wide { from { clip-path: polygon(100% 0, 100% 0, 100% 100%, 100% 100%); } }
-@keyframes feather-in { from { opacity: 0; transform: translateX(60px); } }
 
-/* Hero entrance: sash wipes in, feathers fly in one by one, headline lines wipe */
-.hero-slab { animation: sash-in .5s var(--snap) both; }
-.wing polygon { transform-box: fill-box; animation: feather-in .4s var(--snap) both; }
-.wing .wing-f0 { animation-delay: .25s; } .wing .wing-f1 { animation-delay: .3s; } .wing .wing-f2 { animation-delay: .35s; }
-.wing .wing-f3 { animation-delay: .4s; } .wing .wing-f4 { animation-delay: .45s; } .wing .wing-f5 { animation-delay: .5s; }
+/* Hero entrance: headline lines wipe. The photo itself is not animated: it is
+   the largest paint on the page and must show as soon as it has loaded. */
 .hero-content > *, .page-head-inner > * { animation: rise .5s var(--snap) both; }
 .hero-content > :nth-child(2), .page-head-inner > :nth-child(2) { animation-delay: .06s; }
 .hero-content > :nth-child(3), .page-head-inner > :nth-child(3) { animation-delay: .12s; }
@@ -803,7 +797,6 @@ address strong { color: var(--text); font: 800 1.35rem/1.2 var(--font-head); tex
 .page-head-inner > :nth-child(6) { animation-delay: .3s; }
 .page-head-inner > :nth-child(7) { animation-delay: .36s; }
 .hero h1, .page-head h1 { animation-name: wipe-in; animation-duration: .55s; }
-.hero-img { animation: fade-in .8s both; }
 .page-head-stripes { animation: wipe-in .6s .1s var(--snap) both; }
 
 /* Scroll reveal (only when JS is active): a short slide from the left, staggered inside grids */
@@ -833,11 +826,6 @@ address strong { color: var(--text); font: 800 1.35rem/1.2 var(--font-head); tex
 @media (min-width: 900px) {
     :root { --header-h: 72px; --gutter: 2rem; --off: 8px; }
     .mobile-bar { display: none; }
-    .hero { align-items: center; }
-    .hero-content { padding-block: 4rem; }
-    .hero-overlay { background: linear-gradient(to right, var(--bg) 25%, color-mix(in srgb, var(--bg) 55%, transparent)); }
-    .hero-slab { clip-path: polygon(66% 0, 86% 0, 70% 100%, 50% 100%); animation-name: sash-in-wide; }
-    .hero-wing { top: 50%; right: 4%; translate: 0 -50%; width: clamp(260px, 30vw, 440px); }
     .tagline { font-size: 1.3rem; }
     .split { grid-template-columns: 1fr 1fr; gap: 4rem; }
     .about-solo { display: grid; grid-template-columns: minmax(0, 5fr) minmax(0, 7fr); column-gap: 4rem; align-items: start; }
@@ -851,6 +839,40 @@ address strong { color: var(--text); font: 800 1.35rem/1.2 var(--font-head); tex
     .page-head-stripes { width: 40%; height: 100%; }
     .page-head-inner { padding-right: 34%; }
     .jump-board ol { max-width: none; }
+}
+/* Upright tablets: the photo box is wide enough to need less zoom, and the larger text needs more room */
+@media (min-width: 600px) {
+    .hero { --hero-zoom: 1.15; }
+    .hero-media { height: max(14rem, min(88vw, 100svh - 38rem, 34rem)); }
+}
+/* Split hero: wide landscape windows, and phones held sideways. --hero-col is the text column; the
+   photo starts where it ends. (build.py: the img "sizes" attribute assumes this layout.) */
+@media (min-width: 900px) and (min-aspect-ratio: 1/1), (min-width: 560px) and (max-height: 560px) and (orientation: landscape) {
+    .hero { --hero-col: clamp(19rem, 40vw, 37.5rem); --hero-focus: 46% 40%; --hero-zoom: 1; flex-direction: row; align-items: center; }
+    /* Two masks, intersected: a long fade on the text side, short ones on the other three.
+       The text-side fade is eased (slow start, slow end): a straight ramp left a visible vertical seam. */
+    .hero-media { --fade-x: linear-gradient(to right, transparent, rgb(0 0 0 / .03) 5%, rgb(0 0 0 / .12) 10%, rgb(0 0 0 / .28) 15%, rgb(0 0 0 / .5) 21%, rgb(0 0 0 / .74) 27%, rgb(0 0 0 / .92) 33%, #000 39%, #000 86%, rgb(0 0 0 / .5)); --fade-y: linear-gradient(to bottom, rgb(0 0 0 / .55), #000 14%, #000 74%, transparent); -webkit-mask-image: var(--fade-x), var(--fade-y); -webkit-mask-composite: source-in; mask-image: var(--fade-x), var(--fade-y); mask-composite: intersect; position: absolute; inset: 0 0 0 calc(max(var(--gutter), (100% - 1180px) / 2 + var(--gutter)) + var(--hero-col)); height: auto; }
+    .hero-content { padding-block: clamp(1.25rem, 6svh, 4rem); }
+    /* The whole text block ends before the photo starts */
+    .hero-content { max-width: calc(var(--gutter) + var(--hero-col) - .75rem); margin-inline: max(0px, (100% - 1180px) / 2) auto; padding-right: 0; }
+    .hero h1 { font-size: max(2.75rem, min(var(--hero-col) / 5.6, 13svh, 7rem)); }
+    /* Always two lines on the red banner, as wide as its longest word */
+    .hero .h1-flag { display: block; width: min-content; }
+    /* Scales with the column, so the tagline stays on one line */
+    .hero .tagline { font-size: min(1.3rem, var(--hero-col) / 25); letter-spacing: .08em; }
+    /* Narrow columns: tighter buttons, so both stay side by side */
+    .hero-buttons { column-gap: .9rem; }
+    .hero-buttons .btn { padding-inline: clamp(.8rem, 5vw - 2rem, 1.8rem); font-size: min(1.2rem, var(--hero-col) / 20); letter-spacing: .03em; }
+}
+@media (max-height: 560px) and (orientation: landscape) and (min-width: 560px) {
+    .hero { --hero-col: clamp(18rem, 48vw, 28rem); }
+    .hero-content { padding-block: .6rem; }
+    .hero .eyebrow, .hero .hero-status { margin-bottom: .5rem; font-size: .75rem; letter-spacing: .08em; }
+    .hero .hero-status { margin-right: .5rem; }
+    .hero h1 { font-size: max(2.5rem, min(var(--hero-col) / 5.6, 11.5svh)); margin-bottom: .22em; }
+    .hero .tagline { font-size: .8rem; letter-spacing: .03em; margin-bottom: 0; }
+    .hero-buttons { gap: .75rem 1rem; margin-top: .75rem; }
+    .hero-buttons .btn { min-height: 44px; padding-inline: .9rem; font-size: 1.05rem; letter-spacing: .03em; }
 }
 @media (min-width: 1200px) {
     .card:not(.event) { padding: 2rem; }
@@ -926,6 +948,15 @@ address strong { color: var(--text); font: 800 1.35rem/1.2 var(--font-head); tex
 @media (max-width: 359px) {
     .drink-tab { font-size: 1rem; letter-spacing: .03em; padding-inline: .5rem; }
     .header-actions { gap: 0; }
+    /* Smallest phones: keep chip, tagline and the two hero buttons on one line each (longest: Italian) */
+    .hero .hero-status, .hero .eyebrow { font-size: .8rem; letter-spacing: .06em; }
+    .hero .tagline { font-size: .8rem; letter-spacing: 0; }
+    .hero-buttons { column-gap: .75rem; }
+    .hero-buttons .btn { padding-inline: .4rem; font-size: 1rem; letter-spacing: 0; }
+}
+/* Short upright phones: a slightly lower photo keeps the buttons on the first screen */
+@media (max-width: 359px) and (max-height: 600px) {
+    .hero-media { height: 10rem; }
 }
 
 [hidden] { display: none !important; }

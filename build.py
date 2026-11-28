@@ -400,7 +400,7 @@ def show_music():
 
 
 # Per-place copy in data/i18n.json ("near<suffix>" blurb). Places without an entry show name, kind and distance only.
-NEAR_COPY = {"Deutsche Bank Park": "Stadium", "Festhalle Frankfurt": "Festhalle", "Frankfurt Hauptbahnhof": "Hbf"}
+NEAR_COPY = {"Deutsche Bank Park": "Stadium"}
 
 
 def nearby_places():
@@ -461,12 +461,6 @@ def faq_items(lang, home=""):
         if pt and not missing(pt):
             a += t["faqA3pt"].format(pt=pt)
         items.append((t["faqQ3"].format(stadium=stadium), a, ("#local", t["faqMoreLocal"])))
-    # Places near the bar (rounded straight-line distances, always worded as "about")
-    for name, key in (("Festhalle Frankfurt", "Festhalle"), ("Frankfurt Hauptbahnhof", "Hbf")):
-        p = nearby_place(name)
-        if p:
-            items.append((t[f"faqQnear{key}"], cap(t[f"faqAnear{key}"].format(dist=fmt_dist(lang, p["distance_km"]))),
-                          ("#local", t["faqMoreLocal"])))
     if get("address.street"):
         items.append((t["faqQ4"], t["faqA4"].format(addr=full_address_line()), None))
     if SITE["hours"].get("confirmed") is True:
@@ -704,16 +698,6 @@ def home_href(path):
     return "../" * path.count("/") or "./"
 
 
-def wing_svg(cls):
-    """Decorative, generic abstract wing: six slanted 'feather' bars. Not a club crest or logo."""
-    bars = []
-    for i, (xl, xr) in enumerate([(20, 390), (56, 376), (100, 362), (148, 348), (194, 334), (236, 320)]):
-        y = 10 + i * 50
-        bars.append(f'<polygon class="wing-f{i}" points="{xl + 26},{y} {xr},{y} {xr - 26},{y + 34} {xl},{y + 34}"/>')
-    return (f'<svg class="{cls}" viewBox="0 0 400 304" aria-hidden="true" focusable="false">'
-            + "".join(bars) + "</svg>")
-
-
 def ticker_html(items, extra_cls=""):
     """Decorative marquee band. The same words are on the page already, so the track is hidden
     from screen readers. Four identical groups let the CSS loop scroll by exactly one group (-25%).
@@ -753,7 +737,10 @@ GO_ICON = ('<svg class="nav-go" viewBox="0 0 24 24" aria-hidden="true" focusable
 NAV_PAGE_KEYS = {"home": "navHome", "schedule": "navSchedule", "contact": "navContactPage"}
 NAV_SECTION_KEYS = {"about": "navAbout", "sport": "navSport", "drinks": "navDrinks", "events": "navEvents",
                     "gallery": "navGallery"}
-HOME_NAV_PAGES = ["schedule", "contact"]
+# Match schedule: hidden at the owner's request. Code, texts and data/schedule.json are kept; True brings it back
+# (then also add "spielplan" to GENERATED and set MIN_PAGES to 15 in .github/workflows/deploy.yml).
+SHOW_SCHEDULE = False
+HOME_NAV_PAGES = ["schedule", "contact"] if SHOW_SCHEDULE else ["contact"]
 SUB_NAV_PAGES = ["home"] + HOME_NAV_PAGES
 SUB_NAV_SECTIONS = ["drinks", "events"]  # the home sections a visitor of a sub page most likely wants
 
@@ -849,25 +836,10 @@ def site_footer(lang, home=""):
     </footer>'''
 
 
-def additives_legend():
-    """The printed menu's footnote numbers (drinks.json additives_legend, {"1": {de, en, it}}).
-    Until the owner supplies the meaning, the numbers are NOT shown (they would be meaningless) and a
-    TODO is reported. Returns {int: localized text} or {}."""
-    legend = DRINKS.get("additives_legend")
-    if not isinstance(legend, dict) or not legend:
-        msg = ("drinks.json additives_legend: ask the owner for the meaning of the additive numbers 1–14 "
-               "printed on the menu (German law requires declaring them)")
-        if msg not in TODOS:
-            TODOS.append(msg)
-        return {}
-    return {int(k): v for k, v in legend.items() if str(k).isdigit()}
-
-
 def drinks_html(lang):
     cats = DRINKS.get("categories", [])
     cur = DRINKS.get("currency", "€")
     t = I18N[lang]
-    legend = additives_legend()
 
     def price(n):
         s = f"{n:.2f}"
@@ -879,14 +851,6 @@ def drinks_html(lang):
         """Sizes are stored with a decimal comma ('0,25 l'); they follow the language's decimal style like the prices."""
         s = str(s or "").replace(",", ".")
         return s.replace(".", ",") if lang in DECIMAL_COMMA else s
-
-    def sup(it):
-        """Footnote numbers as a superscript, only for numbers the legend explains (none while it is null)."""
-        nums = [n for n in it.get("additives") or [] if n in legend]
-        if not nums:
-            return ""
-        return (f'<sup class="drink-add"><span class="sr-only">{esc(t["drinkAdditives"])} </span>'
-                f'{esc(",".join(str(n) for n in nums))}</sup>')
 
     tabs, panels = [], []
     for i, c in enumerate(cats):
@@ -916,7 +880,7 @@ def drinks_html(lang):
             # name | tail (dots + prices): a tail that does not fit wraps as a whole under the name
             items.append(
                 f'<div class="drink-item" style="--i:{j}"><div class="drink-head">'
-                f'<span class="drink-name">{esc(loc(it["name"], lang))}{sup(it)}{size}</span>'
+                f'<span class="drink-name">{esc(loc(it["name"], lang))}{size}</span>'
                 f'<span class="drink-tail"><span class="drink-dots"></span>{prices}</span></div>{desc}</div>')
         note = loc(c.get("note"), lang)
         note_html = f'<p class="drink-cat-note">{esc(note)}</p>' if note else ""
@@ -924,10 +888,6 @@ def drinks_html(lang):
             f'<div class="drink-panel{" has-note" if note else ""}" id="panel-{cid}" aria-labelledby="tab-{cid}" tabindex="0">'
             f'<h3 class="drink-cat-title">{esc(loc(c["name"], lang))}</h3>{note_html}' + "".join(items) + "</div>")
     small = ""
-    if legend:
-        used = sorted({n for c in cats for it in c.get("items", []) for n in it.get("additives") or [] if n in legend})
-        lis = "".join(f'<li><span class="drink-legend-n">{n}</span> {esc(loc(legend[n], lang))}</li>' for n in used)
-        small += f'<div class="drink-legend"><p class="drink-legend-title">{esc(t["drinkAdditives"])}</p><ul>{lis}</ul></div>'
     notes = "".join(f"<p>{esc(loc(n, lang))}</p>" for n in DRINKS.get("notes") or [])
     if notes:
         small += f'<div class="drink-notes">{notes}</div>'
@@ -1170,7 +1130,7 @@ def render_home(lang, hrefs=None):
     facts_html = ('<ul class="facts">' + "".join(f"<li>{esc(f)}</li>" for f in facts) + "</ul>") if facts else ""
     n_screens = get("venue.screens", report=False)
     sport5 = t["sport5Screens"].format(n=n_screens) if n_screens else t["sport5"]
-    sched_href = PAGES["schedule"][lang]
+    live_href, live_label = (PAGES["schedule"][lang], t["btnLive"]) if SHOW_SCHEDULE else ("#sport", t["btnSport"])
     return f'''<!DOCTYPE html>
 <html lang="{lang}">
 <head>
@@ -1196,16 +1156,17 @@ def render_home(lang, hrefs=None):
 
     <main id="main">
         <section class="hero" id="top">
-            <img class="hero-img" src="{r}assets/img/hero.svg" width="1200" height="1600" fetchpriority="high" alt="{img_alt(t["heroAlt"])}">
-            <div class="hero-overlay"></div>
-            <div class="hero-slab" aria-hidden="true"></div>
-            {wing_svg("wing hero-wing")}
+            <div class="hero-media">
+                <!-- Real photo, so it always has its description (independent of images.photos_are_real).
+                     The crop and colour grade are CSS: "Home hero" in css/style.css. -->
+                <img class="hero-img" src="{r}assets/img/hero-1600.webp" srcset="{r}assets/img/hero-960.webp 960w, {r}assets/img/hero-1600.webp 1600w" sizes="(min-width: 900px) and (min-aspect-ratio: 1/1) 75vw, 150vw" width="1600" height="1200" fetchpriority="high" alt="{attr(t["heroAlt"])}">
+            </div>
             <div class="container hero-content">
                 {hero_chip}<p class="eyebrow">Frankfurt · Niederrad</p>
-                <h1><span class="h1-line">C'est la Vie</span> <span class="h1-line h1-flag">Café &amp; Sportsbar</span></h1>
+                <h1><span class="h1-line">C'est la Vie</span> <span class="h1-line h1-flag"><span class="h1-keep">Café &amp;</span> Sportsbar</span></h1>
                 <p class="tagline">{esc(t["tagline"])}</p>
                 <div class="hero-buttons">
-                    <a class="btn btn-primary" href="{sched_href}">{esc(t["btnLive"])}</a>
+                    <a class="btn btn-primary" href="{live_href}">{esc(live_label)}</a>
                     <a class="btn btn-ghost" href="#visit">{esc(t["btnRoute"])}</a>
                 </div>
             </div>
@@ -1377,7 +1338,7 @@ def local_paragraphs(lang):
     if L.get("nearby_confirmed") is True and L.get("nearby"):
         parts.append(t["localNearby"].format(places=join_list(lang, L["nearby"])))
     elif "local.nearby_confirmed" not in TODOS:
-        TODOS.append("local.nearby_confirmed (set true once the bar is confirmed to be near DFB-Campus / Bürostadt)")
+        TODOS.append("local.nearby_confirmed (set true once the bar is confirmed to be near DFB-Campus)")
     pt = loc(get("local.public_transport"), lang)
     if pt and not missing(pt):
         parts.append(t["localPt"].format(pt=pt))
@@ -1436,7 +1397,7 @@ def link_list(lang, home, keys):
         "local": (contact + "#local", "localLinkArea"),
     }
     lis = "".join(f'<li class="more-link"><a href="{attr(target[k][0])}">{esc(t[target[k][1]])}'
-                  f'<span aria-hidden="true">&nbsp;→</span></a></li>' for k in keys)
+                  f'<span aria-hidden="true">&nbsp;→</span></a></li>' for k in keys if SHOW_SCHEDULE or k != "schedule")
     return f'<ul class="link-list">{lis}</ul>'
 
 
@@ -1603,7 +1564,7 @@ def render_contact(lang, hrefs):
 
 
 # ---------------------------------------------------------------- robots.txt + sitemap.xml
-INDEXABLE = ["home", "schedule", "contact"]  # legal pages are noindex and stay out of the sitemap
+INDEXABLE = ["home"] + HOME_NAV_PAGES  # legal pages are noindex and stay out of the sitemap
 
 
 def robots_txt():
@@ -1648,6 +1609,8 @@ def main():
         for kind in ("impressum", "datenschutz"):
             write(pre + PAGES[kind][lang], render_legal(lang, kind, lang_hrefs(lang, PAGES[kind][lang])))
         for key, render in (("schedule", render_schedule), ("contact", render_contact)):
+            if key == "schedule" and not SHOW_SCHEDULE:
+                continue
             path = PAGES[key][lang]
             write(pre + path + "index.html", render(lang, lang_hrefs(lang, path)))
     write("robots.txt", robots_txt())
